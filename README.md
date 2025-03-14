@@ -1,4 +1,4 @@
-# Project Name
+# Tower Defense Game
 Put here a short paragraph describing your project. 
 Adding an screenshot or a mockup of your application in action would be nice.  
 
@@ -18,6 +18,9 @@ tar -xzf
 
 # How to contribute
 Follow this project board to know the latest status of the project: [http://...]([http://...])  
+
+# Project Board
+https://github.com/orgs/cis3296s25/projects/66
 
 ### How to build
 - Use this github repository: ... 
