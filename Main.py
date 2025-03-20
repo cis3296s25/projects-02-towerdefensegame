@@ -10,7 +10,7 @@ BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
 pygame.init()
-screen = pygame.display.set_mode((600, 430))
+screen = pygame.display.set_mode((600, 400))
 clock = pygame.time.Clock()
 
 IMG_NAMES = [
@@ -71,7 +71,7 @@ class Enemy:
         hpPercentage = self.hp / 50 # Max HP: 50 = 100%
         pygame.draw.rect(screen, (0, 255, 0), (self.x, self.y + 45, 40 * hpPercentage, 5))  # HP Bar Green
 
-tower = Tower(150, 150, 100, 10, 2)
+tower = Tower(160, 160, 100, 10, 2)
 enemy = Enemy(200, 80, 50, 10, 5, 3)
 map = Map()
 
@@ -82,8 +82,8 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))
-    # draw_grid()
     map.draw()
+    draw_grid()
     tower.draw()  # draw tower
     enemy.draw()  # draw enemy
     pygame.display.flip()
