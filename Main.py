@@ -10,6 +10,13 @@ BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
 pygame.init()
+
+#code for background music
+pygame.mixer.init()
+pygame.mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
+pygame.mixer.music.set_volume(0.5)
+
+
 screen = pygame.display.set_mode((750, 400))
 clock = pygame.time.Clock()
 
@@ -110,6 +117,8 @@ def draw_sidebar():
 
 
 def game():
+    pygame.mixer.music.play(-1) #plays music after leaving homescreen
+
     tower = Tower(160, 160, 100, 10, 2)
     enemy = Enemy(200, 80, 50, 10, 5, 3)
     map = Map()
@@ -129,6 +138,7 @@ def game():
         pygame.display.flip()
         clock.tick(60)
 
+    pygame.mixer.music.stop()
     pygame.quit()
     
 
