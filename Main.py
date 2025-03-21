@@ -116,6 +116,36 @@ def draw_sidebar():
     pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
 
 
+def pause_screen():
+    pygame.mixer.music.pause() 
+
+    # Create a transparent overlay
+    overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)  
+    overlay.fill((0, 0, 0, 150))  
+    font = pygame.font.SysFont("Arial", 50)
+    pause_text = font.render("Game Paused", True, (255, 255, 255))
+    resume_text = pygame.font.SysFont("Arial", 30).render("Press ESC to Resume", True, (255, 255, 255))
+    pause_rect = pause_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+    resume_rect = resume_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
+    screen.blit(overlay, (0, 0))  
+    screen.blit(pause_text, pause_rect)
+    screen.blit(resume_text, resume_rect)
+    pygame.display.flip() 
+
+    # Pause gameloop
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:  
+                    paused = False
+    
+    pygame.mixer.music.unpause()
+
+
 def game():
     pygame.mixer.music.play(-1) #plays music after leaving homescreen
 
@@ -128,6 +158,11 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
+                    pause_screen()  
+
 
         screen.fill((0, 0, 0))
         map.draw()
