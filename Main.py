@@ -153,6 +153,35 @@ def game():
     enemy = Enemy(200, 80, 50, 10, 5, 3)
     map = Map()
 
+    # Load and scale speaker icons
+    speaker_img_muted = pygame.transform.scale(
+        pygame.image.load(IMAGE_PATH + "mute.png").convert_alpha(), (24, 24)
+    )
+    speaker_img_low = pygame.transform.scale(
+        pygame.image.load(IMAGE_PATH + "low-volume.png").convert_alpha(), (24, 24)
+    )
+    speaker_img_medium = pygame.transform.scale(
+        pygame.image.load(IMAGE_PATH + "medium-volume.png").convert_alpha(), (24, 24)
+    )
+    speaker_img_high = pygame.transform.scale(
+        pygame.image.load(IMAGE_PATH + "high-volume.png").convert_alpha(), (24, 24)
+    )
+
+    # Volume/mute state
+    muted = False
+    volume = 0.5
+    pygame.mixer.music.set_volume(volume)
+
+    # Volume slider setup (placed inside sidebar area)
+    slider_rect = pygame.Rect(20, screen.get_height() - 40, 100, 10)
+    handle_rect = pygame.Rect(slider_rect.x + int(slider_rect.width * volume) - 5, slider_rect.y - 5, 10, 20)
+    dragging_volume = False
+
+    # Placeholder for speaker icon rect (will be updated dynamically)
+    speaker_rect = pygame.Rect(0, 0, 24, 24)  # placeholder; will update dynamically below
+
+
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -161,7 +190,26 @@ def game():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    pause_screen()  
+                    pause_screen()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if handle_rect.collidepoint(event.pos):
+                    dragging_volume = True
+                elif speaker_rect.collidepoint(event.pos):
+                    muted = not muted
+                    pygame.mixer.music.set_volume(0 if muted else volume)
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                dragging_volume = False
+
+            elif event.type == pygame.MOUSEMOTION:
+                if dragging_volume:
+                    mouse_x = event.pos[0]
+                    new_volume = max(0, min(1, (mouse_x - slider_rect.x) / slider_rect.width))
+                    volume = new_volume
+                    if not muted:
+                        pygame.mixer.music.set_volume(volume)
+                    handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
 
 
         screen.fill((0, 0, 0))
@@ -170,6 +218,27 @@ def game():
         draw_grid()
         tower.draw()  # draw tower
         enemy.draw()  # draw enemy
+
+         # Volume slider bar
+        pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
+        pygame.draw.rect(screen, (100, 100, 255), (slider_rect.x, slider_rect.y, int(slider_rect.width * volume), slider_rect.height))  # Volume fill
+        pygame.draw.rect(screen, (255, 255, 255), handle_rect)  # Slider handle
+
+        # Choose which speaker icon to display
+        if muted:
+            speaker_img = speaker_img_muted
+        elif volume <= 0.33:
+            speaker_img = speaker_img_low
+        elif volume <= 0.66:
+            speaker_img = speaker_img_medium
+        else:
+            speaker_img = speaker_img_high
+
+        # Position speaker icon next to slider
+        speaker_rect = speaker_img.get_rect(topleft=(slider_rect.x + slider_rect.width + 10, slider_rect.y - 6))
+        screen.blit(speaker_img, speaker_rect)
+
+
         pygame.display.flip()
         clock.tick(60)
 
