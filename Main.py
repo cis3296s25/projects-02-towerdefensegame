@@ -10,6 +10,13 @@ BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
 pygame.init()
+
+#code for background music
+pygame.mixer.init()
+pygame.mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
+pygame.mixer.music.set_volume(0.5) #can change if needed 0.0-1.0
+pygame.mixer.music.play(-1)
+
 screen = pygame.display.set_mode((600, 400))
 clock = pygame.time.Clock()
 
