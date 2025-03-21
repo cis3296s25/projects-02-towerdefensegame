@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_data_files
 
-datas = [('images/enemySample40x40.png', 'images'), ('images/mapSample.png', 'images'), ('sounds/backgroundmusic.mp3', 'sounds')]
+datas = [('images/enemySample40x40.png', 'images'), ('images/mapSample.png', 'images'), ('sounds/backgroundmusic.mp3', 'sounds'), ('images/high-volume.png','images'),('images/low-volume.png', 'images'), ('images/medium-volume.png', 'images'), ('images/mute.png','images')]
 datas += collect_data_files('assets/chars')
 datas += collect_data_files('assets/tiles')
 datas += collect_data_files('assets/fonts')

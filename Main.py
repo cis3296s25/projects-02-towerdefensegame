@@ -4,6 +4,7 @@ import sys #required for .exe creation
 from pygame import(
     image,
 )
+from EnemyLogic import Enemy
 from os.path import abspath, dirname
 
 BASE_PATH = abspath(dirname(__file__))
@@ -28,6 +29,7 @@ IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
     for name in IMG_NAMES
 }
+enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -65,23 +67,6 @@ def draw_grid():
 
     screen.blit(grid_surface, (0, 0))
 
-class Enemy:
-    def __init__(self, x, y, hp, range, dmg, cooldown):
-        self.hp = hp
-        self.range = range
-        self.dmg = dmg
-        self.cooldown = cooldown
-        self.x = x
-        self.y = y
-        self.image = IMAGES["enemySample40x40"]
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
-
-    def draw(self):
-        #pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, 40, 40))  # Red square as a Enemy
-        screen.blit(self.image, (self.x, self.y))
-        pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y + 45, 40, 5))  # HP Bar Background White
-        hpPercentage = self.hp / 50 # Max HP: 50 = 100%
-        pygame.draw.rect(screen, (0, 255, 0), (self.x, self.y + 45, 40 * hpPercentage, 5))  # HP Bar Green
 
 def homescreen():
     #fonts
@@ -150,7 +135,7 @@ def game():
     pygame.mixer.music.play(-1) #plays music after leaving homescreen
 
     tower = Tower(160, 160, 100, 10, 2)
-    enemy = Enemy(200, 80, 50, 10, 5, 3)
+    enemy = Enemy(200, 80, 50, 10, 5, 3, screen, enemyImage)
     map = Map()
 
     # Load and scale speaker icons
