@@ -1,20 +1,24 @@
 # Tower Defense Game
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+Development of a tower defense game where the player places down towers to prevent the waves of enemies from reaching the base. Each wave will have a certain number of enemies and should get more challenging each wave. The game should be engaging, requiring many different strategies to complete. The towers are placed on a map with the enemies coming towards the base along a predetermined path    
 
-![This is a screenshot.](images.png)
+![This is a screenshot.](TD_proof_concept.png)
 # How to run
 Provide here instructions on how to use your application.   
-- Download the latest binary from the Release section on the right on GitHub.  
-- On the command line uncompress using
+- Download a zip of the project to run the exe file 
+- Or clone the repository
+- Make sure Python is downloaded
+    - You can download python on the Python Website:
+    ```
+    https://www.python.org/downloads/
+    ```
+    - Or download it from Microsoft Store (Windows)
+- Install Visual Studio Code if it’s not already installed
+- Add the necessary extensions on VS code
+- Download pygames by running this on the command line:
 ```
-tar -xzf  
+pip install pygame
 ```
-- On the command line run with
-```
-./hello
-```
-- You will see Hello World! on your terminal. 
+- Run Main.py
 
 # How to contribute
 Follow this project board to know the latest status of the project: [http://...]([http://...])  
