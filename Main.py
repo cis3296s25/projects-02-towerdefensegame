@@ -136,6 +136,7 @@ def game():
         pygame.display.flip()
         clock.tick(60)
 
+    pygame.mixer.music.stop()
     pygame.quit()
     
 
