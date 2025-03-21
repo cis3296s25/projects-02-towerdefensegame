@@ -15,7 +15,7 @@ pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
 pygame.mixer.music.set_volume(0.5) #can change if needed 0.0-1.0
-pygame.mixer.music.play(-1)
+
 
 screen = pygame.display.set_mode((600, 400))
 clock = pygame.time.Clock()
@@ -95,6 +95,8 @@ def homescreen():
     pygame.display.flip()
 
 def game():
+    pygame.mixer.music.play(-1)
+
     tower = Tower(160, 160, 100, 10, 2)
     enemy = Enemy(200, 80, 50, 10, 5, 3)
     map = Map()
