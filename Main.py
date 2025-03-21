@@ -10,7 +10,7 @@ BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
 pygame.init()
-screen = pygame.display.set_mode((600, 400))
+screen = pygame.display.set_mode((750, 400))
 clock = pygame.time.Clock()
 
 IMG_NAMES = [
@@ -49,9 +49,14 @@ class Tower:
         pygame.draw.rect(screen, (0, 255, 0), (self.x, self.y, 40, 40))  # Green square as a tower
 
 def draw_grid():
-    for x in range(0, 650, 40):
+    grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
+    grid_surface.set_alpha(15)  # Set transparency (0 = fully transparent, 255 = fully opaque)
+
+    for x in range(0, 600, 40):
         for y in range(0, 600, 40):
-            pygame.draw.rect(screen, (255, 255, 255), (x, y, 40, 40), 1)
+            pygame.draw.rect(grid_surface, (255, 255, 255, 100), (x, y, 40, 40), 1)  # Draw on transparent surface
+
+    screen.blit(grid_surface, (0, 0))
 
 class Enemy:
     def __init__(self, x, y, hp, range, dmg, cooldown):
@@ -86,6 +91,23 @@ def homescreen():
     screen.blit(title_text, title_rect)
     screen.blit(start_text, start_rect)
     pygame.display.flip()
+    
+def draw_sidebar():
+    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
+    
+    font = pygame.font.SysFont("Arial", 18)
+    
+    # text
+    text_Lives = font.render("Lives: 0.01", True, (255, 255, 255))  
+    text_Money = font.render("Money: 69", True, (255, 255, 255))  # (text, antialias, color, background=None)
+    text_tower = font.render("Towers", True, (255, 255, 255))  
+    
+    
+    screen.blit(text_Lives, (610, 10))  # Position the Money text
+    screen.blit(text_Money, (610, 30))  # Position the Money text
+    screen.blit(text_tower, (610, 60))  # Position the Tower text
+    pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+
 
 def game():
     tower = Tower(160, 160, 100, 10, 2)
@@ -100,6 +122,7 @@ def game():
 
         screen.fill((0, 0, 0))
         map.draw()
+        draw_sidebar()
         draw_grid()
         tower.draw()  # draw tower
         enemy.draw()  # draw enemy
@@ -107,7 +130,7 @@ def game():
         clock.tick(60)
 
     pygame.quit()
-
+    
 
 
 def main():
