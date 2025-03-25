@@ -5,7 +5,7 @@ from pygame import(
     image,
     mixer,
 )
-from EnemyLogic import Enemy
+from EnemyLogic import Enemy, WAYPOINTS
 from TowerLogic import Tower
 from MapLogic import Map
 from UI import homescreen, pause_screen, draw_sidebar, draw_grid
@@ -50,7 +50,7 @@ def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage)
-    enemy = Enemy(200, 80, 50, 10, 5, 3, screen, enemyImage)
+    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, enemyImage)
     gameMap = Map(screen, mapSample)
 
     # Load and scale speaker icons
@@ -114,7 +114,10 @@ def game():
         draw_sidebar(screen)
         draw_grid(screen)
         tower.draw()  # draw tower
-        enemy.draw()  # draw enemy
+
+        if not enemy.reached_end:
+            enemy.move()  # move the enemy
+            enemy.draw()  # draw enemy
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
