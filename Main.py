@@ -50,7 +50,7 @@ def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, enemyImage)
+    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
     gameMap = Map(screen, mapSample)
 
     # Load and scale speaker icons

@@ -1,32 +1,46 @@
 import pygame
 import math
+from os.path import abspath, dirname
+
 
 # enemy's path
 WAYPOINTS = [
-    (0, 185),
-    (75, 185),
-    (75, 72),
-    (200, 72),
-    (200, 230),
-    (355, 230),
-    (355, 150),
-    (600, 150)
+    (0, 160),
+    (60, 160),
+    (60, 40),
+    (180, 40),
+    (180, 200),
+    (340, 200),
+    (340, 120),
+    (600, 120)
 ]
+
+BASE_PATH = abspath(dirname(__file__))
+IMAGE_PATH = BASE_PATH + "/images/enemy1/"
 
 class Enemy:
 
-    def __init__(self, x, y, hp, range, dmg, cooldown, screen, image):
+    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen):
         self.hp = hp
-        self.range = range
+        self.range = attack_range
         self.dmg = dmg
         self.cooldown = cooldown
         self.x = x
         self.y = y
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        
         self.screen = screen
 
         self.speed = 1.0
+
+        #animates enemy
+        self.frames = [
+            pygame.image.load(IMAGE_PATH + f"mushroom{i}.png").convert_alpha()
+            for i in range(8)
+        ]
+        self.current_frame = 0
+        self.frame_timer = 0
+        self.image = self.frames[self.current_frame]
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
         self.waypoints = WAYPOINTS
         self.waypoint_index = 0
@@ -37,6 +51,13 @@ class Enemy:
         if self.reached_end:  # Enemy reached the end
             return
         
+         # Animate enemy
+        self.frame_timer += 1
+        if self.frame_timer % 10 == 0:  # Adjust frame speed
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.image = self.frames[self.current_frame]
+
+
         dx = self.target_x - self.x
         dy = self.target_y - self.y
         dist = math.hypot(dx, dy)
@@ -62,6 +83,22 @@ class Enemy:
 
         #pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, 40, 40))  # Red square as an Enemy
         self.screen.blit(self.image, (self.x, self.y))
-        pygame.draw.rect(self.screen, (255, 255, 255), (self.x, self.y + 45, 40, 5))  # HP Bar Background White
-        hpPercentage = self.hp / 50 # Max HP: 50 = 100%
-        pygame.draw.rect(self.screen, (0, 255, 0), (self.x, self.y + 45, 40 * hpPercentage, 5))  # HP Bar Green
+        
+        bar_width = 40
+        bar_height = 5
+
+        # Center above the enemy based on its rect
+        bar_x = self.rect.centerx - bar_width // 2
+        bar_y = self.rect.top + 69  # ← move this number up or down as needed
+
+        # Background
+        pygame.draw.rect(self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height))
+
+        # Fill
+        hp_percentage = self.hp / 50
+        pygame.draw.rect(self.screen, (0, 255, 0), (bar_x, bar_y, bar_width * hp_percentage, bar_height))
+
+        
+        # pygame.draw.rect(self.screen, (255, 255, 255), (self.x, self.y + 45, 40, 5))  # HP Bar Background White
+        # hpPercentage = self.hp / 50 # Max HP: 50 = 100%
+        # pygame.draw.rect(self.screen, (0, 255, 0), (self.x, self.y + 45, 40 * hpPercentage, 5))  # HP Bar Green
