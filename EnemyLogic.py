@@ -16,7 +16,7 @@ WAYPOINTS = [
 ]
 
 BASE_PATH = abspath(dirname(__file__))
-IMAGE_PATH = BASE_PATH + "/images/enemy1/"
+IMAGE_PATH = BASE_PATH + "/images/enemy1/RedMushroom/"
 
 class Enemy:
 
