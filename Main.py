@@ -50,7 +50,12 @@ def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+    # enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+    enemies = []
+
+    spawn_delay = 2500 #ms
+    last_spawn_time = pygame.time.get_ticks()
+
     gameMap = Map(screen, mapSample)
 
     # Load and scale speaker icons
@@ -108,6 +113,12 @@ def game():
                     if not muted:
                         mixer.music.set_volume(volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+        
+        current_time = pygame.time.get_ticks()
+        if current_time - last_spawn_time >= spawn_delay:
+            new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+            enemies.append(new_enemy)
+            last_spawn_time = current_time
 
         screen.fill((0, 0, 0))
         gameMap.draw()
@@ -115,9 +126,14 @@ def game():
         draw_grid(screen)
         tower.draw()  # draw tower
 
-        if not enemy.reached_end:
-            enemy.move()  # move the enemy
-            enemy.draw()  # draw enemy
+        #if not enemy.reached_end:
+            #enemy.move()  # move the enemy
+            #enemy.draw()  # draw enemy
+
+        for enemy in enemies:
+            if not enemy.reached_end:
+                enemy.move()
+            enemy.draw()
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
