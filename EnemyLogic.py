@@ -12,7 +12,7 @@ WAYPOINTS = [
     (180, 200),
     (340, 200),
     (340, 120),
-    (600, 120)
+    (570, 120)
 ]
 
 BASE_PATH = abspath(dirname(__file__))
