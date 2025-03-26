@@ -1,6 +1,7 @@
 import pygame
 import os #required for .exe creation
 import sys #required for .exe creation
+import random
 from pygame import(
     image,
     mixer,
@@ -116,7 +117,8 @@ def game():
         
         current_time = pygame.time.get_ticks()
         if current_time - last_spawn_time >= spawn_delay:
-            new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+            color = random.choice(["Red", "Blue", "Purple"])
+            new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
             enemies.append(new_enemy)
             last_spawn_time = current_time
 
