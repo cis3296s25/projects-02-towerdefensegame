@@ -50,7 +50,7 @@ def resource_path(relative_path):
 #wave helper function
 def get_wave_data(wave):
     if wave == 1:
-        return["Red"] * 5
+        return["Red"] * 1
     elif wave == 2:
         return["Red"] * 10
     elif wave == 3:
@@ -65,11 +65,11 @@ def game():
     # enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
     
     enemies = []
-    spawn_delay = 2500 #ms
+    spawn_delay = 2000 #ms
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
-    wave_number = 3
+    wave_number = 1
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
