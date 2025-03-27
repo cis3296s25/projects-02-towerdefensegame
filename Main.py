@@ -207,8 +207,8 @@ def game():
             tower.draw()
             
         # Draw the temporary tower if placing
-        #if placing_tower and temporary_tower:
-            #temporary_tower.draw()
+        if placing_tower and temporary_tower:
+            temporary_tower.draw()
 
         for enemy in enemies[:]:
             if enemy.is_dying:
