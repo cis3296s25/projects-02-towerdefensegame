@@ -187,11 +187,6 @@ def game():
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
         
         current_time = pygame.time.get_ticks()
-        #if current_time - last_spawn_time >= spawn_delay:
-         #   color = random.choice(["Red", "Blue", "Purple"])
-          #  new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
-           # enemies.append(new_enemy)
-            #last_spawn_time = current_time
         
         if spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
@@ -206,29 +201,35 @@ def game():
         gameMap.draw()
         draw_grid(screen)
         
-        # Draw buttons
-        if towerButton.draw(screen): # if tower button is clicked
-            placing_tower = True
-        if placing_tower == True:
-            if cancelButton.draw(screen):
-                placing_tower = False
                 
         # Draw all placed towers
         for tower in towers:
             tower.draw()
             
         # Draw the temporary tower if placing
-        if placing_tower and temporary_tower:
-            temporary_tower.draw()
-
-        #if not enemy.reached_end:
-            #enemy.move()  # move the enemy
-            #enemy.draw()  # draw enemy
+        #if placing_tower and temporary_tower:
+            #temporary_tower.draw()
 
         for enemy in enemies[:]:
-            if not enemy.reached_end:
+            if enemy.is_dying:
+                #play death animation
+                enemy.frame_timer += 1
+                if enemy.frame_timer % 10 == 0:
+                    enemy.death_frame_index += 1
+                    if enemy.death_frame_index < len(enemy.death_frames):
+                        enemy.image = enemy.death_frames[enemy.death_frame_index]
+                    else:
+                        enemy.death_animation_done = True
+
+                # Remove enemy after animation completes
+                if enemy.death_animation_done:
+                    enemies.remove(enemy)
+
+            elif not enemy.reached_end:
                 enemy.move()
-                if Tower.enemy_in_range(tower, enemy) and not enemy.is_dying:
+
+                #only attacks if enemy is alive
+                if Tower.enemy_in_range(tower, enemy):
                     Tower.attack(tower, enemy)
                     if enemy.hp <= 0:
                         enemy.is_dying = True
@@ -238,10 +239,17 @@ def game():
                 # Enemy reached the end – reduce lives and remove the enemy
                 lives -= 1
                 enemies.remove(enemy)
+
             enemy.draw()
 
         draw_sidebar(screen, lives) # makes enemy go behind sidebar instead of overtop it
 
+        # Draw buttons
+        if towerButton.draw(screen): # if tower button is clicked
+            placing_tower = True
+        if placing_tower == True:
+            if cancelButton.draw(screen):
+                placing_tower = False
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
