@@ -204,7 +204,6 @@ def game():
         # DRAWING CODE
         screen.fill((0, 0, 0))
         gameMap.draw()
-        draw_sidebar(screen, lives)
         draw_grid(screen)
         
         # Draw buttons
@@ -236,6 +235,8 @@ def game():
                 lives -= 1
                 enemies.remove(enemy)
             enemy.draw()
+
+        draw_sidebar(screen, lives) # makes enemy go behind sidebar instead of overtop it
 
 
          # Volume slider bar
