@@ -1,3 +1,4 @@
+import pygame
 import pygame as pg
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
@@ -20,6 +21,7 @@ class Tower:
         self.image = image
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
         self.screen = screen
+        self.attack_time = 0
 
     def draw(self):
         self.screen.blit(self.image, (self.x, self.y))
@@ -31,10 +33,20 @@ class Tower:
         dy = enemy.y - self.y   # get y distance between enemy and tower
         dist = (dx ** 2 + dy ** 2) ** 0.5  # get distance between enemy and tower
         if dist <= self.range:
-            enemy.hp -= self.damage
             return True
         return False
+    def can_attack(self,enemy):
+        current_time = pygame.time.get_ticks()
+        if self.enemy_in_range(enemy) and current_time > self.attack_time:
+            return True
+        else:
+            return False
 
     def attack(self, enemy):
-        enemy.hp -= self.damage
+        if self.can_attack(self):
+            self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
+            return True
+        else:
+            return False
+
 
