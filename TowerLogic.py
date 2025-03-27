@@ -43,8 +43,8 @@ class Tower:
         self.screen.blit(self.image, (self.x, self.y))
         
         
-    '''
-    def attack(self, enemy):
+
+    def enemy_in_range(self, enemy):
         dx = enemy.x - self.x   # get x distance between enemy and tower
         dy = enemy.y - self.y   # get y distance between enemy and tower
         dist = (dx ** 2 + dy ** 2) ** 0.5  # get distance between enemy and tower
@@ -52,4 +52,7 @@ class Tower:
             enemy.hp -= self.damage
             return True
         return False
-    '''
+
+    def attack(self, enemy):
+        enemy.hp -= self.damage
+
