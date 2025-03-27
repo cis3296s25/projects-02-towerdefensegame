@@ -27,16 +27,10 @@ class Enemy:
         self.cooldown = cooldown
         self.x = x
         self.y = y
-        
+    
         self.screen = screen
 
         self.speed = 1.0
-
-        #animates enemy
-        #self.frames = [
-            #pygame.image.load(IMAGE_PATH + f"mushroom{i}.png").convert_alpha()
-            #for i in range(8)
-        #]
 
         folder = f"{color}Mushroom"
         frame_prefix = color.lower() + "mushroom"
@@ -57,6 +51,17 @@ class Enemy:
         self.waypoint_index = 0
         self.target_x, self.target_y = self.waypoints[self.waypoint_index]
         self.reached_end = False 
+
+        #Load death animation frames
+        self.death_frames = [
+            pygame.image.load(os.path.join(image_path, "Die", f"{frame_prefix}die{i}.png")).convert_alpha()
+            for i in range(7)
+        ]
+
+
+        self.is_dying = False
+        self.death_frame_index = 0
+        self.death_animation_done = False
 
     def move(self):
         if self.reached_end:  # Enemy reached the end
@@ -86,6 +91,20 @@ class Enemy:
             self.y += self.speed * dy / dist
 
         self.rect.topleft = (self.x, self.y)
+
+    #update method handles whether move animation or death animation is played
+    def update(self):
+        if self.is_dying:
+            self.frame_timer += 1
+            if self.frame_timer % 10 == 0: #can adjust speed as needed
+                if self.death_frame_index < len(self.death_frames):
+                    self.image = self.death_frames[self.death_frame_index]
+                    self.death_frame_index += 1
+                else:
+                    self.death_animation_done = True
+            return
+        
+        self.move()
     
     def draw(self):
 
