@@ -1,6 +1,7 @@
 import pygame
 import os #required for .exe creation
 import sys #required for .exe creation
+import random
 from pygame import(
     image,
     mixer,
@@ -46,11 +47,32 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+#wave helper function
+def get_wave_data(wave):
+    if wave == 1:
+        return["Red"] * 1
+    elif wave == 2:
+        return["Red"] * 10
+    elif wave == 3:
+        return["Red"] * 5 + ["Blue"] * 2
+    else:
+        return["Red"] * 5
+
 def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+    # enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+    
+    enemies = []
+    spawn_delay = 2000 #ms
+    last_spawn_time = pygame.time.get_ticks()
+
+    #Wave Logic
+    wave_number = 1
+    current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
+    spawned_count = 0         #how many have spawned from this wave
+
     gameMap = Map(screen, mapSample)
 
     # Load and scale speaker icons
@@ -108,6 +130,21 @@ def game():
                     if not muted:
                         mixer.music.set_volume(volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+        
+        current_time = pygame.time.get_ticks()
+        #if current_time - last_spawn_time >= spawn_delay:
+         #   color = random.choice(["Red", "Blue", "Purple"])
+          #  new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+           # enemies.append(new_enemy)
+            #last_spawn_time = current_time
+        
+        if spawned_count < len(current_wave_enemies):
+            if current_time - last_spawn_time >= spawn_delay:
+                color = current_wave_enemies[spawned_count]
+                new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+                enemies.append(new_enemy)
+                spawned_count += 1
+                last_spawn_time = current_time
 
         screen.fill((0, 0, 0))
         gameMap.draw()
@@ -115,9 +152,14 @@ def game():
         draw_grid(screen)
         tower.draw()  # draw tower
 
-        if not enemy.reached_end:
-            enemy.move()  # move the enemy
-            enemy.draw()  # draw enemy
+        #if not enemy.reached_end:
+            #enemy.move()  # move the enemy
+            #enemy.draw()  # draw enemy
+
+        for enemy in enemies:
+            if not enemy.reached_end:
+                enemy.move()
+            enemy.draw()
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
