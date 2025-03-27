@@ -201,7 +201,6 @@ def game():
         gameMap.draw()
         draw_grid(screen)
         
-                
         # Draw all placed towers
         for tower in towers:
             tower.draw()
