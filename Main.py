@@ -231,7 +231,13 @@ def game():
         for enemy in enemies:
             if not enemy.reached_end:
                 enemy.move()
+                if Tower.enemy_in_range(tower, enemy):
+                    Tower.attack(tower, enemy)
             enemy.draw()
+
+
+
+
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
