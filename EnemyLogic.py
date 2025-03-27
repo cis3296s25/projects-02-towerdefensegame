@@ -1,5 +1,6 @@
 import pygame
 import math
+import os
 from os.path import abspath, dirname
 
 
@@ -12,15 +13,17 @@ WAYPOINTS = [
     (180, 200),
     (340, 200),
     (340, 120),
-    (600, 120)
+    (570, 120)
 ]
 
 BASE_PATH = abspath(dirname(__file__))
-IMAGE_PATH = BASE_PATH + "/images/enemy1/"
+#IMAGE_PATH = BASE_PATH + "/images/enemy1/RedMushroom/"
+
+
 
 class Enemy:
 
-    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen):
+    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color="Red"):
         self.hp = hp
         self.range = attack_range
         self.dmg = dmg
@@ -33,10 +36,23 @@ class Enemy:
         self.speed = 1.0
 
         #animates enemy
+        #self.frames = [
+            #pygame.image.load(IMAGE_PATH + f"mushroom{i}.png").convert_alpha()
+            #for i in range(8)
+        #]
+
+        folder = f"{color}Mushroom"
+        frame_prefix = color.lower() + "mushroom"
+
+        image_path = os.path.join(BASE_PATH, "images", "enemy1", folder)
+
         self.frames = [
-            pygame.image.load(IMAGE_PATH + f"mushroom{i}.png").convert_alpha()
+            pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i}.png")).convert_alpha()
             for i in range(8)
         ]
+
+
+
         self.current_frame = 0
         self.frame_timer = 0
         self.image = self.frames[self.current_frame]
