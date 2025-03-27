@@ -229,13 +229,16 @@ def game():
         for enemy in enemies[:]:
             if not enemy.reached_end:
                 enemy.move()
-                if Tower.enemy_in_range(tower, enemy):
-                    Tower.attack(tower, enemy)
             else:
                 # Enemy reached the end – reduce lives and remove the enemy
                 lives -= 1
                 enemies.remove(enemy)
             enemy.draw()
+
+        for tower in towers:
+            for enemy  in enemies:
+                if Tower.attack(tower, enemy):
+                    enemy.hp -= tower.damage
 
 
          # Volume slider bar

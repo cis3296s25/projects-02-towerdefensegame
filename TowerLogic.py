@@ -24,6 +24,9 @@ class Tower:
         self.attack_time = 0
 
     def draw(self):
+        range_surface = pygame.Surface((240,240), pygame.SRCALPHA)
+        pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
+        self.screen.blit(range_surface, (self.x - 120, self.y - 120))
         self.screen.blit(self.image, (self.x, self.y))
         
         
@@ -43,7 +46,7 @@ class Tower:
             return False
 
     def attack(self, enemy):
-        if self.can_attack(self):
+        if self.can_attack(enemy):
             self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
             return True
         else:
