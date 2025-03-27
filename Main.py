@@ -205,7 +205,7 @@ def game():
         gameMap.draw()
         draw_sidebar(screen)
         draw_grid(screen)
-        tower.draw()  # draw tower
+        # tower.draw()  # draw tower
         
         # Draw buttons
         if towerButton.draw(screen): # if tower button is clicked
