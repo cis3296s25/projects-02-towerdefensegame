@@ -48,6 +48,14 @@ class Enemy:
             for i in range(8)
         ]
 
+        #Load death animation frames
+        death_folder = os.path.join(image_path, "Die")
+        self.death_frames = [
+            pygame.image.load(os.path.join(death_folder, f"mushroomdie{i}.png")).convert_alpha()
+            for i in range(7)
+        ]
+        
+
         self.current_frame = 0
         self.frame_timer = 0
         self.image = self.frames[self.current_frame]
