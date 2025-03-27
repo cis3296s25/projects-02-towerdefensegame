@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen
 from os.path import abspath, dirname
 
 BASE_PATH = abspath(dirname(__file__))
@@ -238,6 +238,12 @@ def game():
                 # Enemy reached the end – reduce lives and remove the enemy
                 lives -= 1
                 enemies.remove(enemy)
+
+                if lives <= 0:
+                    gameover_screen(screen)
+                    running = False
+                    break
+
 
             enemy.draw()
 

@@ -46,6 +46,28 @@ def pause_screen(screen, mixer):
     
     mixer.music.unpause()
 
+def gameover_screen(screen):
+    gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
+    quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit", True, (255, 255, 255))
+
+    gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
+
+    screen.fill((0, 0, 0))
+    screen.blit(gameover_text, gameover_rect)
+    screen.blit(quit_text, quit_rect)
+    pygame.display.flip()
+
+    # Wait for player to quit
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                waiting = False
+
 def draw_sidebar(screen, lives):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
