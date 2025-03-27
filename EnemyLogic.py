@@ -48,14 +48,6 @@ class Enemy:
             for i in range(8)
         ]
 
-        #Load death animation frames
-        death_folder = os.path.join(image_path, "Die")
-        self.death_frames = [
-            pygame.image.load(os.path.join(death_folder, f"mushroomdie{i}.png")).convert_alpha()
-            for i in range(7)
-        ]
-        
-
         self.current_frame = 0
         self.frame_timer = 0
         self.image = self.frames[self.current_frame]
@@ -65,6 +57,17 @@ class Enemy:
         self.waypoint_index = 0
         self.target_x, self.target_y = self.waypoints[self.waypoint_index]
         self.reached_end = False 
+
+        #Load death animation frames
+        death_folder = os.path.join(image_path, "Die")
+        self.death_frames = [
+            pygame.image.load(os.path.join(death_folder, f"mushroomdie{i}.png")).convert_alpha()
+            for i in range(7)
+        ]
+
+        self.is_dying = False
+        self.death_frame_index = 0
+        self.death_animation_done = False
 
     def move(self):
         if self.reached_end:  # Enemy reached the end
