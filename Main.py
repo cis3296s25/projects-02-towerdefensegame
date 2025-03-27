@@ -8,6 +8,7 @@ from pygame import(
 from EnemyLogic import Enemy, WAYPOINTS
 from TowerLogic import Tower
 from MapLogic import Map
+from Button import Button
 from UI import homescreen, pause_screen, draw_sidebar, draw_grid
 from os.path import abspath, dirname
 
@@ -22,7 +23,9 @@ mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
 mixer.music.set_volume(0.5)
 
 
-screen = pygame.display.set_mode((750, 400))
+SCREEN_WIDTH = 750
+SCREEN_HEIGHT = 400
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
 IMG_NAMES = [
@@ -37,6 +40,7 @@ IMAGES = {
 enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 towerImage = IMAGES["towerSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
+cancel_button = IMAGES["cancel_button"] #generate cancel button image
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -49,9 +53,16 @@ def resource_path(relative_path):
 def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
-    tower = Tower(160, 160, 100, 10, 2, screen, towerImage)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen)
+    # Initialize objects
+    tower = Tower(160, 160, 100, 10, 2, screen, towerImage) # (x, y, range, damage, cooldown, screen, image)
+    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen)
     gameMap = Map(screen, mapSample)
+    
+    # Create buttons
+    turretButton = Button(610, 90, IMAGES["towerSample"]) # (x, y, image)
+    cancelButton = Button(610, 120, IMAGES["cancel_button"]) # (x, y, image)
+    
+    
 
     # Load and scale speaker icons
     speaker_img_muted = pygame.transform.scale(
@@ -108,12 +119,17 @@ def game():
                     if not muted:
                         mixer.music.set_volume(volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
-
+        
+        # DRAWING CODE
         screen.fill((0, 0, 0))
         gameMap.draw()
         draw_sidebar(screen)
         draw_grid(screen)
         tower.draw()  # draw tower
+        
+        # Draw buttons
+        turretButton.draw(screen)
+        
 
         if not enemy.reached_end:
             enemy.move()  # move the enemy
