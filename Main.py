@@ -6,7 +6,7 @@ from pygame import(
     mixer,
 )
 from EnemyLogic import Enemy, WAYPOINTS
-from TowerLogic import Tower
+from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
 from UI import homescreen, pause_screen, draw_sidebar, draw_grid
@@ -32,6 +32,7 @@ IMG_NAMES = [
     "enemySample40x40",
     "mapSample",
     "towerSample",
+    "cancel_button",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -40,7 +41,7 @@ IMAGES = {
 enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 towerImage = IMAGES["towerSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
-cancel_button = IMAGES["cancel_button"] #generate cancel button image
+cancelImage = IMAGES["cancel_button"] #generate cancel button image
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -53,14 +54,20 @@ def resource_path(relative_path):
 def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
+    # game variables
+    placing_tower = False
+    towers = []  # List to store placed towers
+    tower_positions = set()  # Set to store tower positions
+    temporary_tower = None  # Temporary tower for placement
+
     # Initialize objects
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage) # (x, y, range, damage, cooldown, screen, image)
     enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen)
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    turretButton = Button(610, 90, IMAGES["towerSample"]) # (x, y, image)
-    cancelButton = Button(610, 120, IMAGES["cancel_button"]) # (x, y, image)
+    towerButton = Button(610, 90, IMAGES["towerSample"], True) # (x, y, image, single_click)
+    cancelButton = Button(610, 120, IMAGES["cancel_button"], True) # (x, y, image, single_click)
     
     
 
@@ -107,6 +114,41 @@ def game():
                 elif speaker_rect.collidepoint(event.pos):
                     muted = not muted
                     mixer.music.set_volume(0 if muted else volume)
+                    
+            ############################## HANDLE PLACING TOWERS ##############################
+                if placing_tower:
+                    # Place the tower on the map
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    grid_x = mouse_x // 40 * 40
+                    grid_y = mouse_y // 40 * 40
+                    
+
+                    if mouse_x < 600:  # Ensure placement is within the map area
+                        if (grid_x, grid_y) not in tower_positions and (grid_x, grid_y) not in ENEMY_PATHS:  # Check if the position is free
+                            print(f"Placing tower at: ({grid_x}, {grid_y})")
+                            
+                            towers.append(Tower(grid_x, grid_y, 100, 10, 2, screen, towerImage))
+                            tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
+                            placing_tower = False
+                            temporary_tower = None
+                elif towerButton.draw(screen):
+                    # Start placing a tower
+                    placing_tower = True
+                    temporary_tower = Tower(0, 0, 100, 10, 2, screen, towerImage)
+                elif cancelButton.draw(screen):
+                    # Cancel tower placement
+                    placing_tower = False
+                    temporary_tower = None
+
+            elif event.type == pygame.MOUSEMOTION and placing_tower:
+                # Update the position of the temporary tower to follow the mouse
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if temporary_tower:
+                    temporary_tower.x = mouse_x // 40 * 40
+                    temporary_tower.y = mouse_y // 40 * 40
+                    
+            ############################### END OF TOWER PLACEMENT CODE ########################################
+                    
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_volume = False
@@ -128,7 +170,20 @@ def game():
         tower.draw()  # draw tower
         
         # Draw buttons
-        turretButton.draw(screen)
+        if towerButton.draw(screen): # if tower button is clicked
+            placing_tower = True
+        if placing_tower == True:
+            if cancelButton.draw(screen):
+                placing_tower = False
+                
+        # Draw all placed towers
+        for tower in towers:
+            tower.draw()
+            
+        # Draw the temporary tower if placing
+        if placing_tower and temporary_tower:
+            temporary_tower.draw()
+
         
 
         if not enemy.reached_end:
