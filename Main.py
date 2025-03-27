@@ -83,6 +83,7 @@ def game():
 
     #Wave Logic
     wave_number = 1
+    lives = 1  # Starting number of lives
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
@@ -203,9 +204,8 @@ def game():
         # DRAWING CODE
         screen.fill((0, 0, 0))
         gameMap.draw()
-        draw_sidebar(screen)
+        draw_sidebar(screen, lives)
         draw_grid(screen)
-        # tower.draw()  # draw tower
         
         # Draw buttons
         if towerButton.draw(screen): # if tower button is clicked
@@ -222,21 +222,20 @@ def game():
         if placing_tower and temporary_tower:
             temporary_tower.draw()
 
-        
-
         #if not enemy.reached_end:
             #enemy.move()  # move the enemy
             #enemy.draw()  # draw enemy
 
-        for enemy in enemies:
+        for enemy in enemies[:]:
             if not enemy.reached_end:
                 enemy.move()
                 if Tower.enemy_in_range(tower, enemy):
                     Tower.attack(tower, enemy)
+            else:
+                # Enemy reached the end – reduce lives and remove the enemy
+                lives -= 1
+                enemies.remove(enemy)
             enemy.draw()
-
-
-
 
 
          # Volume slider bar

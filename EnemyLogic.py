@@ -3,7 +3,6 @@ import math
 import os
 from os.path import abspath, dirname
 
-
 # enemy's path
 WAYPOINTS = [
     (0, 160),
@@ -18,8 +17,6 @@ WAYPOINTS = [
 
 BASE_PATH = abspath(dirname(__file__))
 #IMAGE_PATH = BASE_PATH + "/images/enemy1/RedMushroom/"
-
-
 
 class Enemy:
 
@@ -51,8 +48,6 @@ class Enemy:
             for i in range(8)
         ]
 
-
-
         self.current_frame = 0
         self.frame_timer = 0
         self.image = self.frames[self.current_frame]
@@ -73,7 +68,6 @@ class Enemy:
             self.current_frame = (self.current_frame + 1) % len(self.frames)
             self.image = self.frames[self.current_frame]
 
-
         dx = self.target_x - self.x
         dy = self.target_y - self.y
         dist = math.hypot(dx, dy)
@@ -92,8 +86,6 @@ class Enemy:
             self.y += self.speed * dy / dist
 
         self.rect.topleft = (self.x, self.y)
-
-
     
     def draw(self):
 
@@ -113,7 +105,6 @@ class Enemy:
         # Fill
         hp_percentage = self.hp / 50
         pygame.draw.rect(self.screen, (0, 255, 0), (bar_x, bar_y, bar_width * hp_percentage, bar_height))
-
         
         # pygame.draw.rect(self.screen, (255, 255, 255), (self.x, self.y + 45, 40, 5))  # HP Bar Background White
         # hpPercentage = self.hp / 50 # Max HP: 50 = 100%
