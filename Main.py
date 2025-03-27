@@ -59,7 +59,7 @@ def get_wave_data(wave):
     elif wave == 2:
         return["Red"] * 10
     elif wave == 3:
-        return["Red"] * 5 + ["Blue"] * 2
+        return["Red"] * 2 + ["Blue"] * 2 + ["Purple"] * 2 + ["Glowing"] * 2
     else:
         return["Red"] * 5
 
@@ -82,7 +82,7 @@ def game():
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
-    wave_number = 1
+    wave_number = 3
     lives = 1  # Starting number of lives
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
