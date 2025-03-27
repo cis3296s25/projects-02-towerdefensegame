@@ -46,13 +46,13 @@ def pause_screen(screen, mixer):
     
     mixer.music.unpause()
 
-def draw_sidebar(screen):
+def draw_sidebar(screen, lives):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
     font = pygame.font.SysFont("Arial", 18)
     
     # text
-    text_Lives = font.render("Lives: 0.01", True, (255, 255, 255))  
+    text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
     text_Money = font.render("Money: 69", True, (255, 255, 255))  # (text, antialias, color, background=None)
     text_tower = font.render("Towers", True, (255, 255, 255))  
     
