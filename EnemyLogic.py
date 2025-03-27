@@ -27,16 +27,10 @@ class Enemy:
         self.cooldown = cooldown
         self.x = x
         self.y = y
-        
+    
         self.screen = screen
 
         self.speed = 1.0
-
-        #animates enemy
-        #self.frames = [
-            #pygame.image.load(IMAGE_PATH + f"mushroom{i}.png").convert_alpha()
-            #for i in range(8)
-        #]
 
         folder = f"{color}Mushroom"
         frame_prefix = color.lower() + "mushroom"
@@ -59,11 +53,11 @@ class Enemy:
         self.reached_end = False 
 
         #Load death animation frames
-        death_folder = os.path.join(image_path, "Die")
         self.death_frames = [
-            pygame.image.load(os.path.join(death_folder, f"mushroomdie{i}.png")).convert_alpha()
+            pygame.image.load(os.path.join(image_path, "Die", f"{frame_prefix}die{i}.png")).convert_alpha()
             for i in range(7)
         ]
+
 
         self.is_dying = False
         self.death_frame_index = 0
