@@ -227,19 +227,21 @@ def game():
             elif not enemy.reached_end:
                 enemy.move()
 
-                #only attacks if enemy is alive
-                if Tower.enemy_in_range(tower, enemy):
-                    Tower.attack(tower, enemy)
-                    if enemy.hp <= 0:
-                        enemy.is_dying = True
-                        enemy.frame_timer = 0
-                        enemy.death_frame_index = 0
             else:
                 # Enemy reached the end – reduce lives and remove the enemy
                 lives -= 1
                 enemies.remove(enemy)
 
             enemy.draw()
+        for enemy in enemies:
+            for tower in towers:
+                # only attacks if enemy is alive
+                if Tower.attack(tower, enemy):
+                    enemy.hp -= tower.damage
+                    if enemy.hp <= 0:
+                        enemy.is_dying = True
+                        enemy.frame_timer = 0
+                        enemy.death_frame_index = 0
 
         draw_sidebar(screen, lives) # makes enemy go behind sidebar instead of overtop it
 
