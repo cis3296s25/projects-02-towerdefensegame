@@ -102,7 +102,7 @@ class Enemy:
     def update(self):
         if self.is_dying:
             self.frame_timer += 1
-            if self.frame_timer % 7 == 0: #can adjust speed as needed
+            if self.frame_timer % 10 == 0: #can adjust speed as needed
                 if self.death_frame_index < len(self.death_frames):
                     self.image = self.death_frames[self.death_frame_index]
                     self.death_frame_index += 1
