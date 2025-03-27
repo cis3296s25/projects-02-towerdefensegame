@@ -228,8 +228,12 @@ def game():
         for enemy in enemies[:]:
             if not enemy.reached_end:
                 enemy.move()
-                if Tower.enemy_in_range(tower, enemy):
+                if Tower.enemy_in_range(tower, enemy) and not enemy.is_dying:
                     Tower.attack(tower, enemy)
+                    if enemy.hp <= 0:
+                        enemy.is_dying = True
+                        enemy.frame_timer = 0
+                        enemy.death_frame_index = 0
             else:
                 # Enemy reached the end – reduce lives and remove the enemy
                 lives -= 1
