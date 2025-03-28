@@ -48,7 +48,7 @@ def pause_screen(screen, mixer):
 
 def gameover_screen(screen):
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
-    quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit", True, (255, 255, 255))
+    quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
 
     gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
     quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
@@ -65,6 +65,9 @@ def gameover_screen(screen):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return "restart"
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 waiting = False
 
@@ -82,6 +85,30 @@ def draw_sidebar(screen, lives):
     screen.blit(text_Money, (610, 30))  # Position the Money text
     screen.blit(text_tower, (610, 60))  # Position the Tower text
     pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+
+def draw_tower_stat(screen, tower):
+    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
+    font = pygame.font.SysFont("Arial", 18)
+
+    # Create text for tower stats
+    text_range = font.render(f"Range: {tower.range}", True, (255, 255, 255))  # White text for range
+    text_damage = font.render(f"Damage: {tower.damage}", True, (255, 255, 255))  # White text for damage
+    text_cooldown = font.render(f"Cooldown: {tower.cooldown}", True, (255, 255, 255))  # White text for tower name
+    
+
+    # Positioning the text on the screen (keeping it aligned on the right side)
+    text_range_rect = text_range.get_rect(topleft=(610, 20))
+    text_damage_rect = text_damage.get_rect(topleft=(610, 60))
+    text_cooldown_rect = text_cooldown.get_rect(topleft=(610, 100))
+    
+
+    # Draw the text on the screen
+    screen.blit(text_range, text_range_rect)  # Draw range text
+    screen.blit(text_damage, text_damage_rect)  # Draw damage text
+    screen.blit(text_cooldown, text_cooldown_rect)  # Draw cooldown text
+    
+    pygame.display.flip()
+    
 
 def draw_grid(screen):
     grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface

@@ -21,9 +21,18 @@ BASE_PATH = abspath(dirname(__file__))
 class Enemy:
 
     def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color="Red"):
+
+        mob_dmg_map = {
+            "Red": 1,  
+            "Blue": 3,  
+            "Purple": 5,  
+            "Glowing": 7,  
+        }
+
+
         self.hp = hp
         self.range = attack_range
-        self.dmg = dmg
+        self.dmg = mob_dmg_map.get(color, 1)  
         self.cooldown = cooldown
         self.x = x
         self.y = y
