@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave
 from os.path import abspath, dirname
 
 BASE_PATH = abspath(dirname(__file__))
@@ -81,7 +81,7 @@ def game():
 
     # Initialize objects
     tower = Tower(160, 160, 100, 10, 2, screen, towerImage) # (x, y, range, damage, cooldown, screen, image)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen)
+    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
 
     # Enemy variables
     enemies = []
@@ -89,8 +89,9 @@ def game():
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
-    wave_number = 3
+    wave_number = 1
     lives = 100  # Starting number of lives
+    money = 0  # Starting amount of money
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
@@ -131,7 +132,9 @@ def game():
 
     running = True
     show_stats = False
+    show_wave = True
     while running:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -221,17 +224,18 @@ def game():
         screen.fill((0, 0, 0))
         gameMap.draw()
         draw_grid(screen)
-        
+
         # Draw all placed towers
         for tower in towers:
             tower.draw()
-            
+
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
             temporary_tower.draw()
 
         for enemy in enemies[:]:
             if enemy.is_dying:
+                print(f"Enemy {enemy} is dying... Frame: {enemy.death_frame_index}/{len(enemy.death_frames)}")
                 #play death animation
                 enemy.frame_timer += 1
                 if enemy.frame_timer % 10 == 0:
@@ -239,11 +243,13 @@ def game():
                     if enemy.death_frame_index < len(enemy.death_frames):
                         enemy.image = enemy.death_frames[enemy.death_frame_index]
                     else:
-                        enemy.death_animation_done = True
-
-                # Remove enemy after animation completes
-                if enemy.death_animation_done:
-                    enemies.remove(enemy)
+                        print(f"Enemy {enemy} death animation completed. Removing enemy.")
+                        enemies.remove(enemy)  # Remove the enemy from the list
+                        enemy.death_frame_index = 0  # Reset the death frame index
+                        enemy.frame_timer = 0  # Reset the frame timer
+                        enemy.death_animation_done = False  # Reset the death animation flag
+                        enemy.is_dying = False  # Stop the death animation from looping
+                        print(f"Enemy {enemy} removed.")
 
             elif not enemy.reached_end:
                 enemy.move()
@@ -272,10 +278,17 @@ def game():
                         enemy.is_dying = True
                         enemy.frame_timer = 0
                         enemy.death_frame_index = 0
-                        
+                        money += enemy.money
+        
+        if not enemies and spawned_count == len(current_wave_enemies):
+            wave_number += 1
+            current_wave_enemies = get_wave_data(wave_number)
+            spawned_count = 0
+            last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
+            money += 10 * wave_number
                         
 
-        draw_sidebar(screen, lives) # makes enemy go behind sidebar instead of overtop it
+        draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
 
         # Draw buttons
         if towerButton.draw(screen): # if tower button is clicked
@@ -306,9 +319,10 @@ def game():
         if show_stats and selected_tower:
             draw_tower_stat(screen, tower)
 
+        if show_wave: 
+            number_wave(screen, wave_number)
         
         pygame.display.flip()
-        wave_number += 1
         clock.tick(60)
 
     mixer.music.stop()
