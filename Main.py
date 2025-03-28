@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat
 from os.path import abspath, dirname
 
 BASE_PATH = abspath(dirname(__file__))
@@ -63,6 +63,13 @@ def get_wave_data(wave):
     else:
         return["Red"] * 5
 
+def select_tower(pixel_x, pixel_y, towers):
+    for tower in towers:
+        if tower.x == pixel_x and tower.y == pixel_y:
+            print("found tower")
+            return tower
+    return None
+
 def game():
     mixer.music.play(-1) #plays music after leaving homescreen
 
@@ -83,7 +90,7 @@ def game():
 
     #Wave Logic
     wave_number = 3
-    lives = 1  # Starting number of lives
+    lives = 100  # Starting number of lives
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
@@ -123,6 +130,7 @@ def game():
     speaker_rect = pygame.Rect(0, 0, 24, 24)  # placeholder; will update dynamically below
 
     running = True
+    show_stats = False
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -138,6 +146,16 @@ def game():
                 elif speaker_rect.collidepoint(event.pos):
                     muted = not muted
                     mixer.music.set_volume(0 if muted else volume)
+                else: 
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    grid_x = mouse_x // 40 * 40
+                    grid_y = mouse_y // 40 * 40
+                    selected_tower = select_tower(grid_x, grid_y, towers)  
+                    if selected_tower:
+                        print(f"Selected Tower at ({grid_x}, {grid_y})")
+                        show_stats = True
+                    
+                        
                     
             ############################## HANDLE PLACING TOWERS ##############################
                 if placing_tower:
@@ -170,6 +188,8 @@ def game():
                 if temporary_tower:
                     temporary_tower.x = mouse_x // 40 * 40
                     temporary_tower.y = mouse_y // 40 * 40
+            
+            
                     
             ############################### END OF TOWER PLACEMENT CODE ########################################
                     
@@ -185,9 +205,10 @@ def game():
                     if not muted:
                         mixer.music.set_volume(volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+
         
         current_time = pygame.time.get_ticks()
-        
+
         if spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
@@ -229,13 +250,16 @@ def game():
 
             else:
                 # Enemy reached the end – reduce lives and remove the enemy
-                lives -= 1
+                lives -= enemy.dmg
                 enemies.remove(enemy)
 
                 if lives <= 0:
-                    gameover_screen(screen)
-                    running = False
-                    break
+                    if gameover_screen(screen) == "restart":
+                        print("Restarting game...")
+                        game()
+                    else:
+                        running = False
+                        break
 
 
             enemy.draw()
@@ -248,6 +272,8 @@ def game():
                         enemy.is_dying = True
                         enemy.frame_timer = 0
                         enemy.death_frame_index = 0
+                        
+                        
 
         draw_sidebar(screen, lives) # makes enemy go behind sidebar instead of overtop it
 
@@ -277,8 +303,12 @@ def game():
         speaker_rect = speaker_img.get_rect(topleft=(slider_rect.x + slider_rect.width + 10, slider_rect.y - 6))
         screen.blit(speaker_img, speaker_rect)
 
+        if show_stats and selected_tower:
+            draw_tower_stat(screen, tower)
 
+        
         pygame.display.flip()
+        wave_number += 1
         clock.tick(60)
 
     mixer.music.stop()
