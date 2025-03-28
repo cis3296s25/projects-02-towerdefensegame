@@ -2,20 +2,45 @@ import pygame
 import sys #required for .exe creation
 
 def homescreen(screen):
-    #fonts
-    title_font = pygame.font.SysFont("Arial", 60)
-    smaller_font = pygame.font.SysFont("Arial", 20)
-    #title
-    title_text = title_font.render("My Tower Defense", True, (255, 255, 255))
-    title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 30))
-    #instruction
-    start_text = smaller_font.render("Press SPACE or Click to Start", True, (255, 255, 255))
-    start_rect = start_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
-    
-    screen.fill((0, 0, 0))
-    screen.blit(title_text, title_rect)
-    screen.blit(start_text, start_rect)
-    pygame.display.flip()
+    clock = pygame.time.Clock()
+
+    # Load logo and buttons
+    logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
+    play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
+
+    # size of pngs
+    logo = pygame.transform.smoothscale(logo, (600, 450))
+    play_btn = pygame.transform.smoothscale(play_btn, (250, 120))
+
+    # Get rects for positioning
+    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
+    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 250))
+
+    while True:
+        mouse_pos = pygame.mouse.get_pos()
+        clicked = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if pygame.Rect(play_rect).collidepoint(mouse_pos):
+                    clicked = True
+
+        # Background
+        screen.fill((15, 15, 20))
+
+        # Draw logo and play button
+        screen.blit(logo, logo_rect)
+        screen.blit(play_btn, play_rect)
+
+        pygame.display.flip()
+        clock.tick(60)
+
+        if clicked:
+            break  # Exit homescreen when clicked
+
 
 def pause_screen(screen, mixer):
     mixer.music.pause() 
