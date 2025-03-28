@@ -23,9 +23,10 @@ class Tower:
         self.screen = screen
         self.attack_time = 0
 
-    def draw(self):
+    def draw(self, boolean):
         range_surface = pygame.Surface((240, 240), pygame.SRCALPHA)
-        pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
+        if boolean == True:
+            pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
         self.screen.blit(range_surface, (self.x - 120, self.y - 120))
         self.screen.blit(self.image, (self.x, self.y))
 

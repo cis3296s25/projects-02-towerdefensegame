@@ -157,6 +157,7 @@ def game():
                     if selected_tower:
                         print(f"Selected Tower at ({grid_x}, {grid_y})")
                         show_stats = True
+                        show_range = True
                     
                         
                     
@@ -227,11 +228,11 @@ def game():
 
         # Draw all placed towers
         for tower in towers:
-            tower.draw()
+            tower.draw(False)
 
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
-            temporary_tower.draw()
+            temporary_tower.draw(True)
 
         for enemy in enemies[:]:
             if enemy.is_dying:
@@ -318,9 +319,13 @@ def game():
 
         if show_stats and selected_tower:
             draw_tower_stat(screen, tower)
+            selected_tower.draw(True)  
 
         if show_wave: 
             number_wave(screen, wave_number)
+
+    
+            
         
         pygame.display.flip()
         clock.tick(60)
