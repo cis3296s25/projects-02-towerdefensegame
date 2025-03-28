@@ -29,17 +29,39 @@ class Enemy:
             "Glowing": 7,  
         }
 
+        mob_money_valueMap = {
+            "Red": 15,  
+            "Blue": 20,  
+            "Purple": 25,  
+            "Glowing": 30,  
+        }
 
-        self.hp = hp
+        mob_health_map = {
+            "Red": 50,
+            "Blue": 30,
+            "Purple": 70,
+            "Glowing": 90,
+        }
+
+        mob_speed_map = {
+            "Red": 0.8,
+            "Blue": 1.0,
+            "Purple": 0.6,
+            "Glowing": 0.4,
+        }
+
+        self.money = mob_money_valueMap.get(color, 0)  
+        self.hp = mob_health_map.get(color, 50)
+        self.max_hp = mob_health_map.get(color, 50)
         self.range = attack_range
         self.dmg = mob_dmg_map.get(color, 1)  
         self.cooldown = cooldown
         self.x = x
         self.y = y
-    
+
         self.screen = screen
 
-        self.speed = 1.0
+        self.speed = mob_speed_map.get(color, 0.8) 
 
         folder = f"{color}Mushroom"
         frame_prefix = color.lower() + "mushroom"
@@ -131,7 +153,7 @@ class Enemy:
         pygame.draw.rect(self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height))
 
         # Fill
-        hp_percentage = self.hp / 50
+        hp_percentage = self.hp / self.max_hp  
         pygame.draw.rect(self.screen, (0, 255, 0), (bar_x, bar_y, bar_width * hp_percentage, bar_height))
         
         # pygame.draw.rect(self.screen, (255, 255, 255), (self.x, self.y + 45, 40, 5))  # HP Bar Background White

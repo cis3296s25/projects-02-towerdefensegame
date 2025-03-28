@@ -71,14 +71,14 @@ def gameover_screen(screen):
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 waiting = False
 
-def draw_sidebar(screen, lives):
+def draw_sidebar(screen, lives, money):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
     font = pygame.font.SysFont("Arial", 18)
     
     # text
     text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
-    text_Money = font.render("Money: 69", True, (255, 255, 255))  # (text, antialias, color, background=None)
+    text_Money = font.render(f"Money: {money}", True, (255, 255, 255))  # (text, antialias, color, background=None)
     text_tower = font.render("Towers", True, (255, 255, 255))  
     
     screen.blit(text_Lives, (610, 10))  # Position the Money text
@@ -109,6 +109,11 @@ def draw_tower_stat(screen, tower):
     
     pygame.display.flip()
     
+def number_wave(screen, wave_number):
+    font = pygame.font.SysFont("Arial", 18)
+    wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
+    screen.blit(wave_text, (640, 360))  # Position the Wave text
+    pygame.display.flip()
 
 def draw_grid(screen):
     grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
