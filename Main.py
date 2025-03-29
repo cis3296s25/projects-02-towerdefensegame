@@ -60,6 +60,8 @@ def get_wave_data(wave):
         return["Red"] * 10
     elif wave == 3:
         return["Red"] * 2 + ["Blue"] * 2 + ["Purple"] * 2 + ["Glowing"] * 2
+    elif wave == 4:
+        return["Giant"] * 1
     else:
         return["Red"] * 5
 
