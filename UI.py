@@ -6,21 +6,19 @@ class Spore:
     def __init__(self, screen_width, screen_height):
         self.x = random.randint(0, screen_width)
         self.y = random.randint(0, screen_height)
-        self.radius = random.randint(2, 4)
-        self.speed = random.uniform(0.2, 0.8)
-        self.alpha = random.randint(50, 150)
+        self.radius = random.randint(1, 3)
+        self.speed_y = random.uniform(0.1, 0.5)
+        self.alpha = random.randint(100, 200)
 
     def update(self):
-        self.y -= self.speed
-        if self.y < -10:  # reset to bottom
-            self.y = 400 + 10
+        self.y += self.speed_y
+        if self.y > 400:
+            self.y = 0
             self.x = random.randint(0, 750)
 
     def draw(self, screen):
-        surface = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(surface, (255, 255, 255, self.alpha), (self.radius, self.radius), self.radius)
-        screen.blit(surface, (self.x, self.y))
-
+        color = (255, 255, 255)
+        pygame.draw.circle(screen, color, (int(self.x), int(self.y)), self.radius)
 
 def homescreen(screen):
     clock = pygame.time.Clock()
@@ -37,20 +35,9 @@ def homescreen(screen):
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 250))
 
-    spores = [Spore(screen.get_width(), screen.get_height()) for _ in range(30)]
+    spores = [Spore(750, 400) for _ in range(50)]
 
     while True:
-        mouse_pos = pygame.mouse.get_pos()
-        clicked = False
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if pygame.Rect(play_rect).collidepoint(mouse_pos):
-                    clicked = True
-
         # Background
         screen.fill((15, 15, 20))
         for spore in spores:
@@ -60,12 +47,20 @@ def homescreen(screen):
         # Draw logo and play button
         screen.blit(logo, logo_rect)
         screen.blit(play_btn, play_rect)
+        
+        for event in pygame.event.get():
+
+            mouse_pos = pygame.mouse.get_pos()
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                 if event.button == 1 and play_rect.collidepoint(mouse_pos):
+                    return
 
         pygame.display.flip()
         clock.tick(60)
-
-        if clicked:
-            break  # Exit homescreen when clicked
 
 
 def pause_screen(screen, mixer):
