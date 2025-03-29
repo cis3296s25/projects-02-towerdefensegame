@@ -1,5 +1,26 @@
 import pygame
 import sys #required for .exe creation
+import random
+
+class Spore:
+    def __init__(self, screen_width, screen_height):
+        self.x = random.randint(0, screen_width)
+        self.y = random.randint(0, screen_height)
+        self.radius = random.randint(2, 4)
+        self.speed = random.uniform(0.2, 0.8)
+        self.alpha = random.randint(50, 150)
+
+    def update(self):
+        self.y -= self.speed
+        if self.y < -10:  # reset to bottom
+            self.y = 400 + 10
+            self.x = random.randint(0, 750)
+
+    def draw(self, screen):
+        surface = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(surface, (255, 255, 255, self.alpha), (self.radius, self.radius), self.radius)
+        screen.blit(surface, (self.x, self.y))
+
 
 def homescreen(screen):
     clock = pygame.time.Clock()
@@ -16,6 +37,8 @@ def homescreen(screen):
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 250))
 
+    spores = [Spore(screen.get_width(), screen.get_height()) for _ in range(30)]
+
     while True:
         mouse_pos = pygame.mouse.get_pos()
         clicked = False
@@ -30,6 +53,9 @@ def homescreen(screen):
 
         # Background
         screen.fill((15, 15, 20))
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
 
         # Draw logo and play button
         screen.blit(logo, logo_rect)
