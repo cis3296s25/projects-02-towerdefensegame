@@ -6,7 +6,7 @@ from pygame import(
     image,
     mixer,
 )
-from EnemyLogic import Enemy, WAYPOINTS
+from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
@@ -60,6 +60,8 @@ def get_wave_data(wave):
         return["Red"] * 10
     elif wave == 3:
         return["Red"] * 2 + ["Blue"] * 2 + ["Purple"] * 2 + ["Glowing"] * 2
+    elif wave == 4:
+        return["Giant"] * 1
     else:
         return["Red"] * 5
 
@@ -216,7 +218,17 @@ def game():
         if spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
-                new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+                #new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+                if color == "Giant":
+                    new_enemy = Enemy(
+                        GIANT_PATH[0][0], GIANT_PATH[0][1],
+                        200, 50, 20, 3, screen, color, waypoints=GIANT_PATH
+                    )
+                else:
+                    new_enemy = Enemy(
+                        WAYPOINTS[0][0], WAYPOINTS[0][1],
+                        50, 10, 5, 3, screen, color
+            )
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
@@ -327,6 +339,14 @@ def game():
     
             
         
+        #Show mouse position on screen (for debugging waypoints)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        font = pygame.font.SysFont("Arial", 14)
+        pos_text = font.render(f"({mouse_x}, {mouse_y})", True, (200, 200, 200))
+        screen.blit(pos_text, (10, 10))
+
+    
+
         pygame.display.flip()
         clock.tick(60)
 
@@ -335,23 +355,7 @@ def game():
 
 def main():
     homescreen(screen)  # Show the home screen at the start
-    waiting_for_input = True
-
-    while waiting_for_input:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Wait for SPACE key press to start the game
-                    waiting_for_input = False
-                    game()  # Start the game loop
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Wait for mouse click to start the game (optional)
-                    waiting_for_input = False
-                    game()  # Start the game loop
+    game() # now when play button is clicked, takes you to the game
 
 if __name__ == "__main__":
     main()

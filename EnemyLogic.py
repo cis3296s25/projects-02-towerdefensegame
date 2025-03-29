@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 
 # enemy's path
 WAYPOINTS = [
-    (0, 160),
+    (-40, 160),
     (60, 160),
     (60, 40),
     (180, 40),
@@ -15,25 +15,42 @@ WAYPOINTS = [
     (570, 120)
 ]
 
+GIANT_PATH = [
+    (-120, 35),
+    (-20, 35),
+    (-20, -85),
+    (100, -85),
+    (100, 75),
+    (260, 75),
+    (260, -5),
+    (510, -5)
+]
+
 BASE_PATH = abspath(dirname(__file__))
 #IMAGE_PATH = BASE_PATH + "/images/enemy1/RedMushroom/"
 
 class Enemy:
 
-    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color="Red"):
+    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color = "Red", waypoints = None):
+
+        self.waypoints = waypoints if waypoints else WAYPOINTS
+        self.color = color
+
 
         mob_dmg_map = {
             "Red": 1,  
             "Blue": 3,  
             "Purple": 5,  
-            "Glowing": 7,  
+            "Glowing": 7,
+            "Giant": 50,  
         }
 
         mob_money_valueMap = {
             "Red": 15,  
             "Blue": 20,  
             "Purple": 25,  
-            "Glowing": 30,  
+            "Glowing": 30,
+            "Giant": 250,  
         }
 
         mob_health_map = {
@@ -41,6 +58,7 @@ class Enemy:
             "Blue": 30,
             "Purple": 70,
             "Glowing": 90,
+            "Giant": 500,
         }
 
         mob_speed_map = {
@@ -48,6 +66,7 @@ class Enemy:
             "Blue": 1.0,
             "Purple": 0.6,
             "Glowing": 0.4,
+            "Giant": 0.1,
         }
 
         self.money = mob_money_valueMap.get(color, 0)  
@@ -78,7 +97,15 @@ class Enemy:
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
-        self.waypoints = WAYPOINTS
+
+        if color == "Giant":
+            self.waypoints = GIANT_PATH
+        elif waypoints:
+            self.waypoints = waypoints
+        else:
+            self.waypoints = WAYPOINTS
+
+
         self.waypoint_index = 0
         self.target_x, self.target_y = self.waypoints[self.waypoint_index]
         self.reached_end = False 
@@ -147,7 +174,14 @@ class Enemy:
 
         # Center above the enemy based on its rect
         bar_x = self.rect.centerx - bar_width // 2
-        bar_y = self.rect.top + 69  # ← move this number up or down as needed
+        #bar_y = self.rect.top + 69  # ← move this number up or down as needed
+
+        if "giant" in self.color.lower():
+            bar_y = self.rect.top + 195 #giant mushroom bar
+        else:
+            bar_y = self.rect.top + 69 #regular mushroom bar
+
+
 
         # Background
         pygame.draw.rect(self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height))
