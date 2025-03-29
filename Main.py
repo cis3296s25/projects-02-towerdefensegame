@@ -330,23 +330,7 @@ def game():
 
 def main():
     homescreen(screen)  # Show the home screen at the start
-    waiting_for_input = True
-
-    while waiting_for_input:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Wait for SPACE key press to start the game
-                    waiting_for_input = False
-                    game()  # Start the game loop
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Wait for mouse click to start the game (optional)
-                    waiting_for_input = False
-                    game()  # Start the game loop
+    game() # now when play button is clicked, takes you to the game
 
 if __name__ == "__main__":
     main()
