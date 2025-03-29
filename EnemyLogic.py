@@ -31,9 +31,11 @@ BASE_PATH = abspath(dirname(__file__))
 
 class Enemy:
 
-    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color="Red", waypoints = None):
+    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color = "Red", waypoints = None):
 
         self.waypoints = waypoints if waypoints else WAYPOINTS
+        self.color = color
+
 
         mob_dmg_map = {
             "Red": 1,  
@@ -172,7 +174,14 @@ class Enemy:
 
         # Center above the enemy based on its rect
         bar_x = self.rect.centerx - bar_width // 2
-        bar_y = self.rect.top + 69  # ← move this number up or down as needed
+        #bar_y = self.rect.top + 69  # ← move this number up or down as needed
+
+        if "giant" in self.color.lower():
+            bar_y = self.rect.top + 195 #giant mushroom bar
+        else:
+            bar_y = self.rect.top + 69 #regular mushroom bar
+
+
 
         # Background
         pygame.draw.rect(self.screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height))
