@@ -234,8 +234,10 @@ def game():
 
         # Draw all placed towers
         for tower in towers:
-            tower.draw(False)
-
+            if show_stats and selected_tower and tower == selected_tower:
+                tower.draw(True)
+            else:
+                tower.draw(False)
 
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
@@ -325,8 +327,7 @@ def game():
         screen.blit(speaker_img, speaker_rect)
 
         if show_stats and selected_tower:
-            draw_tower_stat(screen, tower)
-            selected_tower.draw(True)  
+            draw_tower_stat(screen, selected_tower) 
 
         if show_wave: 
             number_wave(screen, wave_number)
