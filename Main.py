@@ -6,7 +6,7 @@ from pygame import(
     image,
     mixer,
 )
-from EnemyLogic import Enemy, WAYPOINTS
+from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
@@ -215,7 +215,17 @@ def game():
         if spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
-                new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+                #new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
+                if color == "Giant":
+                    new_enemy = Enemy(
+                        GIANT_PATH[0][0], GIANT_PATH[0][1],
+                        200, 50, 20, 3, screen, color, waypoints=GIANT_PATH
+                    )
+                else:
+                    new_enemy = Enemy(
+                        WAYPOINTS[0][0], WAYPOINTS[0][1],
+                        50, 10, 5, 3, screen, color
+            )
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
@@ -322,6 +332,14 @@ def game():
         if show_wave: 
             number_wave(screen, wave_number)
         
+        #Show mouse position on screen (for debugging waypoints)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        font = pygame.font.SysFont("Arial", 14)
+        pos_text = font.render(f"({mouse_x}, {mouse_y})", True, (200, 200, 200))
+        screen.blit(pos_text, (10, 10))
+
+    
+
         pygame.display.flip()
         clock.tick(60)
 
