@@ -29,11 +29,11 @@ def homescreen(screen):
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (600, 450))
-    play_btn = pygame.transform.smoothscale(play_btn, (250, 120))
+    play_btn = pygame.transform.smoothscale(play_btn, (300, 150))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
-    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 250))
+    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 265))
 
     spores = [Spore(750, 400) for _ in range(50)]
 
