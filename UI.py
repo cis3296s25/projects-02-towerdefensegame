@@ -1,21 +1,67 @@
 import pygame
 import sys #required for .exe creation
+import random
+
+class Spore:
+    def __init__(self, screen_width, screen_height):
+        self.x = random.randint(0, screen_width)
+        self.y = random.randint(0, screen_height)
+        self.radius = random.randint(1, 3)
+        self.speed_y = random.uniform(0.1, 0.5)
+        self.alpha = random.randint(100, 200)
+
+    def update(self):
+        self.y += self.speed_y
+        if self.y > 400:
+            self.y = 0
+            self.x = random.randint(0, 750)
+
+    def draw(self, screen):
+        color = (255, 255, 255)
+        pygame.draw.circle(screen, color, (int(self.x), int(self.y)), self.radius)
 
 def homescreen(screen):
-    #fonts
-    title_font = pygame.font.SysFont("Arial", 60)
-    smaller_font = pygame.font.SysFont("Arial", 20)
-    #title
-    title_text = title_font.render("My Tower Defense", True, (255, 255, 255))
-    title_rect = title_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 30))
-    #instruction
-    start_text = smaller_font.render("Press SPACE or Click to Start", True, (255, 255, 255))
-    start_rect = start_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
-    
-    screen.fill((0, 0, 0))
-    screen.blit(title_text, title_rect)
-    screen.blit(start_text, start_rect)
-    pygame.display.flip()
+    clock = pygame.time.Clock()
+
+    # Load logo and buttons
+    logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
+    play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
+
+    # size of pngs
+    logo = pygame.transform.smoothscale(logo, (600, 450))
+    play_btn = pygame.transform.smoothscale(play_btn, (300, 150))
+
+    # Get rects for positioning
+    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
+    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 265))
+
+    spores = [Spore(750, 400) for _ in range(50)]
+
+    while True:
+        # Background
+        screen.fill((15, 15, 20))
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
+
+        # Draw logo and play button
+        screen.blit(logo, logo_rect)
+        screen.blit(play_btn, play_rect)
+        
+        for event in pygame.event.get():
+
+            mouse_pos = pygame.mouse.get_pos()
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                 if event.button == 1 and play_rect.collidepoint(mouse_pos):
+                    return
+
+        pygame.display.flip()
+        clock.tick(60)
+
 
 def pause_screen(screen, mixer):
     mixer.music.pause() 
