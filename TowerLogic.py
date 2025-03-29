@@ -1,5 +1,6 @@
 import pygame
 import pygame as pg
+import os
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
 ENEMY_PATHS = [
@@ -12,22 +13,41 @@ ENEMY_PATHS = [
 ]
 
 class Tower:
-    def __init__(self, x, y, range, damage, cooldown, screen, image):
+    def __init__(self, x, y, tower_range, damage, cooldown, screen, tower_name):
         self.x = x
         self.y = y
-        self.range = range
+        self.range = tower_range
         self.damage = damage
         self.cooldown = cooldown
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
         self.screen = screen
         self.attack_time = 0
 
+        # Load animation frames from folder
+        folder = f"{tower_name}Tower"
+        frame_prefix = tower_name.lower() + "Attack"
+        image_path = os.path.join("images", "towers", folder)
+
+        self.frames = [
+            pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i + 1}.png")).convert_alpha()
+            for i in range(4)
+        ]
+
+        self.image = self.frames[0]
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
+        # Animation control
+        self.anim_index = 0
+        self.animating = False
+        self.last_anim_time = 0
+        self.anim_speed = 100  # milliseconds between frames
+
     def draw(self, boolean):
         range_surface = pygame.Surface((240, 240), pygame.SRCALPHA)
-        if boolean == True:
+        if boolean:
             pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
         self.screen.blit(range_surface, (self.x - 120, self.y - 120))
+
+        self.update_animation()
         self.screen.blit(self.image, (self.x, self.y))
 
     #def enemy_in_range(self, enemy):
@@ -46,19 +66,29 @@ class Tower:
         dy = enemy_center_y - self.y
         dist = (dx ** 2 + dy ** 2) ** 0.5
         return dist <= self.range
-
+    
+    def update_animation(self):
+        if self.animating:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_anim_time > self.anim_speed:
+                self.last_anim_time = current_time
+                self.anim_index += 1
+                if self.anim_index >= len(self.frames):
+                    self.anim_index = 0
+                    self.animating = False
+                self.image = self.frames[self.anim_index]
+        else:
+            self.image = self.frames[0]  # reset to first frame
 
     def can_attack(self, enemy):
         current_time = pygame.time.get_ticks()
-        if self.enemy_in_range(enemy) and current_time > self.attack_time:
-            return True
-        else:
-            return False
+        return self.enemy_in_range(enemy) and current_time > self.attack_time
 
     def attack(self, enemy):
         if self.can_attack(enemy):
             self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
+            self.anim_index = 0
+            self.animating = True
             return True
-        else:
-            return False
+        return False
 
