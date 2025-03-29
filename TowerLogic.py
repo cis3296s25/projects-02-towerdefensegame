@@ -29,13 +29,23 @@ class Tower:
         self.screen.blit(range_surface, (self.x - 120, self.y - 120))
         self.screen.blit(self.image, (self.x, self.y))
 
+    #def enemy_in_range(self, enemy):
+    #    dx = enemy.x - self.x  # get x distance between enemy and tower
+    #    dy = enemy.y - self.y  # get y distance between enemy and tower
+    #    dist = (dx ** 2 + dy ** 2) ** 0.5  # get distance between enemy and tower
+    #    if dist <= self.range:
+    #        return True
+    #    return False
+
+    #fixes towers not attacking giant: come back to here if any problems
     def enemy_in_range(self, enemy):
-        dx = enemy.x - self.x  # get x distance between enemy and tower
-        dy = enemy.y - self.y  # get y distance between enemy and tower
-        dist = (dx ** 2 + dy ** 2) ** 0.5  # get distance between enemy and tower
-        if dist <= self.range:
-            return True
-        return False
+        enemy_center_x = enemy.rect.centerx
+        enemy_center_y = enemy.rect.centery
+        dx = enemy_center_x - self.x
+        dy = enemy_center_y - self.y
+        dist = (dx ** 2 + dy ** 2) ** 0.5
+        return dist <= self.range
+
 
     def can_attack(self, enemy):
         current_time = pygame.time.get_ticks()
