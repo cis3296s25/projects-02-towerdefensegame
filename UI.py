@@ -152,14 +152,11 @@ def draw_tower_stat(screen, tower):
     screen.blit(text_range, text_range_rect)  # Draw range text
     screen.blit(text_damage, text_damage_rect)  # Draw damage text
     screen.blit(text_cooldown, text_cooldown_rect)  # Draw cooldown text
-    
-    pygame.display.flip()
-    
+
 def number_wave(screen, wave_number):
     font = pygame.font.SysFont("Arial", 18)
     wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
     screen.blit(wave_text, (640, 360))  # Position the Wave text
-    pygame.display.flip()
 
 def draw_grid(screen):
     grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
