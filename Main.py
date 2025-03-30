@@ -82,7 +82,7 @@ def game():
     temporary_tower = None  # Temporary tower for placement
 
     # Initialize objects
-    tower = Tower(160, 160, 100, 10, 2, screen, towerImage) # (x, y, range, damage, cooldown, screen, image)
+    tower = Tower(160, 160, 100, 10, 2, screen, "witch") # (x, y, range, damage, cooldown, screen, image)
     enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
 
     # Enemy variables
@@ -160,9 +160,7 @@ def game():
                         print(f"Selected Tower at ({grid_x}, {grid_y})")
                         show_stats = True
                         show_range = True
-                    
-                        
-                    
+
             ############################## HANDLE PLACING TOWERS ##############################
                 if placing_tower:
                     # Place the tower on the map
@@ -175,14 +173,14 @@ def game():
                         if (grid_x, grid_y) not in tower_positions and (grid_x, grid_y) not in ENEMY_PATHS:  # Check if the position is free
                             print(f"Placing tower at: ({grid_x}, {grid_y})")
                             
-                            towers.append(Tower(grid_x, grid_y, 100, 10, 2, screen, towerImage))
+                            towers.append(Tower(grid_x, grid_y, 100, 10, 2, screen, "witch"))
                             tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
                             placing_tower = False
                             temporary_tower = None
                 elif towerButton.draw(screen):
                     # Start placing a tower
                     placing_tower = True
-                    temporary_tower = Tower(0, 0, 100, 10, 2, screen, towerImage)
+                    temporary_tower = Tower(0, 0, 100, 10, 2, screen, "witch")
                 elif cancelButton.draw(screen):
                     # Cancel tower placement
                     placing_tower = False
@@ -194,11 +192,8 @@ def game():
                 if temporary_tower:
                     temporary_tower.x = mouse_x // 40 * 40
                     temporary_tower.y = mouse_y // 40 * 40
-            
-            
-                    
+ 
             ############################### END OF TOWER PLACEMENT CODE ########################################
-                    
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_volume = False
@@ -212,7 +207,6 @@ def game():
                         mixer.music.set_volume(volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
 
-        
         current_time = pygame.time.get_ticks()
 
         if spawned_count < len(current_wave_enemies):
@@ -241,6 +235,7 @@ def game():
         # Draw all placed towers
         for tower in towers:
             tower.draw(False)
+
 
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
