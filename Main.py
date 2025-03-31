@@ -151,7 +151,7 @@ def game():
                 elif speaker_rect.collidepoint(event.pos):
                     muted = not muted
                     mixer.music.set_volume(0 if muted else volume)
-                else: 
+                else:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
                     grid_y = mouse_y // 40 * 40
@@ -238,6 +238,7 @@ def game():
                 tower.draw(True)
             else:
                 tower.draw(False)
+            Tower.attack(tower, enemies)
 
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
@@ -279,8 +280,8 @@ def game():
 
 
             enemy.draw()
-        for tower in towers:
-            Tower.attack(tower, enemies)
+        # for tower in towers:
+        #     Tower.attack(tower, enemies)
             # only attacks if enemy is alive
             # if enemy.hp <= 0:
             #     enemy.is_dying = True
