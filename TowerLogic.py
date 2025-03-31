@@ -21,6 +21,7 @@ class Tower:
         self.cooldown = cooldown
         self.screen = screen
         self.attack_time = 0
+        self.target = None
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -58,14 +59,7 @@ class Tower:
     #        return True
     #    return False
 
-    #fixes towers not attacking giant: come back to here if any problems
-    def enemy_in_range(self, enemy):
-        enemy_center_x = enemy.rect.centerx
-        enemy_center_y = enemy.rect.centery
-        dx = enemy_center_x - self.x
-        dy = enemy_center_y - self.y
-        dist = (dx ** 2 + dy ** 2) ** 0.5
-        return dist <= self.range
+
     
     def update_animation(self):
         if self.animating:
@@ -76,19 +70,42 @@ class Tower:
                 if self.anim_index >= len(self.frames):
                     self.anim_index = 0
                     self.animating = False
+                    self.attack_time = pygame.time.get_ticks()
+                    self.target = None
                 self.image = self.frames[self.anim_index]
         else:
             self.image = self.frames[0]  # reset to first frame
 
-    def can_attack(self, enemy):
-        current_time = pygame.time.get_ticks()
-        return self.enemy_in_range(enemy) and current_time > self.attack_time
+        # fixes towers not attacking giant: come back to here if any problems
 
-    def attack(self, enemy):
-        if self.can_attack(enemy):
-            self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
-            self.anim_index = 0
+    def take_aim(self, enemies):
+        for enemy in enemies:
+            if enemy.hp > 0:
+                enemy_center_x = enemy.rect.centerx
+                enemy_center_y = enemy.rect.centery
+                dx = enemy_center_x - self.x
+                dy = enemy_center_y - self.y
+                dist = (dx ** 2 + dy ** 2) ** 0.5
+                if dist <= self.range:
+                    self.target = enemy
+                    self.target.hp -= self.damage
+                    if self.target.hp <= 0:
+                        enemy.is_dying = True
+
+
+
+    def attack(self, enemies):
+        if self.target:
             self.animating = True
-            return True
-        return False
+        else:
+            if pygame.time.get_ticks() - self.attack_time > self.cooldown * 1000:
+                self.take_aim(enemies)
+
+    # def attack(self, enemies):
+    #     if self.can_attack(enemy):
+    #         self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
+    #         self.anim_index = 0
+    #         self.animating = True
+    #         return True
+    #     return False
 

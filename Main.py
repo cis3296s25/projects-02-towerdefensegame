@@ -82,7 +82,7 @@ def game():
     temporary_tower = None  # Temporary tower for placement
 
     # Initialize objects
-    tower = Tower(160, 160, 100, 10, 2, screen, "witch") # (x, y, range, damage, cooldown, screen, image)
+    tower = Tower(160, 160, 100, 10, 1, screen, "witch") # (x, y, range, damage, cooldown, screen, image)
     enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
 
     # Enemy variables
@@ -279,16 +279,15 @@ def game():
 
 
             enemy.draw()
-        for enemy in enemies:
-            for tower in towers:
-                # only attacks if enemy is alive
-                if Tower.attack(tower, enemy):
-                    enemy.hp -= tower.damage
-                    if enemy.hp <= 0:
-                        enemy.is_dying = True
-                        enemy.frame_timer = 0
-                        enemy.death_frame_index = 0
-                        money += enemy.money
+        for tower in towers:
+            Tower.attack(tower, enemies)
+            # only attacks if enemy is alive
+            # if enemy.hp <= 0:
+            #     enemy.is_dying = True
+            #     enemy.frame_timer = 0
+            #     enemy.death_frame_index = 0
+            #     money += enemy.money
+
         
         if not enemies and spawned_count == len(current_wave_enemies):
             wave_number += 1
