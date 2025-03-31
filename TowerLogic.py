@@ -76,8 +76,7 @@ class Tower:
         else:
             self.image = self.frames[0]  # reset to first frame
 
-        # fixes towers not attacking giant: come back to here if any problems
-
+    # fixes towers not attacking giant: come back to here if any problems
     def take_aim(self, enemies):
         for enemy in enemies:
             if enemy.hp > 0:
@@ -89,8 +88,10 @@ class Tower:
                 if dist <= self.range:
                     self.target = enemy
                     self.target.hp -= self.damage
+                    self.attack_time = pygame.time.get_ticks()
                     if self.target.hp <= 0:
-                        enemy.is_dying = True
+                        self.target.is_dying = True
+                    break
 
 
 
