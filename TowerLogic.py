@@ -2,6 +2,8 @@ import pygame
 import pygame as pg
 import os
 
+from fireball import Fireball
+
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
 ENEMY_PATHS = [
     (0, 200), (40, 200), (80, 200), (80, 160),
@@ -21,6 +23,7 @@ class Tower:
         self.cooldown = cooldown
         self.screen = screen
         self.attack_time = 0
+        self.fireballs = pygame.sprite.Group()
         self.target = None
 
         # Load animation frames from folder
@@ -50,6 +53,9 @@ class Tower:
 
         self.update_animation()
         self.screen.blit(self.image, (self.x, self.y))
+
+        for fireball in self.fireballs:
+            fireball.draw()
 
     #def enemy_in_range(self, enemy):
     #    dx = enemy.x - self.x  # get x distance between enemy and tower
@@ -88,12 +94,12 @@ class Tower:
                 if dist <= self.range:
                     self.target = enemy
                     self.target.hp -= self.damage
+                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen)
+                    self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
                     if self.target.hp <= 0:
                         self.target.is_dying = True
                     break
-
-
 
     def attack(self, enemies):
         if self.target:
@@ -101,6 +107,10 @@ class Tower:
         else:
             if pygame.time.get_ticks() - self.attack_time > self.cooldown * 1000:
                 self.take_aim(enemies)
+
+    def update(self):
+        # Update all fireballs
+        self.fireballs.update()
 
     # def attack(self, enemies):
     #     if self.can_attack(enemy):
