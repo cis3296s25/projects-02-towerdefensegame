@@ -13,7 +13,6 @@ ENEMY_PATHS = [
     (360, 240), (360, 200), (360, 160), (400, 160),
     (440, 160), (480, 160), (520, 160), (560, 160)
 ]
-
 class Tower:
     def __init__(self, x, y, tower_range, damage, cooldown, screen, tower_name):
         self.x = x
@@ -93,17 +92,20 @@ class Tower:
                 dist = (dx ** 2 + dy ** 2) ** 0.5
                 if dist <= self.range:
                     self.target = enemy
-                    self.target.hp -= self.damage
-                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen)
+                    #self.target.hp -= self.damage
+                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = 10)
                     self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
+                    self.target.hp -= fireball.damage
                     if self.target.hp <= 0:
                         self.target.is_dying = True
+
                     break
 
     def attack(self, enemies):
         if self.target:
             self.animating = True
+            self.fireballs.update()
         else:
             if pygame.time.get_ticks() - self.attack_time > self.cooldown * 1000:
                 self.take_aim(enemies)
