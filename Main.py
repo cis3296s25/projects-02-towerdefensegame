@@ -239,7 +239,7 @@ def game():
             else:
                 tower.draw(False)
             Tower.attack(tower, enemies)
-            Tower.update(tower)
+            #Tower.update(tower)
 
         # Draw the temporary tower if placing
         if placing_tower and temporary_tower:
