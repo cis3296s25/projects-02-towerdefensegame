@@ -329,7 +329,7 @@ def game():
         if show_stats and selected_tower:
             draw_tower_stat(screen, selected_tower) 
 
-        if show_wave: 
+        if show_wave:
             number_wave(screen, wave_number)
 
     
