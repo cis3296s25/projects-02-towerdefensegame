@@ -96,6 +96,7 @@ class Tower:
                     fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = 10)
                     self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
+                    # Place all damage logic below
                     self.target.hp -= fireball.damage
                     if self.target.hp <= 0:
                         self.target.is_dying = True
@@ -103,6 +104,7 @@ class Tower:
                     break
 
     def attack(self, enemies):
+        #Add attack anims here
         if self.target:
             self.animating = True
             self.fireballs.update()
