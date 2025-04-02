@@ -98,7 +98,7 @@ class Tower:
                 if dist <= self.range:
                     self.target = enemy
                     #self.target.hp -= self.damage
-                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = 10)
+                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = self.damage)
                     self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
                     # Place all damage logic below
