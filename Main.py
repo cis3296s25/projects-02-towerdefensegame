@@ -153,15 +153,25 @@ def game():
                 elif speaker_rect.collidepoint(event.pos):
                     muted = not muted
                     mixer.music.set_volume(0 if muted else volume)
+                elif show_stats and selected_tower and upgrade_button_rect.collidepoint(event.pos):
+                    print("Upgrade button clicked!")
+                    if money >= 50:
+                        money -= 50
+                        selected_tower.damage += 5
+                    else: 
+                        print("Not enough money to upgrade tower!")
                 else:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
                     grid_y = mouse_y // 40 * 40
-                    selected_tower = select_tower(grid_x, grid_y, towers)  
-                    if selected_tower:
-                        print(f"Selected Tower at ({grid_x}, {grid_y})")
-                        show_stats = True
-                        show_range = True
+                    if mouse_x > 600:
+                        print("Clicked on sidebar")
+                    else:   
+                        selected_tower = select_tower(grid_x, grid_y, towers)
+                        if selected_tower:
+                            print(f"Selected Tower at ({grid_x}, {grid_y})")
+                            show_stats = True
+                            show_range = True
 
             ############################## HANDLE PLACING TOWERS ##############################
                 if placing_tower:
@@ -311,7 +321,7 @@ def game():
         screen.blit(speaker_img, speaker_rect)
 
         if show_stats and selected_tower:
-            draw_tower_stat(screen, selected_tower) 
+            upgrade_button_rect = draw_tower_stat(screen, selected_tower)
 
         if show_wave:
             number_wave(screen, wave_number)

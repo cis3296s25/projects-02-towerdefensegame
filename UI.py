@@ -153,6 +153,18 @@ def draw_tower_stat(screen, tower):
     screen.blit(text_damage, text_damage_rect)  # Draw damage text
     screen.blit(text_cooldown, text_cooldown_rect)  # Draw cooldown text
 
+     # Draw Upgrade Button
+    upgrade_button_rect = pygame.Rect(620, 150, 120, 40)  # Button size and position
+    pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)  # Green button
+    
+    # Upgrade Button Text
+    upgrade_text = font.render("Upgrade: 50$", True, (255, 255, 255))
+    upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button_rect.center)
+    screen.blit(upgrade_text, upgrade_text_rect)
+    
+    return upgrade_button_rect  # Return button rect to check for clicks
+
+
 def number_wave(screen, wave_number):
     font = pygame.font.SysFont("Arial", 18)
     wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
