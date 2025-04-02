@@ -160,9 +160,15 @@ class Enemy:
                     self.death_frame_index += 1
                 else:
                     self.death_animation_done = True
+                    self.death_frame_index = 0  # Reset the death frame index
+                    self.frame_timer = 0  # Reset the frame timer
+                    #self.death_animation_done = False  # Reset the death animation flag
+                    #self.is_dying = False  # Stop the death animation from looping
+
             return
         
         self.move()
+
     
     def draw(self):
 
