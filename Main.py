@@ -232,7 +232,7 @@ def game():
         gameMap.draw()
         draw_grid(screen)
 
-        # Draw all placed towers
+        # Draw all placed towers and call attack
         for tower in towers:
             if show_stats and selected_tower and tower == selected_tower:
                 tower.draw(True)
@@ -245,32 +245,15 @@ def game():
         if placing_tower and temporary_tower:
             temporary_tower.draw(True)
 
+        # enemy loop
         for enemy in enemies[:]:
-            if enemy.is_dying:
-                print(f"Enemy {enemy} is dying... Frame: {enemy.death_frame_index}/{len(enemy.death_frames)}")
-                #play death animation
-                enemy.frame_timer += 1
-                if enemy.frame_timer % 10 == 0:
-                    enemy.death_frame_index += 1
-                    if enemy.death_frame_index < len(enemy.death_frames):
-                        enemy.image = enemy.death_frames[enemy.death_frame_index]
-                    else:
-                        print(f"Enemy {enemy} death animation completed. Removing enemy.")
-                        enemies.remove(enemy)  # Remove the enemy from the list
-                        enemy.death_frame_index = 0  # Reset the death frame index
-                        enemy.frame_timer = 0  # Reset the frame timer
-                        enemy.death_animation_done = False  # Reset the death animation flag
-                        enemy.is_dying = False  # Stop the death animation from looping
-                        print(f"Enemy {enemy} removed.")
-
-            elif not enemy.reached_end:
-                enemy.move()
-
+            if not enemy.reached_end:
+                enemy.update()
+                if enemy.hp <= 0 and enemy.death_animation_done:
+                    enemies.remove(enemy)
             else:
-                # Enemy reached the end – reduce lives and remove the enemy
                 lives -= enemy.dmg
                 enemies.remove(enemy)
-
                 if lives <= 0:
                     if gameover_screen(screen) == "restart":
                         print("Restarting game...")
@@ -279,17 +262,8 @@ def game():
                         running = False
                         break
 
-
             enemy.draw()
-        # for tower in towers:
-        #     Tower.attack(tower, enemies)
-            # only attacks if enemy is alive
-            # if enemy.hp <= 0:
-            #     enemy.is_dying = True
-            #     enemy.frame_timer = 0
-            #     enemy.death_frame_index = 0
-            #     money += enemy.money
-
+        # end enemy loop
         
         if not enemies and spawned_count == len(current_wave_enemies):
             wave_number += 1
