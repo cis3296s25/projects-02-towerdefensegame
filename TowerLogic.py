@@ -13,6 +13,11 @@ ENEMY_PATHS = [
     (360, 240), (360, 200), (360, 160), (400, 160),
     (440, 160), (480, 160), (520, 160), (560, 160)
 ]
+
+TOWER_COSTS = {
+    "Witch": 100,
+}
+
 class Tower:
     def __init__(self, x, y, tower_range, damage, cooldown, screen, tower_name):
         self.x = x
