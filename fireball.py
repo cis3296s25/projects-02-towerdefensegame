@@ -2,15 +2,17 @@ import pygame
 import os
 
 class Fireball(pygame.sprite.Sprite):
-    def __init__(self, x, y, target, speed, screen):
+    def __init__(self, x, y, target, speed, screen, damage):
         super().__init__()
         self.x = x
         self.y = y
         self.target = target
         self.speed = speed
         self.screen = screen
+        self.damage = damage
         self.image = pygame.image.load(os.path.join("images", "smallfireball.png")).convert_alpha()  
         self.rect = self.image.get_rect(center=(self.x, self.y))
+
 
         # Ensure target is valid
         if target:
@@ -33,7 +35,7 @@ class Fireball(pygame.sprite.Sprite):
 
         # Check for collision with the target
         if self.rect.colliderect(self.target.rect):
-            self.target.hp -= 10  # Damage the target
+            #self.target.hp -= 10  # Damage the target
             self.kill()  # Remove the fireball from the game
 
 
