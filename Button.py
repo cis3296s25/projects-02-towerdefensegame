@@ -36,7 +36,7 @@ class Button:
         if self.rect.collidepoint(pos) and self.tooltip_text and self.font:
             self.draw_tooltip(screen, pos)
         
-        return action
+        return action # Return if the button was clicked
     
     def draw_tooltip(self, screen, pos):
         # Split the tooltip text into multiple lines
