@@ -3,6 +3,8 @@ import math
 import os
 from os.path import abspath, dirname
 
+from EnemyData import mob_data
+
 # enemy's path
 WAYPOINTS = [
     (-40, 160),
@@ -31,56 +33,19 @@ BASE_PATH = abspath(dirname(__file__))
 
 class Enemy:
 
-    def __init__(self, x, y, hp, attack_range, dmg, cooldown, screen, color = "Red", waypoints = None):
+    def __init__(self, x, y, screen, color, waypoints = None):
 
         self.waypoints = waypoints if waypoints else WAYPOINTS
         self.color = color
-
-
-        mob_dmg_map = {
-            "Red": 1,  
-            "Blue": 3,  
-            "Purple": 5,  
-            "Glowing": 7,
-            "Giant": 50,  
-        }
-
-        mob_money_valueMap = {
-            "Red": 15,  
-            "Blue": 20,  
-            "Purple": 25,  
-            "Glowing": 30,
-            "Giant": 250,  
-        }
-
-        mob_health_map = {
-            "Red": 50,
-            "Blue": 30,
-            "Purple": 70,
-            "Glowing": 90,
-            "Giant": 500,
-        }
-
-        mob_speed_map = {
-            "Red": 0.8,
-            "Blue": 1.0,
-            "Purple": 0.6,
-            "Glowing": 0.4,
-            "Giant": 0.1,
-        }
-
-        self.money = mob_money_valueMap.get(color, 0)  
-        self.hp = mob_health_map.get(color, 50)
-        self.max_hp = mob_health_map.get(color, 50)
-        self.range = attack_range
-        self.dmg = mob_dmg_map.get(color, 1)  
-        self.cooldown = cooldown
+        self.money = mob_data[color]["Money"]
+        self.speed = mob_data[color]["Speed"]
+        self.hp = mob_data[color]["Health"]
+        self.max_hp = mob_data[color]["Health"]
+        self.dmg = mob_data[color]["Damage"] 
         self.x = x
         self.y = y
 
         self.screen = screen
-
-        self.speed = mob_speed_map.get(color) 
 
         folder = f"{color}Mushroom"
         frame_prefix = color.lower() + "mushroom"

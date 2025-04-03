@@ -84,10 +84,6 @@ def game():
     tower_positions = set()  # Set to store tower positions
     temporary_tower = None  # Temporary tower for placement
 
-    # Initialize objects
-    #tower = Tower(160, 160, screen, "Witch") # (x, y, range, damage, cooldown, screen, image)
-    #enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
-
     # Enemy variables
     enemies = []
     spawn_delay = 2000 #ms
@@ -244,16 +240,13 @@ def game():
         if wave_started and spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
-                #new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
                 if color == "Giant":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], GIANT_PATH[0][1],
-                        200, 50, 20, 3, screen, color, waypoints=GIANT_PATH
+                        GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
                     )
                 else:
                     new_enemy = Enemy(
-                        WAYPOINTS[0][0], WAYPOINTS[0][1],
-                        50, 10, 5, 3, screen, color
+                        WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
             )
                 enemies.append(new_enemy)
                 spawned_count += 1
