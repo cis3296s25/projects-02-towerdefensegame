@@ -12,6 +12,7 @@ from MapLogic import Map
 from Button import Button
 from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave
 from os.path import abspath, dirname
+from TowerData import towers_base
 
 BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
@@ -161,12 +162,14 @@ def game():
                     mixer.music.set_volume(0 if muted else volume)
                 elif show_stats and selected_tower and upgrade_button_rect.collidepoint(event.pos):
                     print("Upgrade button clicked!")
-                    if money >= 50:
-                        money -= 50
-                        selected_tower.damage += 5  
-                        print("Tower upgraded!")
-                    else: 
+                    if selected_tower.upgrade == 3:
+                        print("Tower is already at max upgrade!")
+                    elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
+                        money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
+                        selected_tower.do_upgrade()
+                    elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
                         print("Not enough money to upgrade tower!")
+                    
                 elif start_wave_button.draw(screen):
                     if not wave_started:
                         wave_started = True
