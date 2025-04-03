@@ -104,7 +104,13 @@ def game():
     # Create buttons
     towerButton = Button(610, 90, IMAGES["towerSample"], True, tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click)
     cancelButton = Button(610, 120, IMAGES["cancel_button"], True) # (x, y, image, single_click)
-    
+
+    #wave button logic
+    start_wave_btn_img = pygame.image.load(IMAGE_PATH + "startwave.png").convert_alpha()
+    start_wave_btn_img = pygame.transform.scale(start_wave_btn_img, (112, 112))  # Adjust size as needed
+    start_wave_button = Button(662, 313, start_wave_btn_img, True)
+
+    wave_started = False
     
 
     # Load and scale speaker icons
@@ -160,6 +166,11 @@ def game():
                         selected_tower.damage += 5
                     else: 
                         print("Not enough money to upgrade tower!")
+                elif start_wave_button.draw(screen):
+                    if not wave_started:
+                        wave_started = True
+                        print("Wave started!")
+
                 else:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
@@ -226,7 +237,7 @@ def game():
 
         current_time = pygame.time.get_ticks()
 
-        if spawned_count < len(current_wave_enemies):
+        if wave_started and spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
                 #new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen, color)
@@ -290,6 +301,7 @@ def game():
             spawned_count = 0
             last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
             money += 10 * wave_number
+            wave_started = False
                         
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
@@ -300,6 +312,9 @@ def game():
         if placing_tower == True:
             if cancelButton.draw(screen):
                 placing_tower = False
+
+        if not wave_started: #only appears when wave hasnt started yet
+            start_wave_button.draw(screen)
 
          # Volume slider bar
         pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
