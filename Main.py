@@ -34,6 +34,7 @@ IMG_NAMES = [
     "mapSample",
     "towerSample",
     "cancel_button",
+    "fastForward",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -43,6 +44,7 @@ enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 towerImage = IMAGES["towerSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
 cancelImage = IMAGES["cancel_button"] #generate cancel button image
+fastForwardImage = IMAGES["fastForward"] #generate fast forward button image
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -104,11 +106,15 @@ def game():
     # Create buttons
     towerButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
     cancelButton = Button(610, 120, IMAGES["cancel_button"], True) # (x, y, image, single_click)
+    
+    fastForwardScale =  pygame.transform.scale(IMAGES["fastForward"], (40, 40))
+    fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
+    
 
     #wave button logic
     start_wave_btn_img = pygame.image.load(IMAGE_PATH + "startwave.png").convert_alpha()
-    start_wave_btn_img = pygame.transform.scale(start_wave_btn_img, (112, 112))  # Adjust size as needed
-    start_wave_button = Button(662, 313, start_wave_btn_img, True)
+    start_wave_btn_img = pygame.transform.scale(start_wave_btn_img, (40, 40))  # Adjust size as needed
+    start_wave_button = Button(700, 350, start_wave_btn_img, True)
 
     wave_started = False
     
@@ -143,6 +149,7 @@ def game():
     running = True
     show_stats = False
     show_wave = True
+    fps = 60
     while running:
 
         for event in pygame.event.get():
@@ -171,6 +178,13 @@ def game():
                     if not wave_started:
                         wave_started = True
                         print("Wave started!")
+                elif fastForwardButton.draw(screen):
+                    if fps == 60:
+                        fps = 120
+                        print("Fast forward activated!")
+                    else:
+                        fps = 60
+                        print("Fast forward deactivated!")
 
                 else:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -313,6 +327,8 @@ def game():
         if placing_tower == True:
             if cancelButton.draw(screen):
                 placing_tower = False
+                
+        fastForwardButton.draw(screen) # draw fast forward button
 
         if not wave_started: #only appears when wave hasnt started yet
             start_wave_button.draw(screen)
@@ -354,7 +370,7 @@ def game():
     
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(fps) # Control the frame rate / speed of the game
 
     mixer.music.stop()
     pygame.quit()
