@@ -2,6 +2,8 @@ import pygame
 import sys #required for .exe creation
 import random
 
+from TowerData import towers_base
+
 class Spore:
     def __init__(self, screen_width, screen_height):
         self.x = random.randint(0, screen_width)
@@ -158,7 +160,10 @@ def draw_tower_stat(screen, tower):
     pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)  # Green button
     
     # Upgrade Button Text
-    upgrade_text = font.render("Upgrade: 50$", True, (255, 255, 255))
+    if tower.upgrade < 3:
+        upgrade_text = font.render(f"Upgrade: {towers_base[tower.tower_name]["upgrades"][tower.upgrade + 1]["cost"]}", True, (255, 255, 255))
+    else:
+        upgrade_text = font.render("Max Upgrade", True, (255, 255, 255))
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button_rect.center)
     screen.blit(upgrade_text, upgrade_text_rect)
     
