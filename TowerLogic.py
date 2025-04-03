@@ -51,7 +51,7 @@ class Tower:
         self.anim_speed = 100  # milliseconds between frames
 
     def draw(self, boolean):
-        range_surface = pygame.Surface((240, 240), pygame.SRCALPHA)
+        range_surface = pygame.Surface((600, 600), pygame.SRCALPHA)
         if boolean:
             pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
         self.screen.blit(range_surface, (self.x - 120, self.y - 120))
@@ -129,6 +129,7 @@ class Tower:
             self.upgrade += 1
             self.damage = towers_base[self.tower_name]["upgrades"][self.upgrade]["damage"]
             self.cooldown = towers_base[self.tower_name]["upgrades"][self.upgrade]["cooldown"]
+            self.range = towers_base[self.tower_name]["upgrades"][self.upgrade]["range"]
 
     # def attack(self, enemies):
     #     if self.can_attack(enemy):

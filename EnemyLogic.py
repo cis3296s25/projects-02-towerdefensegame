@@ -80,7 +80,7 @@ class Enemy:
 
         self.screen = screen
 
-        self.speed = mob_speed_map.get(color, 0.8) 
+        self.speed = mob_speed_map.get(color) 
 
         folder = f"{color}Mushroom"
         frame_prefix = color.lower() + "mushroom"
