@@ -29,6 +29,7 @@ class Tower:
         self.attack_time = 0
         self.fireballs = pygame.sprite.Group()
         self.target = None
+        self.upgrade = 0
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -121,6 +122,13 @@ class Tower:
         # Update all fireballs
         self.fireballs.update()
 
+    def do_upgrade(self):
+        if self.upgrade == 3:
+            print("Max upgrade reached")
+        else:
+            self.upgrade += 1
+            self.damage = towers_base[self.tower_name]["upgrades"][self.upgrade]["damage"]
+            self.cooldown = towers_base[self.tower_name]["upgrades"][self.upgrade]["cooldown"]
 
     # def attack(self, enemies):
     #     if self.can_attack(enemy):
