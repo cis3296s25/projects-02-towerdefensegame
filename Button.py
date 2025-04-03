@@ -1,11 +1,12 @@
 import pygame as pg
 
 class Button:
-    def __init__(self, x, y, image, single_click, tooltip_text=None):
+    def __init__(self, x, y, image, single_click, tower_name="None", tooltip_text=None):
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.clicked = False
         self.single_click = single_click
+        self.name = tower_name  
 
         self.tooltip_text = tooltip_text  # Tooltip text
         self.font = pg.font.Font(None, 15)  # Font for the tooltip

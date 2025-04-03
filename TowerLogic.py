@@ -3,6 +3,7 @@ import pygame as pg
 import os
 
 from fireball import Fireball
+from TowerData import towers_base
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
 ENEMY_PATHS = [
@@ -14,17 +15,16 @@ ENEMY_PATHS = [
     (440, 160), (480, 160), (520, 160), (560, 160)
 ]
 
-TOWER_COSTS = {
-    "Witch": 100,
-}
-
 class Tower:
-    def __init__(self, x, y, tower_range, damage, cooldown, screen, tower_name):
+    def __init__(self, x, y, screen, tower_name):
+
         self.x = x
         self.y = y
-        self.range = tower_range
-        self.damage = damage
-        self.cooldown = cooldown
+        self.tower_name = tower_name
+        self.range = towers_base[tower_name]["range"]
+        self.damage = towers_base[tower_name]["damage"]
+        self.cost = towers_base[tower_name]["cost"]
+        self.cooldown = towers_base[tower_name]["cooldown"]
         self.screen = screen
         self.attack_time = 0
         self.fireballs = pygame.sprite.Group()
@@ -120,6 +120,7 @@ class Tower:
     def update(self):
         # Update all fireballs
         self.fireballs.update()
+
 
     # def attack(self, enemies):
     #     if self.can_attack(enemy):

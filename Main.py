@@ -7,7 +7,7 @@ from pygame import(
     mixer,
 )
 from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
-from TowerLogic import Tower, ENEMY_PATHS, TOWER_COSTS
+from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
 from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave
@@ -84,8 +84,8 @@ def game():
     temporary_tower = None  # Temporary tower for placement
 
     # Initialize objects
-    tower = Tower(160, 160, 100, 10, 1, screen, "witch") # (x, y, range, damage, cooldown, screen, image)
-    enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
+    #tower = Tower(160, 160, screen, "Witch") # (x, y, range, damage, cooldown, screen, image)
+    #enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], 50, 10, 5, 3, screen) # (x, y, hp, attack_range, dmg, cooldown, screen, money)
 
     # Enemy variables
     enemies = []
@@ -102,7 +102,7 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    towerButton = Button(610, 90, IMAGES["towerSample"], True, tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click)
+    towerButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
     cancelButton = Button(610, 120, IMAGES["cancel_button"], True) # (x, y, image, single_click)
 
     #wave button logic
@@ -163,7 +163,8 @@ def game():
                     print("Upgrade button clicked!")
                     if money >= 50:
                         money -= 50
-                        selected_tower.damage += 5
+                        selected_tower.damage += 5  
+                        print("Tower upgraded!")
                     else: 
                         print("Not enough money to upgrade tower!")
                 elif start_wave_button.draw(screen):
@@ -195,11 +196,11 @@ def game():
                     if mouse_x < 600:  # Ensure placement is within the map area
                         if (grid_x, grid_y) not in tower_positions and (grid_x, grid_y) not in ENEMY_PATHS:  # Check if the position is free
                             # check if the player has enough money to place the tower
-                            if money >= TOWER_COSTS["Witch"]:
-                                money -= TOWER_COSTS["Witch"]
+                            if money >= temporary_tower.cost:
+                                money -= temporary_tower.cost  
                                 print(f"Placing tower at: ({grid_x}, {grid_y})")
                                 
-                                towers.append(Tower(grid_x, grid_y, 100, 10, 2, screen, "witch"))
+                                towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name))
                                 tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
                                 placing_tower = False
                                 temporary_tower = None
@@ -208,7 +209,7 @@ def game():
                 elif towerButton.draw(screen):
                     # Start placing a tower
                     placing_tower = True
-                    temporary_tower = Tower(0, 0, 100, 10, 2, screen, "witch")
+                    temporary_tower = Tower(0, 0, screen, towerButton.name)
                 elif cancelButton.draw(screen):
                     # Cancel tower placement
                     placing_tower = False

@@ -168,7 +168,7 @@ def draw_tower_stat(screen, tower):
 def number_wave(screen, wave_number):
     font = pygame.font.SysFont("Arial", 18)
     wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
-    screen.blit(wave_text, (640, 360))  # Position the Wave text
+    screen.blit(wave_text, (630, 360))  # Position the Wave text
 
 def draw_grid(screen):
     grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
