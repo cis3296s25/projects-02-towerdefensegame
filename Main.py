@@ -102,10 +102,18 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    towerButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    witchButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
+    buttons = [witchButton]
+
+    def find_button(x, y):
+        for button in buttons:
+            if button.rect.collidepoint(x, y):
+                return button
+        return None
+
     fastForwardScale =  pygame.transform.scale(IMAGES["fastForward"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
     
@@ -148,6 +156,7 @@ def game():
     running = True
     show_stats = False
     show_wave = True
+    towerButton = None
     fps = 60
     while running:
 
@@ -221,8 +230,9 @@ def game():
                                 temporary_tower = None
                             else:
                                 print("Not enough money to place tower!")
-                elif towerButton.draw(screen):
+                elif find_button(mouse_x, mouse_y):
                     # Start placing a tower
+                    towerButton = find_button(mouse_x, mouse_y)
                     placing_tower = True
                     temporary_tower = Tower(0, 0, screen, towerButton.name)
                 elif cancelButton.draw(screen):
@@ -324,7 +334,7 @@ def game():
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
 
         # Draw buttons
-        if towerButton.draw(screen): # if tower button is clicked
+        if towerButton and towerButton.draw(screen): # if tower button is clicked
             placing_tower = True
         if placing_tower == True:
             if cancelButton.draw(screen):
@@ -353,6 +363,9 @@ def game():
         # Position speaker icon next to slider
         speaker_rect = speaker_img.get_rect(topleft=(slider_rect.x + slider_rect.width + 10, slider_rect.y - 6))
         screen.blit(speaker_img, speaker_rect)
+
+        for button in buttons:
+            button.draw(screen)  
 
         if show_stats and selected_tower:
             upgrade_button_rect = draw_tower_stat(screen, selected_tower)
