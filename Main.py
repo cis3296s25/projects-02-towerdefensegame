@@ -103,10 +103,11 @@ def game():
     
     # Create buttons
     witchButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(660, 90, IMAGES["towerSample"], True, "Archer", tooltip_text="cost: 80\n atk: 8")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [witchButton]
+    buttons = [witchButton, archerButton]
 
     def find_button(x, y):
         for button in buttons:
@@ -234,6 +235,7 @@ def game():
                     # Start placing a tower
                     towerButton = find_button(mouse_x, mouse_y)
                     placing_tower = True
+                    print(towerButton.name)
                     temporary_tower = Tower(0, 0, screen, towerButton.name)
                 elif cancelButton.draw(screen):
                     # Cancel tower placement
