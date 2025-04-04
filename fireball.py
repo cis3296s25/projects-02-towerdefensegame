@@ -22,9 +22,8 @@ class Fireball(pygame.sprite.Sprite):
             self.direction = (0, 0)  # Fireball won’t move if there’s no target
 
     def update(self):
-        # Check if the target is invalid (dead or None)
         if self.target is None or self.target.hp <= 0:
-            self.kill()  # Remove fireball if the target is dead or invalid
+            self.kill()  # Remove fireball if the target is dead
             return
 
         # Move the fireball towards the target
@@ -34,10 +33,9 @@ class Fireball(pygame.sprite.Sprite):
 
         # Check for collision with the target
         if self.rect.colliderect(self.target.rect):
-            # Apply damage to the target
-            self.target.hp -= self.damage
+            self.target.hp -= 10  # Damage the target
             if self.target.hp <= 0:
-                self.target.is_dying = True  # Mark the target as dying if its HP is 0 or less
+                self.target.is_dying = True
             self.kill()  # Remove the fireball from the game
 
 
