@@ -37,7 +37,7 @@ Provide here instructions on how to use your application.
     - Run Main.py on VS code or on Terminal
 
 # How to contribute
-Follow this project board to know the latest status of the project: [https://github.com/orgs/cis3296s25/projects/66]([https://github.com/orgs/cis3296s25/projects/66])  
+Follow this project board to know the latest status of the project: https://github.com/orgs/cis3296s25/projects/66  
 
 ### How to build
 - Use this github repository: ... 
