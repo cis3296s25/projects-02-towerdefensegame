@@ -29,7 +29,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 400
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-FINAL_WAVE = 1
+FINAL_WAVE = 5
 
 IMG_NAMES = [
     "enemySample40x40",
