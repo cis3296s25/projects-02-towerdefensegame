@@ -103,7 +103,8 @@ def game():
     
     # Create buttons
     towerButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    cancelButton = Button(610, 120, IMAGES["cancel_button"], True) # (x, y, image, single_click)
+    cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
+    cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
     fastForwardScale =  pygame.transform.scale(IMAGES["fastForward"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
