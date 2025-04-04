@@ -61,12 +61,14 @@ def get_wave_data(wave):
     if wave == 1:
         return["Red"] * 1
     elif wave == 2:
-        return["Red"] * 10
+        return["Red"] * 4
     elif wave == 3:
-        return["Red"] * 2 + ["Blue"] * 2 + ["Purple"] * 2 + ["Glowing"] * 2
+        return["Red"] * 3 + ["Blue"] * 3
     elif wave == 4:
-        return["Giant"] * 1
+        return["Blue"] * 4 + ["Purple"] * 2 + ["Glowing"] * 1
     elif wave == 5:
+        return["Giant"] * 1
+    elif wave == 6:
         return["Giant"] * 3 + ["Red"] * 5
     else:
         return["Red"] * 5
