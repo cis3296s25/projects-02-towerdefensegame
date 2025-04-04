@@ -35,7 +35,7 @@ class Fireball(pygame.sprite.Sprite):
 
         # Check for collision with the target
         if self.rect.colliderect(self.target.rect):
-            self.target.hp -= self.damage  # Damage the target
+            #self.target.hp -= self.damage  # Damage the target
             if self.target.hp <= 0:
                 self.target.is_dying = True
             self.kill()  # Remove the fireball from the game
