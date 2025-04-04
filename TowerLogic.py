@@ -51,13 +51,21 @@ class Tower:
         self.anim_speed = 100  # milliseconds between frames
 
     def draw(self, boolean):
-        range_surface = pygame.Surface((600, 600), pygame.SRCALPHA)
         if boolean:
-            pygame.draw.circle(range_surface, (255, 255, 255, 45), (140, 140), self.range)
-        self.screen.blit(range_surface, (self.x - 120, self.y - 120))
+            # Create a transparent surface for the range circle
+            range_surface = pygame.Surface((self.range * 2, self.range * 2), pygame.SRCALPHA)
+            pygame.draw.circle(range_surface, (255, 255, 255, 45), (self.range, self.range), self.range)
+            
+            # Adjust the position to center the circle on the tower
+            center_x = self.x + self.rect.width // 2
+            center_y = self.y + self.rect.height // 2
+            self.screen.blit(range_surface, (center_x - self.range, center_y - self.range))
 
+        # Draw the tower's animation
         self.update_animation()
         self.screen.blit(self.image, (self.x, self.y))
+
+
 
         for fireball in self.fireballs:
             fireball.draw()
