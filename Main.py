@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen
 from os.path import abspath, dirname
 from TowerData import towers_base
 
@@ -29,6 +29,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 400
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
+FINAL_WAVE = 5
 
 IMG_NAMES = [
     "enemySample40x40",
@@ -307,13 +308,17 @@ def game():
         # end enemy loop
         
         if not enemies and spawned_count == len(current_wave_enemies):
-            wave_number += 1
-            current_wave_enemies = get_wave_data(wave_number)
-            spawned_count = 0
-            last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
-            money += 10 * wave_number
-            wave_started = False
-                        
+            if wave_number == FINAL_WAVE: # game clear after 5 wave
+                gameclear_screen(screen)
+                main()  # restart from homescreen
+                return
+            else:
+                wave_number += 1
+                current_wave_enemies = get_wave_data(wave_number)
+                spawned_count = 0
+                last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
+                money += 10 * wave_number
+                wave_started = False
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
 

@@ -94,6 +94,35 @@ def pause_screen(screen, mixer):
     
     mixer.music.unpause()
 
+def gameclear_screen(screen):
+    clock = pygame.time.Clock()
+
+    game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
+    game_clear_img = pygame.transform.smoothscale(game_clear_img, (400, 300))  # adjust size if you want
+
+    clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    sub_font = pygame.font.SysFont("Arial", 28)
+    prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
+    prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 280))
+
+    spores = [Spore(750, 400) for _ in range(50)] 
+    while True:
+        screen.fill((15, 15, 20))
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
+        screen.blit(game_clear_img, clear_rect)
+        screen.blit(prompt_text, prompt_rect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return  # go back to homescreen
+
+        pygame.display.flip()
+        clock.tick(60)
+
 def gameover_screen(screen):
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
     quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
