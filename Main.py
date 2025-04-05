@@ -34,7 +34,7 @@ FINAL_WAVE = 5
 IMG_NAMES = [
     "enemySample40x40",
     "mapSample",
-    "towerSample",
+    "witchSample",
     "cancel_button",
     "fastForward",
 ]
@@ -43,7 +43,7 @@ IMAGES = {
     for name in IMG_NAMES
 }
 enemyImage = IMAGES["enemySample40x40"] #generate enemy image
-towerImage = IMAGES["towerSample"] #generate tower image
+witchImage = IMAGES["witchSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
 cancelImage = IMAGES["cancel_button"] #generate cancel button image
 fastForwardImage = IMAGES["fastForward"] #generate fast forward button image
@@ -104,8 +104,8 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    witchButton = Button(610, 90, IMAGES["towerSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(660, 90, IMAGES["towerSample"], True, "Archer", tooltip_text="cost: 80\n atk: 8")
+    witchButton = Button(610, 90, IMAGES["witchSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(660, 90, IMAGES["witchSample"], True, "Archer", tooltip_text="cost: 80\n atk: 8")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
