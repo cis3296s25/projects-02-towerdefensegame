@@ -295,7 +295,9 @@ def game():
                 tower.draw(True)
             else:
                 tower.draw(False)
-            Tower.attack(tower, enemies)
+            Tower.attack(tower, enemies, fps)
+            Tower.update_animation(tower, fps)
+
             #Tower.update(tower)
 
         # Draw the temporary tower if placing
