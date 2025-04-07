@@ -29,7 +29,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 400
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-FINAL_WAVE = 5
+FINAL_WAVE = 6
 
 IMG_NAMES = [
     "enemySample40x40",
@@ -329,6 +329,8 @@ def game():
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 5 wave
                 gameclear_screen(screen)
+                mixer.music.stop()
+
                 main()  # restart from homescreen
                 return
             else:
