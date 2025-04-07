@@ -2,7 +2,7 @@ import pygame
 import pygame as pg
 import os
 
-from fireball import Fireball
+from ProjectileLogic import Projectile
 from TowerData import towers_base
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
@@ -25,6 +25,7 @@ class Tower:
         self.damage = towers_base[tower_name]["damage"]
         self.cost = towers_base[tower_name]["cost"]
         self.cooldown = towers_base[tower_name]["cooldown"]
+        self.projectile = towers_base[tower_name]["projectile"]
         self.screen = screen
         self.attack_time = 0
         self.fireballs = pygame.sprite.Group()
@@ -105,7 +106,7 @@ class Tower:
                 dist = (dx ** 2 + dy ** 2) ** 0.5
                 if dist <= self.range:
                     self.target = enemy
-                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = self.damage)
+                    fireball = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage = self.damage)
                     self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
                     # Place all damage logic below
