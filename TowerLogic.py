@@ -39,7 +39,7 @@ class Tower:
 
         self.frames = [
             pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i + 1}.png")).convert_alpha()
-            for i in range(4)
+            for i in range(6)
         ]
 
         self.image = self.frames[0]
