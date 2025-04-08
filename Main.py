@@ -93,7 +93,7 @@ def game():
 
     # Enemy variables
     enemies = []
-    spawn_delay = 2000 #ms
+    spawn_delay = 800 #ms
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
@@ -106,8 +106,8 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    witchButton = Button(610, 90, IMAGES["witchSample"], True, "Witch", tooltip_text="cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(660, 90, IMAGES["archerSample"], True, "Archer", tooltip_text="cost: 80\n atk: 8")
+    witchButton = Button(600, 72, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\n cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(660, 72, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\n cost: 80\n atk: 8")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
