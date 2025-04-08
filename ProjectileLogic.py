@@ -1,8 +1,11 @@
+from re import match
+from unittest import case
+
 import pygame
 import os
 
-class Fireball(pygame.sprite.Sprite):
-    def __init__(self, x, y, target, speed, screen, damage):
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, target, speed, screen, damage):
         super().__init__()
         self.x = x
         self.y = y
@@ -10,7 +13,8 @@ class Fireball(pygame.sprite.Sprite):
         self.speed = speed
         self.screen = screen
         self.damage = damage
-        self.image = pygame.image.load(os.path.join("images", "smallfireball.png")).convert_alpha()  
+        self.image = self.choose_image(image)
+
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
 
@@ -39,7 +43,14 @@ class Fireball(pygame.sprite.Sprite):
             if self.target.hp <= 0:
                 self.target.is_dying = True
             self.kill()  # Remove the fireball from the game
-
+    def choose_image(self, image):
+        global projectile
+        match image:
+            case "fireball":
+                projectile = self.image = pygame.image.load("images/smallfireball.png")
+            case "arrow":
+                projectile = self.image = pygame.image.load("images/arrowPlaceHolder.png")
+        return projectile
 
     def draw(self):
         self.screen.blit(self.image, self.rect)

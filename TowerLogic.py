@@ -2,7 +2,7 @@ import pygame
 import pygame as pg
 import os
 
-from fireball import Fireball
+from ProjectileLogic import Projectile
 from TowerData import towers_base
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
@@ -25,6 +25,7 @@ class Tower:
         self.damage = towers_base[tower_name]["damage"]
         self.cost = towers_base[tower_name]["cost"]
         self.cooldown = towers_base[tower_name]["cooldown"]
+        self.projectile = towers_base[tower_name]["projectile"]
         self.screen = screen
         self.attack_time = 0
         self.fireballs = pygame.sprite.Group()
@@ -62,7 +63,6 @@ class Tower:
             self.screen.blit(range_surface, (center_x - self.range, center_y - self.range))
 
         # Draw the tower's animation
-        self.update_animation()
         self.screen.blit(self.image, (self.x, self.y))
 
 
@@ -80,10 +80,10 @@ class Tower:
 
 
     
-    def update_animation(self):
+    def update_animation(self, fps):
         if self.animating:
             current_time = pygame.time.get_ticks()
-            if current_time - self.last_anim_time > self.anim_speed:
+            if current_time - self.last_anim_time > self.anim_speed * (60 / fps):
                 self.last_anim_time = current_time
                 self.anim_index += 1
                 if self.anim_index >= len(self.frames):
@@ -106,8 +106,7 @@ class Tower:
                 dist = (dx ** 2 + dy ** 2) ** 0.5
                 if dist <= self.range:
                     self.target = enemy
-                    #self.target.hp -= self.damage
-                    fireball = Fireball(self.x, self.y, self.target, speed=3, screen=self.screen, damage = self.damage)
+                    fireball = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage = self.damage)
                     self.fireballs.add(fireball)  # Add fireball to group
                     self.attack_time = pygame.time.get_ticks()
                     # Place all damage logic below
@@ -117,13 +116,13 @@ class Tower:
 
                     break
 
-    def attack(self, enemies):
+    def attack(self, enemies, fps):
         #Add attack anims here
         if self.target:
             self.animating = True
             self.fireballs.update()
         else:
-            if pygame.time.get_ticks() - self.attack_time > self.cooldown * 1000:
+            if pygame.time.get_ticks() - self.attack_time > (self.cooldown * 1000) * (60 / fps):
                 self.take_aim(enemies)
 
     def update(self):
