@@ -37,7 +37,8 @@ IMG_NAMES = [
     "witchSample",
     "cancel_button",
     "fastForward",
-    "archerSample"
+    "archerSample",
+    "bearSample",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -49,6 +50,7 @@ mapSample = IMAGES["mapSample"] #generate map image
 cancelImage = IMAGES["cancel_button"] #generate cancel button image
 fastForwardImage = IMAGES["fastForward"] #generate fast forward button image
 archerImage = IMAGES["archerSample"] #generate archer tower image
+bearImage = IMAGES["bearSample"] #generate bear tower image
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -108,10 +110,11 @@ def game():
     # Create buttons
     witchButton = Button(600, 72, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\n cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
     archerButton = Button(660, 72, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\n cost: 80\n atk: 8")
+    bearButton = Button(600, 120, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\n cost: 100\n atk: 50")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [witchButton, archerButton]
+    buttons = [witchButton, archerButton, bearButton]
 
     def find_button(x, y):
         for button in buttons:

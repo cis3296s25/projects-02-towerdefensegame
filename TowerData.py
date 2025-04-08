@@ -23,6 +23,18 @@ towers_base = {
             2: {"cost": 60, "damage": 12, "cooldown": 1.3, "range": 170},
             3: {"cost": 100, "damage": 15, "cooldown": 1.2, "range": 180},
         }
-    }
+    },
+    "Bear": {
+        "range": 50,
+        "damage": 25,
+        "projectile": "arrow",
+        "cooldown": 2.5,
+        "cost": 120,
+        "upgrades": {
+            1: {"cost": 60, "damage": 10, "cooldown": 2.3, "range": 60},
+            2: {"cost": 80, "damage": 12, "cooldown": 2.1, "range": 65},
+            3: {"cost": 120, "damage": 15, "cooldown": 1.8, "range": 85},
+        }
+    },
 }
 
