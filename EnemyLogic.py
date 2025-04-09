@@ -7,25 +7,27 @@ from EnemyData import mob_data
 
 # enemy's path
 WAYPOINTS = [
-    (-40, 160),
-    (60, 160),
-    (60, 40),
-    (180, 40),
-    (180, 200),
-    (340, 200),
-    (340, 120),
-    (570, 120)
+    (-40, 195),
+    (82, 195),
+    (82, 75),
+    (202, 75),
+    (202, 235),
+    (362, 235),
+    (362, 155),
+    (601, 155),
+    (601, 155)
 ]
 
 GIANT_PATH = [
-    (-120, 35),
-    (-20, 35),
-    (-20, -85),
-    (100, -85),
-    (100, 75),
-    (260, 75),
-    (260, -5),
-    (510, -5)
+    (-100, 120),
+    (52, 120),
+    (52, 10),
+    (173, 10),
+    (173, 164),
+    (333, 164),
+    (333, 87),
+    (595, 87),
+    (595, 87)
 ]
 
 BASE_PATH = abspath(dirname(__file__))
@@ -148,9 +150,9 @@ class Enemy:
         #bar_y = self.rect.top + 69  # ← move this number up or down as needed
 
         if "giant" in self.color.lower():
-            bar_y = self.rect.top + 195 #giant mushroom bar
+            bar_y = self.rect.top + 112 #giant mushroom bar
         else:
-            bar_y = self.rect.top + 69 #regular mushroom bar
+            bar_y = self.rect.top + 42 #regular mushroom bar
 
 
 
