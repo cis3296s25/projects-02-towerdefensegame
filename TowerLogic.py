@@ -26,11 +26,13 @@ class Tower:
         self.cost = towers_base[tower_name]["cost"]
         self.cooldown = towers_base[tower_name]["cooldown"]
         self.projectile = towers_base[tower_name]["projectile"]
+        self.aoeDmg = towers_base[tower_name]["aoeDmg"]
         self.screen = screen
         self.attack_time = 0
-        self.fireballs = pygame.sprite.Group()
+        self.projectiles = pygame.sprite.Group()
         self.target = None
         self.upgrade = 0
+
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -69,8 +71,8 @@ class Tower:
 
 
 
-        for fireball in self.fireballs:
-            fireball.draw()
+        for projectile in self.projectiles:
+            projectile.draw()
 
     #def enemy_in_range(self, enemy):
     #    dx = enemy.x - self.x  # get x distance between enemy and tower
@@ -99,37 +101,42 @@ class Tower:
 
     # fixes towers not attacking giant: come back to here if any problems
     def take_aim(self, enemies):
-        for enemy in enemies:
-            if enemy.hp > 0:
-                enemy_center_x = enemy.rect.centerx
-                enemy_center_y = enemy.rect.centery
-                dx = enemy_center_x - self.x
-                dy = enemy_center_y - self.y
-                dist = (dx ** 2 + dy ** 2) ** 0.5
-                if dist <= self.range:
-                    self.target = enemy
-                    fireball = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage = self.damage)
-                    self.fireballs.add(fireball)  # Add fireball to group
-                    self.attack_time = pygame.time.get_ticks()
-                    # Place all damage logic below
-                    self.target.hp -= fireball.damage
-                    if self.target.hp <= 0:
-                        self.target.is_dying = True
+        if self.aoeDmg:
+            for enemy in enemies:
+                if enemy.hp > 0:
+                    if self.get_distance(enemy) <= self.range:
+                        self.target = enemy
+                        enemy.hp -= self.damage
+                        if self.target.hp <= 0:
+                            self.target.is_dying = True
+        else:
+            for enemy in enemies:
+                if enemy.hp > 0:
+                    dist = self.get_distance(enemy)
+                    if dist <= self.range:
+                        self.target = enemy
+                        projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage = self.damage)
+                        self.projectiles.add(projectile)  # Add fireball to group
+                        self.attack_time = pygame.time.get_ticks()
+                        # Place all damage logic below
+                        self.target.hp -= projectile.damage
+                        if self.target.hp <= 0:
+                            self.target.is_dying = True
 
-                    break
+                        break
 
     def attack(self, enemies, fps):
         #Add attack anims here
         if self.target:
             self.animating = True
-            self.fireballs.update()
+            self.projectiles.update()
         else:
             if pygame.time.get_ticks() - self.attack_time > (self.cooldown * 1000) * (60 / fps):
                 self.take_aim(enemies)
 
     def update(self):
         # Update all fireballs
-        self.fireballs.update()
+        self.projectiles.update()
 
     def do_upgrade(self):
         if self.upgrade == 3:
@@ -140,6 +147,13 @@ class Tower:
             self.cooldown = towers_base[self.tower_name]["upgrades"][self.upgrade]["cooldown"]
             self.range = towers_base[self.tower_name]["upgrades"][self.upgrade]["range"]
 
+    def get_distance(self, enemy):
+        enemy_center_x = enemy.rect.centerx
+        enemy_center_y = enemy.rect.centery
+        dx = enemy_center_x - self.x
+        dy = enemy_center_y - self.y
+        dist = (dx ** 2 + dy ** 2) ** 0.5
+        return dist
     # def attack(self, enemies):
     #     if self.can_attack(enemy):
     #         self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000

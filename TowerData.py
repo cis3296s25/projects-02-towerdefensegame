@@ -4,6 +4,7 @@ towers_base = {
         "range": 120,
         "damage": 10,
         "projectile": "fireball",
+        "aoeDmg": False,
         "cooldown": 2,
         "cost": 100,
         "upgrades": {
@@ -16,6 +17,7 @@ towers_base = {
         "range": 150,
         "damage": 8,
         "projectile": "arrow",
+        "aoeDmg": False,
         "cooldown": 1.5,
         "cost": 80,
         "upgrades": {
@@ -28,6 +30,7 @@ towers_base = {
         "range": 50,
         "damage": 25,
         "projectile": "arrow",
+        "aoeDmg": True,
         "cooldown": 2.5,
         "cost": 120,
         "upgrades": {
