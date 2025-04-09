@@ -40,7 +40,9 @@ class Tower:
         image_path = os.path.join("images", "towers", folder)
 
         self.frames = [
-            pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i + 1}.png")).convert_alpha()
+            pygame.transform.scale( # scale the animation images to 40x40
+            pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i + 1}.png")).convert_alpha(), (40,40)
+            )
             for i in range(6)
         ]
 

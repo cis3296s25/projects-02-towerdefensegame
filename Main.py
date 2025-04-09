@@ -108,9 +108,9 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    witchButton = Button(600, 72, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\n cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(660, 72, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\n cost: 80\n atk: 8")
-    bearButton = Button(600, 120, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\n cost: 100\n atk: 50")
+    witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\n cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(680, 95, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\n cost: 80\n atk: 8")
+    bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\n cost: 100\n atk: 50")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
