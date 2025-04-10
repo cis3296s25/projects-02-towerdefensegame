@@ -4,7 +4,6 @@ import random
 from pygame import mixer
 import os
 
-
 from TowerData import towers_base
 
 class Spore:
@@ -222,12 +221,15 @@ def number_wave(screen, wave_number):
     screen.blit(wave_text, (630, 360))  # Position the Wave text
 
 def draw_boss_health_bar(screen, boss):
+    sporeshield_label = pygame.image.load("images/sporeshield.png").convert_alpha()
+    shroomgod_label = pygame.image.load("images/shroomgod.png").convert_alpha()
+    
     #Health Bar Dimensions
     screen_width = screen.get_width()
     bar_width = 400
     bar_height = 20
     bar_x = (screen_width - bar_width) // 2
-    bar_y = 20  # top margin
+    bar_y = 40  # top margin
 
     #border
     pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
@@ -240,14 +242,14 @@ def draw_boss_health_bar(screen, boss):
     # Draw shield bar (Phase 1)
     if boss.phase == 1:
         shield_ratio = boss.hp / boss.shield_hp
-        pygame.draw.rect(screen, (100, 100, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
+        pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
 
     # Boss name
-    font = pygame.font.SysFont("Arial", 20, bold=True)
-    name = "The Sporeshield" if boss.phase == 1 else "Shroomgod Unleashed"
-    label = font.render(name, True, (255, 255, 255))
-    label_rect = label.get_rect(center=(screen_width // 2, bar_y - 15))
-    screen.blit(label, label_rect)
+    if boss.phase == 1:
+        screen.blit(sporeshield_label, (screen.get_width() // 2 - sporeshield_label.get_width() // 2, -238))
+    elif boss.phase == 2:
+        screen.blit(shroomgod_label, (screen.get_width() // 2 - shroomgod_label.get_width() // 2, -238))
+
 
 
 def draw_grid(screen):

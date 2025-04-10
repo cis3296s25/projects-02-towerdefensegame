@@ -35,7 +35,7 @@ BASE_PATH = abspath(dirname(__file__))
 
 class Enemy:
 
-    def __init__(self, x, y, screen, color, waypoints = None):
+    def __init__(self, x, y, screen, color, waypoints = None, scream_sound = None, boss_music = None):
 
         self.waypoints = waypoints if waypoints else WAYPOINTS
         self.color = color
@@ -101,10 +101,13 @@ class Enemy:
             self.shield_hp = 1000
             self.hp = self.shield_hp
 
+            self.boss_scream_sound = scream_sound
+            self.boss_battle_music = boss_music
+
             # Boss transformation setup
             
             self.transformation_start = 0
-            self.transformation_duration = 2000  # 2 seconds
+            self.transformation_duration = 2500  # 2.5 seconds
 
             self.load_boss_frames()
 
@@ -180,6 +183,10 @@ class Enemy:
                 self.speed = 0  # stop boss movement
                 self.target = None  # towers should also stop firing (handled externally)
                 self.image = self.frames[0]  # freeze current frame
+
+                if self.boss_scream_sound:
+                    pygame.mixer.music.stop()
+                    self.boss_scream_sound.play()
                 return
 
             # Handle transformation timer
@@ -190,12 +197,16 @@ class Enemy:
                     self.transforming = False
                     self.hp = 1500
                     self.max_hp = 1500
-                    self.speed = 0.15
+                    self.speed = 0.4
                     self.frames = self.phase2_frames
                     self.death_frames = self.phase2_death_frames
                     self.current_frame = 0
                     self.frame_timer = 0
                     self.image = self.frames[0]
+
+                    if self.boss_battle_music:
+                        pygame.mixer.music.load(self.boss_battle_music)
+                        pygame.mixer.music.play(-1)
                 return  # Don't move while transforming
 
         # Death animation (only for enemies or boss in phase 2)
