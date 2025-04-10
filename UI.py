@@ -242,7 +242,7 @@ def draw_boss_health_bar(screen, boss):
     # Draw shield bar (Phase 1)
     if boss.phase == 1:
         shield_ratio = boss.hp / boss.shield_hp
-        pygame.draw.rect(screen, (100, 100, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
+        pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
 
     # Boss name
     if boss.phase == 1:
