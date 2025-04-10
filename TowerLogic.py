@@ -64,10 +64,13 @@ class Tower:
         # attack sound for each tower
         if self.tower_name == "Witch":
             self.witch_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.mp3"))
+            self.witch_attack_sound.set_volume(0.3) # volume control of each attack
         elif self.tower_name == "Archer":
             self.archer_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.mp3"))
+            self.archer_attack_sound.set_volume(0.4)
         elif self.tower_name == "Bear":
             self.bear_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.mp3"))
+            self.bear_attack_sound.set_volume(0.5)
 
     def draw(self, boolean):
         if boolean:
@@ -124,11 +127,11 @@ class Tower:
                         self.target = enemy
                         enemy.hp -= self.damage
                         if self.tower_name == "Witch" and self.witch_attack_sound:
-                            self.witch_attack_sound.play()
+                            self.witch_attack_sound.play(fade_ms=100)
                         elif self.tower_name == "Archer" and self.archer_attack_sound:
-                            self.archer_attack_sound.play()
+                            self.archer_attack_sound.play(fade_ms=100)
                         elif self.tower_name == "Bear" and self.bear_attack_sound:
-                            self.bear_attack_sound.play()
+                            self.bear_attack_sound.play(fade_ms=100)
 
                         # Only mark as dying if NOT Phase 1 boss
                         if enemy.hp <= 0:
