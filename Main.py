@@ -29,7 +29,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 400
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-FINAL_WAVE = 6
+FINAL_WAVE = 10
 
 IMG_NAMES = [
     "enemySample40x40",
@@ -63,17 +63,25 @@ def resource_path(relative_path):
 #wave helper function
 def get_wave_data(wave):
     if wave == 1:
-        return["Red"] * 1
+        return["Red"] * 3
     elif wave == 2:
-        return["Red"] * 4
+        return["Red"] * 7
     elif wave == 3:
         return["Red"] * 3 + ["Blue"] * 3
     elif wave == 4:
-        return["Blue"] * 4 + ["Purple"] * 2 + ["Glowing"] * 1
+        return["Blue"] * 4 + ["Purple"] * 2
     elif wave == 5:
-        return["Boss"] * 1
+        return["Purple"] * 3 + ["Blue"] * 2 + ["Glowing"] * 2
     elif wave == 6:
-        return["Giant"] * 3 + ["Red"] * 5
+        return["Glowing"] * 2 + ["Giant"] * 1
+    elif wave == 7:
+        return["Blue"] * 8 + ["Purple"] * 4 + ["Glowing"] * 3
+    elif wave == 8:
+        return["Glowing"] * 3 + ["Purple"] * 2 + ["Glowing"] * 2 + ["Purple"] * 1 + ["Glowing"] * 1 + ["Purple"] * 3
+    elif wave == 9:
+        return["Giant"] * 3 + ["Red"] * 5 + ["Blue"] * 2
+    elif wave == 10:
+        return["Boss"] * 1
     else:
         return["Red"] * 5
 
