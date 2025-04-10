@@ -26,6 +26,7 @@ class Spore:
         pygame.draw.circle(screen, color, (int(self.x), int(self.y)), self.radius)
 
 def homescreen(screen):
+    mixer.stop() # stop all bgm from playing
     clock = pygame.time.Clock()
 
     # Load logo and buttons
@@ -98,6 +99,12 @@ def pause_screen(screen, mixer):
     mixer.music.unpause()
 
 def gameclear_screen(screen):
+    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+    mixer.music.stop()
+
+    gameclear_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameclear.mp3"))
+    gameclear_sound.play(fade_ms=500)
+
     clock = pygame.time.Clock()
 
     game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
