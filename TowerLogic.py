@@ -35,10 +35,7 @@ class Tower:
         self.projectiles = pygame.sprite.Group()
         self.target = None
         self.upgrade = 0
-        self.witch_attack_sound = None
-        self.archer_attack_sound = None
-        self.bear_attack_sound = None
-
+        self.attack_sound = None
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -63,14 +60,14 @@ class Tower:
 
         # attack sound for each tower
         if self.tower_name == "Witch":
-            self.witch_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.mp3"))
-            self.witch_attack_sound.set_volume(0.3) # volume control of each attack
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.mp3"))
+            self.attack_sound.set_volume(0.3) # volume control of each attack
         elif self.tower_name == "Archer":
-            self.archer_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.mp3"))
-            self.archer_attack_sound.set_volume(0.4)
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.mp3"))
+            self.attack_sound.set_volume(0.4)
         elif self.tower_name == "Bear":
-            self.bear_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.mp3"))
-            self.bear_attack_sound.set_volume(0.5)
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.mp3"))
+            self.attack_sound.set_volume(0.5)
 
     def draw(self, boolean):
         if boolean:
@@ -97,8 +94,6 @@ class Tower:
     #        return True
     #    return False
 
-
-    
     def update_animation(self, fps):
         if self.animating:
             current_time = pygame.time.get_ticks()
@@ -117,6 +112,8 @@ class Tower:
     # fixes towers not attacking giant: come back to here if any problems
     def take_aim(self, enemies):
         if self.aoeDmg:
+            enemy_hit = False
+            
             for enemy in enemies:
                 if enemy.hp > 0:
                     # Skip boss while transforming
@@ -126,12 +123,7 @@ class Tower:
                     if self.get_distance(enemy) <= self.range:
                         self.target = enemy
                         enemy.hp -= self.damage
-                        if self.tower_name == "Witch" and self.witch_attack_sound:
-                            self.witch_attack_sound.play(fade_ms=100)
-                        elif self.tower_name == "Archer" and self.archer_attack_sound:
-                            self.archer_attack_sound.play(fade_ms=100)
-                        elif self.tower_name == "Bear" and self.bear_attack_sound:
-                            self.bear_attack_sound.play(fade_ms=100)
+                        enemy_hit = True
 
                         # Only mark as dying if NOT Phase 1 boss
                         if enemy.hp <= 0:
@@ -139,6 +131,9 @@ class Tower:
                                 pass  # Let phase transition handle it
                             else:
                                 enemy.is_dying = True
+
+            if enemy_hit and self.attack_sound: # bear attack sound
+                self.attack_sound.play(fade_ms=100)
         else:
             for enemy in enemies:
                 if enemy.hp > 0:
@@ -152,10 +147,10 @@ class Tower:
                         projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage=self.damage)
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
-                        if self.tower_name == "Witch" and self.witch_attack_sound: # plays sound when they shoot, when they make projectile
-                            self.witch_attack_sound.play()
-                        elif self.tower_name == "Archer" and self.archer_attack_sound:
-                            self.archer_attack_sound.play()
+
+                        if self.attack_sound: # play witch and archer attack sound when shooting
+                            self.attack_sound.play(fade_ms=100)
+
                         self.target.hp -= projectile.damage
 
                         # Only mark as dying if NOT Phase 1 boss
