@@ -1,9 +1,12 @@
 import pygame
 import pygame as pg
+from pygame import mixer
 import os
 
 from ProjectileLogic import Projectile
 from TowerData import towers_base
+
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
 ENEMY_PATHS = [
@@ -32,6 +35,9 @@ class Tower:
         self.projectiles = pygame.sprite.Group()
         self.target = None
         self.upgrade = 0
+        self.witch_attack_sound = None
+        self.archer_attack_sound = None
+        self.bear_attack_sound = None
 
 
         # Load animation frames from folder
@@ -54,6 +60,13 @@ class Tower:
         self.animating = False
         self.last_anim_time = 0
         self.anim_speed = 100  # milliseconds between frames
+        # Load specific attack sound depending on tower
+        if self.tower_name == "Witch":
+            self.witch_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.wav"))
+        elif self.tower_name == "Archer":
+            self.archer_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.wav"))
+        elif self.tower_name == "Bear":
+            self.bear_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.wav"))
 
     def draw(self, boolean):
         if boolean:
@@ -68,8 +81,6 @@ class Tower:
 
         # Draw the tower's animation
         self.screen.blit(self.image, (self.x, self.y))
-
-
 
         for projectile in self.projectiles:
             projectile.draw()
@@ -111,6 +122,12 @@ class Tower:
                     if self.get_distance(enemy) <= self.range:
                         self.target = enemy
                         enemy.hp -= self.damage
+                        if self.tower_name == "Witch" and self.witch_attack_sound:
+                            self.witch_attack_sound.play()
+                        elif self.tower_name == "Archer" and self.archer_attack_sound:
+                            self.archer_attack_sound.play()
+                        elif self.tower_name == "Bear" and self.bear_attack_sound:
+                            self.bear_attack_sound.play()
 
                         # Only mark as dying if NOT Phase 1 boss
                         if enemy.hp <= 0:
