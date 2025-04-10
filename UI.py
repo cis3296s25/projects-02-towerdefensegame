@@ -138,6 +138,7 @@ def gameover_screen(screen):
     mixer.music.stop()
 
     gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
+    gameover_sound.set_volume(0.4)
     gameover_sound.play()
 
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
