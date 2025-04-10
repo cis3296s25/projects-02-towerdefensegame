@@ -60,13 +60,14 @@ class Tower:
         self.animating = False
         self.last_anim_time = 0
         self.anim_speed = 100  # milliseconds between frames
-        # Load specific attack sound depending on tower
+
+        # attack sound for each tower
         if self.tower_name == "Witch":
-            self.witch_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.wav"))
+            self.witch_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.mp3"))
         elif self.tower_name == "Archer":
-            self.archer_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.wav"))
+            self.archer_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.mp3"))
         elif self.tower_name == "Bear":
-            self.bear_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.wav"))
+            self.bear_attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.mp3"))
 
     def draw(self, boolean):
         if boolean:
@@ -148,6 +149,10 @@ class Tower:
                         projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage=self.damage)
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
+                        if self.tower_name == "Witch" and self.witch_attack_sound: # plays sound when they shoot, when they make projectile
+                            self.witch_attack_sound.play()
+                        elif self.tower_name == "Archer" and self.archer_attack_sound:
+                            self.archer_attack_sound.play()
                         self.target.hp -= projectile.damage
 
                         # Only mark as dying if NOT Phase 1 boss
@@ -195,4 +200,3 @@ class Tower:
     #         self.animating = True
     #         return True
     #     return False
-
