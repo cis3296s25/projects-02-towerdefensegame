@@ -24,6 +24,10 @@ mixer.init()
 mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
 mixer.music.set_volume(0.5)
 
+boss_scream_sound = mixer.Sound(BASE_PATH + "/sounds/bossScream.flac")
+boss_battle_music = BASE_PATH + "/sounds/bossbattle.wav"
+
+
 
 SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 400
@@ -44,6 +48,8 @@ IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
     for name in IMG_NAMES
 }
+
+
 enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 witchImage = IMAGES["witchSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
@@ -108,7 +114,7 @@ def game():
 
     #Wave Logic
     wave_number = 1
-    lives = 2  # Starting number of lives
+    lives = 25  # Starting number of lives
     money = 550  # Starting amount of money
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
@@ -289,7 +295,13 @@ def game():
                     )
                 elif color == "Boss":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
+                        GIANT_PATH[0][0], 
+                        GIANT_PATH[0][1], 
+                        screen, 
+                        color, 
+                        waypoints=GIANT_PATH, 
+                        scream_sound = boss_scream_sound, 
+                        boss_music=boss_battle_music
                     )
                 else:
                     new_enemy = Enemy(
