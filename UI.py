@@ -130,7 +130,7 @@ def gameover_screen(screen):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
-    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3"))
+    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
     gameover_sound.play()
 
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
