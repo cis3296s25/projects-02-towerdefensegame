@@ -204,6 +204,35 @@ def number_wave(screen, wave_number):
     wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
     screen.blit(wave_text, (630, 360))  # Position the Wave text
 
+def draw_boss_health_bar(screen, boss):
+    #Health Bar Dimensions
+    screen_width = screen.get_width()
+    bar_width = 400
+    bar_height = 20
+    bar_x = (screen_width - bar_width) // 2
+    bar_y = 20  # top margin
+
+    #border
+    pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
+
+    # Draw main health (phase 2 or after shield broken)
+    if boss.phase == 2:
+        health_ratio = boss.hp / boss.max_hp
+        pygame.draw.rect(screen, (255, 0, 0), (bar_x, bar_y, bar_width * health_ratio, bar_height))
+
+    # Draw shield bar (Phase 1)
+    if boss.phase == 1:
+        shield_ratio = boss.hp / boss.shield_hp
+        pygame.draw.rect(screen, (100, 100, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
+
+    # Boss name
+    font = pygame.font.SysFont("Arial", 20, bold=True)
+    name = "The Sporeshield" if boss.phase == 1 else "Shroomgod Unleashed"
+    label = font.render(name, True, (255, 255, 255))
+    label_rect = label.get_rect(center=(screen_width // 2, bar_y - 15))
+    screen.blit(label, label_rect)
+
+
 def draw_grid(screen):
     grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
     grid_surface.set_alpha(15)  # Set transparency (0 = fully transparent, 255 = fully opaque)

@@ -28,5 +28,11 @@ mob_data = {
         "Health": 500,
         "Speed": 0.1,
         "Money": 250
+    },
+    "Boss": {
+        "Damage": 100,        # Phase 2 damage (Phase 1 is shielded)
+        "Health": 2500,       # Total HP including shield
+        "Speed": 0.07,        # Base speed in Phase 1 (can increase later)
+        "Money": 1000         # Reward for defeating final boss
     }
 }

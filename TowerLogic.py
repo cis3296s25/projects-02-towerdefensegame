@@ -104,26 +104,43 @@ class Tower:
         if self.aoeDmg:
             for enemy in enemies:
                 if enemy.hp > 0:
+                    # Skip boss while transforming
+                    if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
+                        continue
+
                     if self.get_distance(enemy) <= self.range:
                         self.target = enemy
                         enemy.hp -= self.damage
-                        if self.target.hp <= 0:
-                            self.target.is_dying = True
+
+                        # Only mark as dying if NOT Phase 1 boss
+                        if enemy.hp <= 0:
+                            if getattr(enemy, "is_boss", False) and getattr(enemy, "phase", 1) == 1:
+                                pass  # Let phase transition handle it
+                            else:
+                                enemy.is_dying = True
         else:
             for enemy in enemies:
                 if enemy.hp > 0:
+                    # Skip boss while transforming
+                    if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
+                        continue
+
                     dist = self.get_distance(enemy)
                     if dist <= self.range:
                         self.target = enemy
-                        projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage = self.damage)
-                        self.projectiles.add(projectile)  # Add fireball to group
+                        projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage=self.damage)
+                        self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
-                        # Place all damage logic below
                         self.target.hp -= projectile.damage
-                        if self.target.hp <= 0:
-                            self.target.is_dying = True
 
+                        # Only mark as dying if NOT Phase 1 boss
+                        if self.target.hp <= 0:
+                            if getattr(self.target, "is_boss", False) and getattr(self.target, "phase", 1) == 1:
+                                pass
+                            else:
+                                self.target.is_dying = True
                         break
+
 
     def attack(self, enemies, fps):
         #Add attack anims here
