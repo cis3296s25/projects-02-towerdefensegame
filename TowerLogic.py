@@ -1,9 +1,12 @@
 import pygame
 import pygame as pg
+from pygame import mixer
 import os
 
 from ProjectileLogic import Projectile
 from TowerData import towers_base
+
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
 # ENEMY PATHS WHERE TOWERS CANNOT BE PLACED
 ENEMY_PATHS = [
@@ -32,7 +35,7 @@ class Tower:
         self.projectiles = pygame.sprite.Group()
         self.target = None
         self.upgrade = 0
-
+        self.attack_sound = None
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -55,6 +58,17 @@ class Tower:
         self.last_anim_time = 0
         self.anim_speed = 100  # milliseconds between frames
 
+        # attack sound for each tower
+        if self.tower_name == "Witch":
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "witchAttack.mp3"))
+            self.attack_sound.set_volume(0.3) # volume control of each attack
+        elif self.tower_name == "Archer":
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "archerAttack.mp3"))
+            self.attack_sound.set_volume(0.4)
+        elif self.tower_name == "Bear":
+            self.attack_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "bearAttack.mp3"))
+            self.attack_sound.set_volume(0.5)
+
     def draw(self, boolean):
         if boolean:
             # Create a transparent surface for the range circle
@@ -69,8 +83,6 @@ class Tower:
         # Draw the tower's animation
         self.screen.blit(self.image, (self.x, self.y))
 
-
-
         for projectile in self.projectiles:
             projectile.draw()
 
@@ -82,8 +94,6 @@ class Tower:
     #        return True
     #    return False
 
-
-    
     def update_animation(self, fps):
         if self.animating:
             current_time = pygame.time.get_ticks()
@@ -102,6 +112,8 @@ class Tower:
     # fixes towers not attacking giant: come back to here if any problems
     def take_aim(self, enemies):
         if self.aoeDmg:
+            enemy_hit = False
+            
             for enemy in enemies:
                 if enemy.hp > 0:
                     # Skip boss while transforming
@@ -111,6 +123,7 @@ class Tower:
                     if self.get_distance(enemy) <= self.range:
                         self.target = enemy
                         enemy.hp -= self.damage
+                        enemy_hit = True
 
                         # Only mark as dying if NOT Phase 1 boss
                         if enemy.hp <= 0:
@@ -118,6 +131,9 @@ class Tower:
                                 pass  # Let phase transition handle it
                             else:
                                 enemy.is_dying = True
+
+            if enemy_hit and self.attack_sound: # bear attack sound
+                self.attack_sound.play(fade_ms=100)
         else:
             for enemy in enemies:
                 if enemy.hp > 0:
@@ -131,6 +147,10 @@ class Tower:
                         projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage=self.damage)
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
+
+                        if self.attack_sound: # play witch and archer attack sound when shooting
+                            self.attack_sound.play(fade_ms=100)
+
                         self.target.hp -= projectile.damage
 
                         # Only mark as dying if NOT Phase 1 boss
@@ -178,4 +198,3 @@ class Tower:
     #         self.animating = True
     #         return True
     #     return False
-

@@ -1,6 +1,9 @@
 import pygame
 import sys #required for .exe creation
 import random
+from pygame import mixer
+import os
+
 
 from TowerData import towers_base
 
@@ -23,6 +26,7 @@ class Spore:
         pygame.draw.circle(screen, color, (int(self.x), int(self.y)), self.radius)
 
 def homescreen(screen):
+    mixer.stop() # stop all bgm from playing
     clock = pygame.time.Clock()
 
     # Load logo and buttons
@@ -95,6 +99,12 @@ def pause_screen(screen, mixer):
     mixer.music.unpause()
 
 def gameclear_screen(screen):
+    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+    mixer.music.stop()
+
+    gameclear_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameclear.mp3"))
+    gameclear_sound.play(fade_ms=500)
+
     clock = pygame.time.Clock()
 
     game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
@@ -124,6 +134,13 @@ def gameclear_screen(screen):
         clock.tick(60)
 
 def gameover_screen(screen):
+    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+    mixer.music.stop()
+
+    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
+    gameover_sound.set_volume(0.4)
+    gameover_sound.play()
+
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
     quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
 
