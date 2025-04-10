@@ -31,12 +31,12 @@ towers_base = {
         "damage": 25,
         "projectile": "arrow",
         "aoeDmg": True,
-        "cooldown": 2.5,
+        "cooldown": 2.8,
         "cost": 120,
         "upgrades": {
-            1: {"cost": 60, "damage": 10, "cooldown": 2.3, "range": 60},
-            2: {"cost": 80, "damage": 12, "cooldown": 2.1, "range": 65},
-            3: {"cost": 120, "damage": 15, "cooldown": 1.8, "range": 85},
+            1: {"cost": 60, "damage": 28, "cooldown": 2.5, "range": 60},
+            2: {"cost": 80, "damage": 35, "cooldown": 2.3, "range": 65},
+            3: {"cost": 120, "damage": 45, "cooldown": 2.0, "range": 80},
         }
     },
 }
