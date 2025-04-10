@@ -144,7 +144,7 @@ class Tower:
                     dist = self.get_distance(enemy)
                     if dist <= self.range:
                         self.target = enemy
-                        projectile = Projectile(self.x, self.y, self.projectile, self.target, speed=3, screen=self.screen, damage=self.damage)
+                        projectile = Projectile(self.x, self.y, self.projectile, self.range, self.target, speed=3, screen=self.screen, damage=self.damage)
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
 
