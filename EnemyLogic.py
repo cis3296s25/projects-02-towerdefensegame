@@ -54,10 +54,20 @@ class Enemy:
 
         image_path = os.path.join(BASE_PATH, "images", "enemy1", folder)
 
-        self.frames = [
-            pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i}.png")).convert_alpha()
-            for i in range(8)
-        ]
+        if self.color == "Boss":
+            self.load_boss_frames()
+        else:
+            folder = f"{color}Mushroom"
+            frame_prefix = color.lower() + "mushroom"
+            image_path = os.path.join(BASE_PATH, "images", "enemy1", folder)
+            self.frames = [
+                pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i}.png")).convert_alpha()
+                for i in range(8)
+            ]
+            self.death_frames = [
+                pygame.image.load(os.path.join(image_path, "Die", f"{frame_prefix}die{i}.png")).convert_alpha()
+                for i in range(7)
+            ]
 
         self.current_frame = 0
         self.frame_timer = 0
@@ -77,16 +87,58 @@ class Enemy:
         self.target_x, self.target_y = self.waypoints[self.waypoint_index]
         self.reached_end = False 
 
-        #Load death animation frames
-        self.death_frames = [
-            pygame.image.load(os.path.join(image_path, "Die", f"{frame_prefix}die{i}.png")).convert_alpha()
-            for i in range(7)
-        ]
-
 
         self.is_dying = False
         self.death_frame_index = 0
         self.death_animation_done = False
+
+
+        self.transforming = False
+
+        self.is_boss = color == "Boss"
+        self.phase = 1 if self.is_boss else None
+        if self.is_boss:
+            self.shield_hp = 1000
+            self.hp = self.shield_hp
+
+            # Boss transformation setup
+            
+            self.transformation_start = 0
+            self.transformation_duration = 2000  # 2 seconds
+
+            self.load_boss_frames()
+
+    def load_boss_frames(self):
+        if self.color == "Boss":
+            #Phase 1 walking frames
+            image_path = os.path.join(BASE_PATH, "images", "enemy1", "BossMushroom", "Phase1")
+            self.frames = [
+                pygame.image.load(os.path.join(image_path, f"bossphase1_{i}.png")).convert_alpha()
+                for i in range(8)
+            ]
+
+            #Phase 2 walking and death frames
+            self.phase2_frames = [
+                pygame.image.load(os.path.join(BASE_PATH, "images", "enemy1", "BossMushroom", "Phase2", f"bossphase2_{i}.png")).convert_alpha()
+                for i in range(8)
+            ]
+            self.phase2_death_frames = [
+                pygame.image.load(os.path.join(BASE_PATH, "images", "enemy1", "BossMushroom", "Phase2", "Die", f"bossphase2die{i}.png")).convert_alpha()
+                for i in range(7)
+            ]
+
+        else:
+            folder = f"{self.color}Mushroom"
+            frame_prefix = self.color.lower() + "mushroom"
+            image_path = os.path.join(BASE_PATH, "images", "enemy1", folder)
+            self.frames = [
+                pygame.image.load(os.path.join(image_path, f"{frame_prefix}{i}.png")).convert_alpha()
+                for i in range(8)
+            ]
+            self.death_frames = [
+                pygame.image.load(os.path.join(image_path, "Die", f"{frame_prefix}die{i}.png")).convert_alpha()
+                for i in range(7)
+            ]
 
     def move(self):
         if self.reached_end:  # Enemy reached the end
@@ -119,24 +171,52 @@ class Enemy:
 
     #update method handles whether move animation or death animation is played
     def update(self):
+        if self.is_boss:
+            # Start transformation if shield breaks
+            if self.phase == 1 and self.hp <= 0 and not self.transforming:
+                self.phase = 2
+                self.transforming = True
+                self.transformation_start = pygame.time.get_ticks()
+                self.speed = 0  # stop boss movement
+                self.target = None  # towers should also stop firing (handled externally)
+                self.image = self.frames[0]  # freeze current frame
+                return
+
+            # Handle transformation timer
+            if self.transforming:
+                now = pygame.time.get_ticks()
+                if now - self.transformation_start >= self.transformation_duration:
+                    # End transformation and enter Phase 2
+                    self.transforming = False
+                    self.hp = 1500
+                    self.max_hp = 1500
+                    self.speed = 0.15
+                    self.frames = self.phase2_frames
+                    self.death_frames = self.phase2_death_frames
+                    self.current_frame = 0
+                    self.frame_timer = 0
+                    self.image = self.frames[0]
+                return  # Don't move while transforming
+
+        # Death animation (only for enemies or boss in phase 2)
         if self.is_dying:
             self.frame_timer += 1
-            if self.frame_timer % 10 == 0: #can adjust speed as needed
+            if self.frame_timer % 10 == 0:
                 if self.death_frame_index < len(self.death_frames):
                     self.image = self.death_frames[self.death_frame_index]
                     self.death_frame_index += 1
                 else:
                     self.death_animation_done = True
-                    self.death_frame_index = 0  # Reset the death frame index
-                    self.frame_timer = 0  # Reset the frame timer
-                    #self.death_animation_done = False  # Reset the death animation flag
-                    #self.is_dying = False  # Stop the death animation from looping
-
+                    self.death_frame_index = 0
+                    self.frame_timer = 0
             return
-        
+
+        # Normal move animation
         self.move()
 
-    
+
+
+
     def draw(self):
 
         #pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, 40, 40))  # Red square as an Enemy
@@ -148,8 +228,9 @@ class Enemy:
         # Center above the enemy based on its rect
         bar_x = self.rect.centerx - bar_width // 2
         #bar_y = self.rect.top + 69  # ← move this number up or down as needed
-
-        if "giant" in self.color.lower():
+        if getattr(self, "is_boss", False):
+            return
+        elif "giant" in self.color.lower():
             bar_y = self.rect.top + 112 #giant mushroom bar
         else:
             bar_y = self.rect.top + 42 #regular mushroom bar
