@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen, draw_boss_health_bar
 from os.path import abspath, dirname
 from TowerData import towers_base
 
@@ -71,7 +71,7 @@ def get_wave_data(wave):
     elif wave == 4:
         return["Blue"] * 4 + ["Purple"] * 2 + ["Glowing"] * 1
     elif wave == 5:
-        return["Giant"] * 1
+        return["Boss"] * 1
     elif wave == 6:
         return["Giant"] * 3 + ["Red"] * 5
     else:
@@ -279,6 +279,10 @@ def game():
                     new_enemy = Enemy(
                         GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
                     )
+                elif color == "Boss":
+                    new_enemy = Enemy(
+                        GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
+                    )
                 else:
                     new_enemy = Enemy(
                         WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
@@ -327,6 +331,10 @@ def game():
                         break
 
             enemy.draw()
+
+            if getattr(enemy, "is_boss", False):
+                draw_boss_health_bar(screen, enemy)
+                break  # Only one boss expected at a time
         # end enemy loop
         
         if not enemies and spawned_count == len(current_wave_enemies):
