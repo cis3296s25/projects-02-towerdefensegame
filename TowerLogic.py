@@ -28,7 +28,7 @@ class Tower:
         self.damage = towers_base[tower_name]["damage"]
         self.cost = towers_base[tower_name]["cost"]
         self.cooldown = towers_base[tower_name]["cooldown"]
-        self.projectile = towers_base[tower_name]["projectile"]
+        self.projectile = towers_base[tower_name]["projectile"]["name"]
         self.aoeDmg = towers_base[tower_name]["aoeDmg"]
         self.screen = screen
         self.attack_time = 0
@@ -158,7 +158,10 @@ class Tower:
                     dist = self.get_distance(enemy)
                     if dist <= self.range:
                         self.target = enemy
-                        projectile = Projectile(self.x, self.y, self.projectile, self.range, self.target, speed=3, screen=self.screen, damage=self.damage)
+                        projectile = Projectile(self.x, self.y, self.projectile,
+                                                self.range, towers_base[self.tower_name]["projectile"]["frenetic"], self.target,
+                                                speed=towers_base[self.tower_name]["projectile"]["speed"],
+                                                screen=self.screen, damage=self.damage)
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
 

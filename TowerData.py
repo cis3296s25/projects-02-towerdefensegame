@@ -1,9 +1,12 @@
-import os
 towers_base = {
     "Witch": {
         "range": 120,
         "damage": 10,
-        "projectile": "fireball",
+        "projectile": {
+            "name": "fireball",
+            "speed": 1,
+            "frenetic": True
+        },
         "aoeDmg": False,
         "cooldown": 2,
         "cost": 100,
@@ -16,7 +19,11 @@ towers_base = {
     "Archer": {
         "range": 150,
         "damage": 8,
-        "projectile": "arrow",
+        "projectile": {
+            "name": "arrow",
+            "speed": 6,
+            "frenetic": False
+        },
         "aoeDmg": False,
         "cooldown": 1.5,
         "cost": 80,
