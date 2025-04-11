@@ -1,11 +1,11 @@
 # Tower Defense Game
 Development of a tower defense game where the player places down towers to prevent the waves of enemies from reaching the base. Each wave will have a certain number of enemies and should get more challenging each wave. The game should be engaging, requiring many different strategies to complete. The towers are placed on a map with the enemies coming towards the base along a predetermined path    
 
-![This is a screenshot.](towerDefenseGameImg.png)
+![This is a screenshot.](shroomDefenseImg.png)
 # How to run
 Provide here instructions on how to use your application.
 - There are two ways you can run the game:
-- **Option 1:** Download a zip of the project to run the Main.exe in the 'dist' folder
+- **Option 1:** Download a zip of the project to run the Main.exe in the 'dist' folder (Not Working Currently)
 - **Option 2:** clone the repository
     - Make sure Python is downloaded
         - You can download python on the Python Website:
