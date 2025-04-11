@@ -164,7 +164,7 @@ def game():
 
     # Volume/mute state
     muted = False
-    volume = 0.1
+    volume = 0.5
     mixer.music.set_volume(volume)
 
     # Volume slider setup (placed inside sidebar area)
