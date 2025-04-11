@@ -34,10 +34,31 @@ Provide here instructions on how to use your application.
         ```
         pip3 install pygame
         ```
+    - If you are having trouble installing pygame then do this:
+    - First check where python is installed:
+        - Open Terminal on your PC (not vscode) and run:
+            - Windows
+            ```
+            where python
+            ```
+            - Mac
+            ```
+            which python3
+            ```
+    - Copy the output and install pygames by using YOUR OWN path and this:
+        - EXAMPLE RUN
+        - Windows
+        ```
+        "C:\Users\YourName\AppData\Local\Programs\Python\Python311\python.exe" -m pip install pygame
+        ```
+        - Mac
+        ```
+        /usr/bin/python3 -m pip3 install pygame
+        ```
     - Run Main.py on VS code or on Terminal
 
 # How to contribute
-Follow this project board to know the latest status of the project: https://github.com/orgs/cis3296s25/projects/66  
+Follow this project board to know the latest status of the project: https://github.com/orgs/cis3296s25/projects/66/views/1?filterQuery=  
 
 ### How to build
 - Use this github repository: ... 
