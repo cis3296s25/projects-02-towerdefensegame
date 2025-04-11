@@ -21,8 +21,7 @@ pygame.init()
 
 #code for background music
 mixer.init()
-mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
-mixer.music.set_volume(0.5)
+
 
 boss_scream_sound = mixer.Sound(BASE_PATH + "/sounds/bossScream.flac")
 boss_battle_music = BASE_PATH + "/sounds/bossbattle.wav"
@@ -99,6 +98,8 @@ def select_tower(pixel_x, pixel_y, towers):
     return None
 
 def game():
+    mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
+    mixer.music.set_volume(0.5)
     mixer.music.play(-1) #plays music after leaving homescreen
 
     # tower variables
