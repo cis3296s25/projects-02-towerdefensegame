@@ -128,7 +128,7 @@ def game():
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [witchButton, archerButton, bearButton]
+    buttons = [archerButton, bearButton, witchButton]
 
     def find_button(x, y):
         for button in buttons:
@@ -164,7 +164,7 @@ def game():
 
     # Volume/mute state
     muted = False
-    volume = 0.5
+    volume = 0.1
     mixer.music.set_volume(volume)
 
     # Volume slider setup (placed inside sidebar area)
@@ -230,9 +230,12 @@ def game():
                             print(f"Selected Tower at ({grid_x}, {grid_y})")
                             show_stats = True
                             show_range = True
+                        else:
+                            show_stats = False
+                            selected_tower = None
 
             ############################## HANDLE PLACING TOWERS ##############################
-                if placing_tower:
+                if placing_tower and temporary_tower:
                     # Place the tower on the map
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
@@ -252,7 +255,7 @@ def game():
                                 temporary_tower = None
                             else:
                                 print("Not enough money to place tower!")
-                elif find_button(mouse_x, mouse_y):
+                elif not show_stats and find_button(mouse_x, mouse_y):
                     # Start placing a tower
                     towerButton = find_button(mouse_x, mouse_y)
                     placing_tower = True
@@ -375,7 +378,7 @@ def game():
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
 
         # Draw buttons
-        if towerButton and towerButton.draw(screen): # if tower button is clicked
+        if not show_stats and towerButton and towerButton.draw(screen): # if tower button is clicked
             placing_tower = True
         if placing_tower == True:
             if cancelButton.draw(screen):
