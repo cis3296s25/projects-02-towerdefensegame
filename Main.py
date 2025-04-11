@@ -122,9 +122,9 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\n cost: 100\n atk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(680, 95, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\n cost: 80\n atk: 8")
-    bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\n cost: 100\n atk: 50")
+    witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\ncost: 100\natk: 10") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(680, 95, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\ncost: 80\natk: 8")
+    bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\ncost: 120\natk: 25")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
@@ -196,15 +196,36 @@ def game():
                 elif speaker_rect.collidepoint(event.pos):
                     muted = not muted
                     mixer.music.set_volume(0 if muted else volume)
-                elif show_stats and selected_tower and upgrade_button_rect.collidepoint(event.pos):
-                    print("Upgrade button clicked!")
-                    if selected_tower.upgrade == 3:
-                        print("Tower is already at max upgrade!")
-                    elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
-                        money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
-                        selected_tower.do_upgrade()
-                    elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
-                        print("Not enough money to upgrade tower!")
+                elif show_stats and selected_tower:
+                    if upgrade_button_rect.collidepoint(event.pos):
+                        print("Upgrade button clicked!")
+                        if selected_tower.upgrade == 3:
+                            print("Tower is already at max upgrade!")
+                        elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
+                            money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
+                            selected_tower.do_upgrade()
+                        elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
+                            print("Not enough money to upgrade tower!")
+                
+                    elif sell_button_rect.collidepoint(event.pos):
+                        print("Sell button clicked!")
+                        
+                        total_cost = selected_tower.cost  # Base cost of the tower
+                        for i in range(1, selected_tower.upgrade + 1):  # Add the cost of each applied upgrade
+                            total_cost += towers_base[selected_tower.tower_name]["upgrades"][i]["cost"]
+
+                        # Refund 50% of the tower's cost
+                        money += total_cost // 2  # adjust if you want different refund percentage
+                        print(f"Refunded: {total_cost // 2}")
+
+                        towers.remove(selected_tower)  # Remove the tower from the list
+                        tower_positions.remove((selected_tower.x, selected_tower.y))  # Free up the position
+                        selected_tower = None  # Deselect the tower
+                        show_stats = False  # Hide the stats screen
+                    elif not (600 <= event.pos[0] <= 750):  # Check if click is outside the sidebar
+                        print("Clicked outside the sidebar, exiting stats screen.")
+                        show_stats = False
+                        selected_tower = None
                     
                 elif start_wave_button.draw(screen):
                     if not wave_started:
@@ -412,7 +433,7 @@ def game():
             button.draw(screen)  
 
         if show_stats and selected_tower:
-            upgrade_button_rect = draw_tower_stat(screen, selected_tower)
+            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower)
 
         if show_wave:
             number_wave(screen, wave_number)
