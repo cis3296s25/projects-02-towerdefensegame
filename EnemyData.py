@@ -27,7 +27,7 @@ mob_data = {
         "Damage": 50,
         "Health": 500,
         "Speed": 0.1,
-        "Money": 250
+        "Money": 100
     },
     "Boss": {
         "Damage": 100,        # Phase 2 damage (Phase 1 is shielded)

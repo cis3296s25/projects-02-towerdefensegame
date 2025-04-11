@@ -215,8 +215,17 @@ def draw_tower_stat(screen, tower):
     upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button_rect.center)
     screen.blit(upgrade_text, upgrade_text_rect)
     
-    return upgrade_button_rect  # Return button rect to check for clicks
+    # Draw Sell Button
+    sell_button_rect = pygame.Rect(620, 230, 80, 30)  # Button size and position
+    pygame.draw.rect(screen, (200, 0, 0), sell_button_rect)  # Red button
 
+    # Sell Button Text
+    sell_text = font.render("Sell", True, (255, 255, 255))
+    sell_text_rect = sell_text.get_rect(center=sell_button_rect.center)
+    screen.blit(sell_text, sell_text_rect)
+
+    
+    return upgrade_button_rect, sell_button_rect  # Return both button rects
 
 def number_wave(screen, wave_number):
     font = pygame.font.SysFont("Arial", 18)
