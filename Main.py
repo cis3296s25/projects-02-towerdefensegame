@@ -414,16 +414,16 @@ def game():
         if show_wave:
             number_wave(screen, wave_number)
 
-    
-            
+        if not muted:
+            mixer.music.set_volume(volume)
+        else:
+            mixer.music.set_volume(0)
         
         #Show mouse position on screen (for debugging waypoints)
         mouse_x, mouse_y = pygame.mouse.get_pos()
         font = pygame.font.SysFont("Arial", 14)
         pos_text = font.render(f"({mouse_x}, {mouse_y})", True, (200, 200, 200))
         screen.blit(pos_text, (10, 10))
-
-    
 
         pygame.display.flip()
         clock.tick(fps) # Control the frame rate / speed of the game

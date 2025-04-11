@@ -102,6 +102,8 @@ def gameclear_screen(screen):
     mixer.music.stop()
 
     gameclear_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameclear.mp3"))
+    current_volume = pygame.mixer.music.get_volume()
+    gameclear_sound.set_volume(0.4 * current_volume)
     gameclear_sound.play(fade_ms=500)
 
     clock = pygame.time.Clock()
@@ -137,7 +139,8 @@ def gameover_screen(screen):
     mixer.music.stop()
 
     gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
-    gameover_sound.set_volume(0.4)
+    current_volume = pygame.mixer.music.get_volume()
+    gameover_sound.set_volume(0.4 * current_volume)
     gameover_sound.play()
 
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))

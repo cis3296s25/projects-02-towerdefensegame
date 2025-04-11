@@ -109,6 +109,20 @@ class Tower:
         else:
             self.image = self.frames[0]  # reset to first frame
 
+    def attacksound(self):
+        if self.attack_sound:
+            current_volume = pygame.mixer.music.get_volume()
+            if self.tower_name == "Witch":
+                base_volume = 0.3
+            elif self.tower_name == "Archer":
+                base_volume = 0.4
+            elif self.tower_name == "Bear":
+                base_volume = 0.5
+            else:
+                base_volume = 0.4
+            self.attack_sound.set_volume(base_volume * current_volume)
+            self.attack_sound.play(fade_ms=100)
+
     # fixes towers not attacking giant: come back to here if any problems
     def take_aim(self, enemies):
         if self.aoeDmg:
@@ -132,8 +146,8 @@ class Tower:
                             else:
                                 enemy.is_dying = True
 
-            if enemy_hit and self.attack_sound: # bear attack sound
-                self.attack_sound.play(fade_ms=100)
+            if enemy_hit: # bear attack sound
+                self.attacksound()
         else:
             for enemy in enemies:
                 if enemy.hp > 0:
@@ -148,8 +162,7 @@ class Tower:
                         self.projectiles.add(projectile)
                         self.attack_time = pygame.time.get_ticks()
 
-                        if self.attack_sound: # play witch and archer attack sound when shooting
-                            self.attack_sound.play(fade_ms=100)
+                        self.attacksound() # play witch and archer attack sound when shooting
 
                         self.target.hp -= projectile.damage
 
