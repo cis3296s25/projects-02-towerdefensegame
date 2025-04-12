@@ -5,6 +5,7 @@ import os
 
 from ProjectileLogic import Projectile
 from TowerData import towers_base
+import Settings
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -111,7 +112,6 @@ class Tower:
 
     def attacksound(self):
         if self.attack_sound:
-            current_volume = pygame.mixer.music.get_volume()
             if self.tower_name == "Witch":
                 base_volume = 0.3
             elif self.tower_name == "Archer":
@@ -120,7 +120,7 @@ class Tower:
                 base_volume = 0.5
             else:
                 base_volume = 0.4
-            self.attack_sound.set_volume(base_volume * current_volume)
+            self.attack_sound.set_volume(base_volume * Settings.sfx_volume)
             self.attack_sound.play(fade_ms=100)
 
     # fixes towers not attacking giant: come back to here if any problems
