@@ -17,7 +17,7 @@ class Spore:
 
     def update(self):
         self.y += self.speed_y
-        if self.y > 400:
+        if self.y > 700:
             self.y = 0
             self.x = random.randint(0, 750)
 
@@ -35,16 +35,16 @@ def homescreen(screen):
     settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
 
     # size of pngs
-    logo = pygame.transform.smoothscale(logo, (600, 450))
-    play_btn = pygame.transform.smoothscale(play_btn, (100, 40))
-    settings_btn = pygame.transform.smoothscale(settings_btn, (100, 40))
+    logo = pygame.transform.smoothscale(logo, (800, 650))
+    play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
+    settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
 
     # Get rects for positioning
-    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
-    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 265))
-    settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 315))
+    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
+    play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
+    settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
 
-    spores = [Spore(750, 400) for _ in range(50)]
+    spores = [Spore(750, 600) for _ in range(50)]
 
     while True:
         # Background
@@ -245,7 +245,7 @@ def gameclear_screen(screen):
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
     prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 280))
 
-    spores = [Spore(750, 400) for _ in range(50)] 
+    spores = [Spore(750, 600) for _ in range(50)] 
     while True:
         screen.fill((15, 15, 20))
         for spore in spores:
@@ -311,6 +311,14 @@ def draw_sidebar(screen, lives, money):
     screen.blit(text_tower, (610, 60))  # Position the Tower text
     pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
 
+def draw_underbar(screen):
+    pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
+    font = pygame.font.SysFont("Arial", 18)
+    text_tower = font.render("Select Tower", True, (255, 255, 255))  
+    
+    #screen.blit(text_tower, (10, 610))  # Position the Tower text
+    #pygame.draw.line(screen, (255, 255, 255), (10, 635), (200, 635), 1) # Draw a line below the Tower text
+
 def draw_tower_stat(screen, tower):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     font = pygame.font.SysFont("Arial", 18)
@@ -364,8 +372,8 @@ def draw_tower_stat(screen, tower):
 
 def number_wave(screen, wave_number):
     font = pygame.font.SysFont("Arial", 18)
-    wave_text = font.render(f"Wave: {wave_number}", True, (255, 255, 255))
-    screen.blit(wave_text, (630, 360))  # Position the Wave text
+    wave_text = font.render(f"Wave: {wave_number} of 10", True, (255, 255, 255))
+    screen.blit(wave_text, (605, 360))  # Position the Wave text
 
 def draw_boss_health_bar(screen, boss):
     sporeshield_label = pygame.image.load("images/sporeshield.png").convert_alpha()

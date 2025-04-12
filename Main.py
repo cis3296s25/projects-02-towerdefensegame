@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen, draw_boss_health_bar, settings_screen
+from UI import *
 from os.path import abspath, dirname
 from TowerData import towers_base
 
@@ -28,7 +28,7 @@ boss_battle_music = BASE_PATH + "/sounds/bossbattle.wav"
 
 
 SCREEN_WIDTH = 750
-SCREEN_HEIGHT = 400
+SCREEN_HEIGHT = 550
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 FINAL_WAVE = 10
@@ -92,9 +92,27 @@ def get_wave_data(wave):
 def select_tower(pixel_x, pixel_y, towers):
     for tower in towers:
         if tower.x == pixel_x and tower.y == pixel_y:
-            print("found tower")
+            log_message("found tower")
             return tower
     return None
+
+############################# LOGGING FUNCTIONALITY ###############################
+log_messages = []
+def draw_logs(screen, log_messages):
+    font = pygame.font.SysFont("Arial", 14)  # Font for log messages
+    y_offset = 410  # Start drawing logs near the bottom of the screen
+    for message in log_messages[-5:]:  # Show only the last 5 messages
+        text_surface = font.render(message, True, (255, 255, 255))  # White text
+        screen.blit(text_surface, (605, y_offset))
+        y_offset += 20  # Move down for the next message
+        
+def log_message(message):
+    print(message)  # Still print to the terminal
+    log_messages.append(message)  # Add the message to the log list
+    if len(log_messages) > 50:  # Limit the number of stored messages
+        log_messages.pop(0)
+
+############################## END OF LOGGING ###############################
 
 def game():
     mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
@@ -185,17 +203,17 @@ def game():
                     #mixer.music.set_volume(0 if muted else volume)
                 if show_stats and selected_tower:
                     if upgrade_button_rect.collidepoint(event.pos):
-                        print("Upgrade button clicked!")
+                        log_message("Upgrade button clicked!")
                         if selected_tower.upgrade == 3:
-                            print("Tower is already at max upgrade!")
+                            log_message("Tower is already at max upgrade!")
                         elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
                             money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
                             selected_tower.do_upgrade()
                         elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
-                            print("Not enough money to upgrade tower!")
+                            log_message("Not enough money to upgrade tower!")
                 
                     elif sell_button_rect.collidepoint(event.pos):
-                        print("Sell button clicked!")
+                        log_message("Sell button clicked!")
                         
                         total_cost = selected_tower.cost  # Base cost of the tower
                         for i in range(1, selected_tower.upgrade + 1):  # Add the cost of each applied upgrade
@@ -203,39 +221,39 @@ def game():
 
                         # Refund 50% of the tower's cost
                         money += total_cost // 2  # adjust if you want different refund percentage
-                        print(f"Refunded: {total_cost // 2}")
+                        log_message(f"Refunded: {total_cost // 2}")
 
                         towers.remove(selected_tower)  # Remove the tower from the list
                         tower_positions.remove((selected_tower.x, selected_tower.y))  # Free up the position
                         selected_tower = None  # Deselect the tower
                         show_stats = False  # Hide the stats screen
                     elif not (600 <= event.pos[0] <= 750):  # Check if click is outside the sidebar
-                        print("Clicked outside the sidebar, exiting stats screen.")
+                        log_message("Clicked outside the sidebar, exiting stats screen.")
                         show_stats = False
                         selected_tower = None
                     
                 elif start_wave_button.draw(screen):
                     if not wave_started:
                         wave_started = True
-                        print("Wave started!")
+                        log_message("Wave started!")
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
-                        print("Fast forward activated!")
+                        log_message("Fast forward activated!")
                     else:
                         fps = 60
-                        print("Fast forward deactivated!")
+                        log_message("Fast forward deactivated!")
 
                 else:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
                     grid_y = mouse_y // 40 * 40
                     if mouse_x > 600:
-                        print("Clicked on sidebar")
+                        log_message("Clicked on sidebar")
                     else:   
                         selected_tower = select_tower(grid_x, grid_y, towers)
                         if selected_tower:
-                            print(f"Selected Tower at ({grid_x}, {grid_y})")
+                            log_message(f"Selected Tower at ({grid_x}, {grid_y})")
                             show_stats = True
                             show_range = True
                         else:
@@ -250,24 +268,24 @@ def game():
                     grid_y = mouse_y // 40 * 40
                     
 
-                    if mouse_x < 600:  # Ensure placement is within the map area
+                    if mouse_x < 600 and mouse_y < 400:  # Ensure placement is within the map area
                         if (grid_x, grid_y) not in tower_positions and (grid_x, grid_y) not in ENEMY_PATHS:  # Check if the position is free
                             # check if the player has enough money to place the tower
                             if money >= temporary_tower.cost:
                                 money -= temporary_tower.cost  
-                                print(f"Placing tower at: ({grid_x}, {grid_y})")
+                                log_message(f"Placing tower at: ({grid_x}, {grid_y})")
                                 
                                 towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name))
                                 tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
                                 placing_tower = False
                                 temporary_tower = None
                             else:
-                                print("Not enough money to place tower!")
+                                log_message("Not enough money to place tower!")
                 elif not show_stats and find_button(mouse_x, mouse_y):
                     # Start placing a tower
                     towerButton = find_button(mouse_x, mouse_y)
                     placing_tower = True
-                    print(towerButton.name)
+                    log_message(towerButton.name)
                     temporary_tower = Tower(0, 0, screen, towerButton.name)
                 elif cancelButton.draw(screen):
                     # Cancel tower placement
@@ -313,7 +331,7 @@ def game():
         # DRAWING CODE
         screen.fill((0, 0, 0))
         gameMap.draw()
-        draw_grid(screen)
+        draw_grid(screen)        
 
         # Draw all placed towers and call attack
         for tower in towers:
@@ -343,7 +361,7 @@ def game():
                 money += enemy.money  # increase money if enemy reaches end
                 if lives <= 0:
                     if gameover_screen(screen) == "restart":
-                        print("Restarting game...")
+                        log_message("Restarting game...")
                         game()
                     else:
                         running = False
@@ -372,6 +390,9 @@ def game():
                 wave_started = False
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
+        draw_underbar(screen)
+        draw_logs(screen, log_messages)
+
 
         # Draw buttons
         if not show_stats and towerButton and towerButton.draw(screen): # if tower button is clicked
