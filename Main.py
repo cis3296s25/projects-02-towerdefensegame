@@ -38,7 +38,7 @@ IMG_NAMES = [
     "mapSample",
     "witchSample",
     "cancel_button",
-    "fastForward",
+    "fastforwardwave",
     "archerSample",
     "bearSample",
 ]
@@ -52,7 +52,7 @@ enemyImage = IMAGES["enemySample40x40"] #generate enemy image
 witchImage = IMAGES["witchSample"] #generate tower image
 mapSample = IMAGES["mapSample"] #generate map image
 cancelImage = IMAGES["cancel_button"] #generate cancel button image
-fastForwardImage = IMAGES["fastForward"] #generate fast forward button image
+fastForwardImage = IMAGES["fastforwardwave"] #generate fast forward button image
 archerImage = IMAGES["archerSample"] #generate archer tower image
 bearImage = IMAGES["bearSample"] #generate bear tower image
 
@@ -154,7 +154,7 @@ def game():
                 return button
         return None
 
-    fastForwardScale =  pygame.transform.scale(IMAGES["fastForward"], (40, 40))
+    fastForwardScale =  pygame.transform.scale(IMAGES["fastforwardwave"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
     
 
