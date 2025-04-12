@@ -337,9 +337,15 @@ def draw_tower_stat(screen, tower):
     # Draw Sell Button
     sell_button_rect = pygame.Rect(620, 230, 80, 30)  # Button size and position
     pygame.draw.rect(screen, (200, 0, 0), sell_button_rect)  # Red button
+    
+    # Calculate refund amount
+    total_cost = tower.cost
+    for i in range(1, tower.upgrade + 1):
+        total_cost += towers_base[tower.tower_name]["upgrades"][i]["cost"]
+    refund = total_cost // 2
 
     # Sell Button Text
-    sell_text = font.render("Sell", True, (255, 255, 255))
+    sell_text = font.render(f"Sell for {refund}", True, (255, 255, 255))
     sell_text_rect = sell_text.get_rect(center=sell_button_rect.center)
     screen.blit(sell_text, sell_text_rect)
 

@@ -36,7 +36,11 @@ towers_base = {
     "Bear": {
         "range": 50,
         "damage": 25,
-        "projectile": "arrow",
+        "projectile": {
+            "name": "arrow",
+            "speed": 6,
+            "frenetic": False
+        },
         "aoeDmg": True,
         "cooldown": 2.8,
         "cost": 120,
