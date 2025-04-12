@@ -5,6 +5,7 @@ from pygame import mixer
 import os
 
 from TowerData import towers_base
+import Settings
 
 class Spore:
     def __init__(self, screen_width, screen_height):
@@ -31,14 +32,17 @@ def homescreen(screen):
     # Load logo and buttons
     logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
     play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
+    settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (600, 450))
-    play_btn = pygame.transform.smoothscale(play_btn, (300, 150))
+    play_btn = pygame.transform.smoothscale(play_btn, (100, 40))
+    settings_btn = pygame.transform.smoothscale(settings_btn, (100, 40))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 100))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 265))
+    settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 315))
 
     spores = [Spore(750, 400) for _ in range(50)]
 
@@ -52,6 +56,7 @@ def homescreen(screen):
         # Draw logo and play button
         screen.blit(logo, logo_rect)
         screen.blit(play_btn, play_rect)
+        screen.blit(settings_btn, settings_rect)
         
         for event in pygame.event.get():
 
@@ -61,8 +66,11 @@ def homescreen(screen):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                 if event.button == 1 and play_rect.collidepoint(mouse_pos):
-                    return
+                 if event.button == 1:
+                    if play_rect.collidepoint(mouse_pos):
+                        return "play"
+                    elif settings_rect.collidepoint(mouse_pos):
+                        return "settings"
 
         pygame.display.flip()
         clock.tick(60)
@@ -96,6 +104,117 @@ def pause_screen(screen, mixer):
                     paused = False
     
     mixer.music.unpause()
+
+def settings_screen(screen):
+    clock = pygame.time.Clock()
+    running = True
+
+    # Volume slider setup
+    volume = mixer.music.get_volume()
+    muted = volume == 0
+    sfx_muted = Settings.sfx_volume == 0
+    dragging_music = False
+    slider_rect = pygame.Rect(300, 200, 150, 10)
+    handle_rect = pygame.Rect(slider_rect.x + int(slider_rect.width * volume) - 5, slider_rect.y - 5, 10, 20)
+
+    # SFX Volume
+    global sfx_volume
+    dragging_sfx = False
+    sfx_slider_rect = pygame.Rect(300, 300, 150, 10)
+    sfx_handle_rect = pygame.Rect(sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5, sfx_slider_rect.y - 5, 10, 20)
+
+    # Speaker icons
+    speaker_low = pygame.transform.scale(pygame.image.load("images/low-volume.png"), (24, 24))
+    speaker_med = pygame.transform.scale(pygame.image.load("images/medium-volume.png"), (24, 24))
+    speaker_high = pygame.transform.scale(pygame.image.load("images/high-volume.png"), (24, 24))
+    speaker_mute = pygame.transform.scale(pygame.image.load("images/mute.png"), (24, 24))
+    #speaker_rect = pygame.Rect(slider_rect.x + slider_rect.width + 20, slider_rect.y - 5, 24, 24)
+    music_speaker_rect = pygame.Rect(slider_rect.x + slider_rect.width + 20, slider_rect.y - 5, 24, 24)
+    sfx_speaker_rect = pygame.Rect(sfx_slider_rect.x + sfx_slider_rect.width + 20, sfx_slider_rect.y - 5, 24, 24)
+
+
+
+    while running:
+        screen.fill((30, 30, 30))
+        font = pygame.font.SysFont("Arial", 40)
+        title = font.render("Settings", True, (255, 255, 255))
+        screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 100))
+
+
+        # MUSIC VOLUME
+        music_label = font.render("Music Volume", True, (255, 255, 255))
+        screen.blit(music_label, (slider_rect.x, slider_rect.y - 30))
+        pygame.draw.rect(screen, (200, 200, 200), slider_rect)
+        pygame.draw.rect(screen, (100, 100, 255), (slider_rect.x, slider_rect.y, int(slider_rect.width * volume), slider_rect.height))
+        pygame.draw.rect(screen, (255, 255, 255), handle_rect)
+        music_icon = speaker_mute if muted else speaker_high if volume > 0.66 else speaker_med if volume > 0.33 else speaker_low
+        screen.blit(music_icon, music_speaker_rect)
+
+        # SFX VOLUME
+        sfx_label = font.render("SFX Volume", True, (255, 255, 255))
+        screen.blit(sfx_label, (sfx_slider_rect.x, sfx_slider_rect.y - 30))
+        pygame.draw.rect(screen, (200, 200, 200), sfx_slider_rect)
+        pygame.draw.rect(screen, (0, 255, 100), (sfx_slider_rect.x, sfx_slider_rect.y, int(sfx_slider_rect.width * Settings.sfx_volume), sfx_slider_rect.height))
+        pygame.draw.rect(screen, (255, 255, 255), sfx_handle_rect)
+        sfx_v = Settings.sfx_volume
+        sfx_icon = speaker_mute if sfx_muted else speaker_high if sfx_v > 0.66 else speaker_med if sfx_v > 0.33 else speaker_low
+        screen.blit(sfx_icon, sfx_speaker_rect)
+
+        # Choose speaker icon
+        #if muted:
+        #    icon = speaker_mute
+        #elif volume <= 0.33:
+        #    icon = speaker_low
+        #elif volume <= 0.66:
+        #    icon = speaker_med
+       # else:
+        #    icon = speaker_high
+
+        #screen.blit(icon, speaker_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if handle_rect.collidepoint(event.pos):
+                    dragging_music = True
+                elif music_speaker_rect.collidepoint(event.pos):
+                    muted = not muted
+                    mixer.music.set_volume(0 if muted else volume)
+                elif sfx_handle_rect.collidepoint(event.pos):
+                    dragging_sfx = True
+                elif sfx_slider_rect.collidepoint(event.pos):
+                    sfx_muted = not sfx_muted
+                    Settings.sfx_volume = 0 if sfx_muted else 0.5
+                    sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                dragging_music = False
+                dragging_sfx = False
+
+            elif event.type == pygame.MOUSEMOTION:
+                if dragging_music:
+                    mouse_x = event.pos[0]
+                    volume = max(0, min(1, (mouse_x - slider_rect.x) / slider_rect.width))
+                    if not muted:
+                        mixer.music.set_volume(volume)
+                    handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+                
+                if dragging_sfx:
+                    mouse_x = event.pos[0]
+                    new_sfx_volume  = max(0, min(1, (mouse_x - sfx_slider_rect.x) / sfx_slider_rect.width))
+                    sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * new_sfx_volume) - 5
+                    Settings.sfx_volume = new_sfx_volume
+                    sfx_muted = new_sfx_volume == 0
+
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return  # Go back to game or menu
+
+        pygame.display.flip()
+        clock.tick(60)
+
 
 def gameclear_screen(screen):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))

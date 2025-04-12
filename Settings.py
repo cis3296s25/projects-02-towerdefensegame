@@ -1,0 +1,1 @@
+sfx_volume = 0.5

@@ -10,7 +10,7 @@ from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
-from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen, draw_boss_health_bar
+from UI import homescreen, pause_screen, draw_sidebar, draw_grid, gameover_screen, draw_tower_stat, number_wave, gameclear_screen, draw_boss_health_bar, settings_screen
 from os.path import abspath, dirname
 from TowerData import towers_base
 
@@ -21,7 +21,6 @@ pygame.init()
 
 #code for background music
 mixer.init()
-
 
 boss_scream_sound = mixer.Sound(BASE_PATH + "/sounds/bossScream.flac")
 boss_battle_music = BASE_PATH + "/sounds/bossbattle.wav"
@@ -163,19 +162,6 @@ def game():
         pygame.image.load(IMAGE_PATH + "high-volume.png").convert_alpha(), (24, 24)
     )
 
-    # Volume/mute state
-    muted = False
-    volume = 0.5
-    mixer.music.set_volume(volume)
-
-    # Volume slider setup (placed inside sidebar area)
-    slider_rect = pygame.Rect(20, screen.get_height() - 40, 100, 10)
-    handle_rect = pygame.Rect(slider_rect.x + int(slider_rect.width * volume) - 5, slider_rect.y - 5, 10, 20)
-    dragging_volume = False
-
-    # Placeholder for speaker icon rect (will be updated dynamically)
-    speaker_rect = pygame.Rect(0, 0, 24, 24)  # placeholder; will update dynamically below
-
     running = True
     show_stats = False
     show_wave = True
@@ -189,15 +175,15 @@ def game():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    pause_screen(screen, mixer)
+                    settings_screen(screen)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if handle_rect.collidepoint(event.pos):
-                    dragging_volume = True
-                elif speaker_rect.collidepoint(event.pos):
-                    muted = not muted
-                    mixer.music.set_volume(0 if muted else volume)
-                elif show_stats and selected_tower:
+                #if handle_rect.collidepoint(event.pos):
+                   # dragging_volume = True
+                #elif speaker_rect.collidepoint(event.pos):
+                    #muted = not muted
+                    #mixer.music.set_volume(0 if muted else volume)
+                if show_stats and selected_tower:
                     if upgrade_button_rect.collidepoint(event.pos):
                         print("Upgrade button clicked!")
                         if selected_tower.upgrade == 3:
@@ -296,19 +282,7 @@ def game():
                     temporary_tower.y = mouse_y // 40 * 40
  
             ############################### END OF TOWER PLACEMENT CODE ########################################
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                dragging_volume = False
-
-            elif event.type == pygame.MOUSEMOTION:
-                if dragging_volume:
-                    mouse_x = event.pos[0]
-                    new_volume = max(0, min(1, (mouse_x - slider_rect.x) / slider_rect.width))
-                    volume = new_volume
-                    if not muted:
-                        mixer.music.set_volume(volume)
-                    handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
-
+            
         current_time = pygame.time.get_ticks()
 
         if wave_started and spawned_count < len(current_wave_enemies):
@@ -411,24 +385,7 @@ def game():
         if not wave_started: #only appears when wave hasnt started yet
             start_wave_button.draw(screen)
 
-         # Volume slider bar
-        pygame.draw.rect(screen, (200, 200, 200), slider_rect)  # Bar background
-        pygame.draw.rect(screen, (100, 100, 255), (slider_rect.x, slider_rect.y, int(slider_rect.width * volume), slider_rect.height))  # Volume fill
-        pygame.draw.rect(screen, (255, 255, 255), handle_rect)  # Slider handle
-
-        # Choose which speaker icon to display
-        if muted:
-            speaker_img = speaker_img_muted
-        elif volume <= 0.33:
-            speaker_img = speaker_img_low
-        elif volume <= 0.66:
-            speaker_img = speaker_img_medium
-        else:
-            speaker_img = speaker_img_high
-
-        # Position speaker icon next to slider
-        speaker_rect = speaker_img.get_rect(topleft=(slider_rect.x + slider_rect.width + 10, slider_rect.y - 6))
-        screen.blit(speaker_img, speaker_rect)
+         
 
         for button in buttons:
             button.draw(screen)  
@@ -439,10 +396,6 @@ def game():
         if show_wave:
             number_wave(screen, wave_number)
 
-        if not muted:
-            mixer.music.set_volume(volume)
-        else:
-            mixer.music.set_volume(0)
         
         #Show mouse position on screen (for debugging waypoints)
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -457,8 +410,13 @@ def game():
     pygame.quit()
 
 def main():
-    homescreen(screen)  # Show the home screen at the start
-    game() # now when play button is clicked, takes you to the game
+    while True:
+        result = homescreen(screen)
+        if result == "play":
+            game()
+        elif result == "settings":
+            settings_screen(screen)
+
 
 if __name__ == "__main__":
     main()
