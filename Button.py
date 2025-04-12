@@ -9,7 +9,7 @@ class Button:
         self.name = tower_name  
 
         self.tooltip_text = tooltip_text  # Tooltip text
-        self.font = pg.font.Font(None, 15)  # Font for the tooltip
+        self.font = pg.font.Font(None, 20)  # Font for the tooltip
         self.tooltip_bg = (0,0,0)  # Background color for the tooltip
         self.tooltip_fg = (255, 255, 255)  # Foreground color for the tooltip
         
@@ -34,7 +34,7 @@ class Button:
 
         # Draw tooltip if hovering
         if self.rect.collidepoint(pos) and self.tooltip_text and self.font:
-            self.draw_tooltip(screen, pos)
+            self.draw_tooltip(screen, (0, 400))
         
         return action # Return if the button was clicked
     
