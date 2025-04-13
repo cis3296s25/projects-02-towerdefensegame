@@ -363,7 +363,7 @@ def game():
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
-                    if gameover_screen(screen) == "restart":
+                    if gameover_screen(screen, score) == "restart":
                         log_message("Restarting game...")
                         game()
                     else:
@@ -379,7 +379,7 @@ def game():
         
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 5 wave
-                gameclear_screen(screen)
+                gameclear_screen(screen, score)
                 mixer.music.stop()
 
                 main()  # restart from homescreen
