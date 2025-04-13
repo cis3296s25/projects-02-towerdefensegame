@@ -226,7 +226,7 @@ def settings_screen(screen):
         clock.tick(60)
 
 
-def gameclear_screen(screen):
+def gameclear_screen(screen, score):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -243,7 +243,10 @@ def gameclear_screen(screen):
     clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     sub_font = pygame.font.SysFont("Arial", 28)
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
-    prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 400))
+    prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 500))
+    score_text = pygame.font.SysFont("Arial", 50).render(f"SCORE --> ***{score}***", True, (255, 0, 0))
+    score_rect = score_text.get_rect(center=(screen.get_width() //2, 425))
+    
 
     spores = [Spore(750, 600) for _ in range(50)] 
     while True:
@@ -253,6 +256,7 @@ def gameclear_screen(screen):
             spore.draw(screen)
         screen.blit(game_clear_img, clear_rect)
         screen.blit(prompt_text, prompt_rect)
+        screen.blit(score_text, score_rect)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -263,7 +267,7 @@ def gameclear_screen(screen):
         pygame.display.flip()
         clock.tick(60)
 
-def gameover_screen(screen):
+def gameover_screen(screen, score):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -273,13 +277,16 @@ def gameover_screen(screen):
     gameover_sound.play()
 
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
+    score_text = pygame.font.SysFont("Arial", 25).render(f"Score: {score}", True, (255, 0, 0))
     quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
 
     gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
-    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 30))
+    score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
+    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
 
     screen.fill((0, 0, 0))
     screen.blit(gameover_text, gameover_rect)
+    screen.blit(score_text, score_rect)
     screen.blit(quit_text, quit_rect)
     pygame.display.flip()
 

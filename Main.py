@@ -363,7 +363,7 @@ def game():
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
-                    if gameover_screen(screen) == "restart":
+                    if gameover_screen(screen, score) == "restart":
                         log_message("Restarting game...")
                         game()
                     else:
@@ -379,7 +379,8 @@ def game():
         
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 5 wave
-                gameclear_screen(screen)
+                score += (money*2)
+                gameclear_screen(screen, score)
                 mixer.music.stop()
 
                 main()  # restart from homescreen
@@ -390,6 +391,7 @@ def game():
                 spawned_count = 0
                 last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
                 money += 10 * wave_number
+                score += int((wave_number**2) * (1000/(pygame.time.get_ticks()/1000)))
                 wave_started = False
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
