@@ -331,24 +331,24 @@ def draw_sidebar(screen, lives, money, score, SCORE_FILE):
         value_Score = font.render(f"*{score}*", True, (173, 216, 23))
     else:
         value_Score = font.render(f"{score}", True, (255, 255, 255))
-
     text_tower = font.render("Towers", True, (255, 255, 255))  
     
-    screen.blit(text_Lives, (610, 10))  # Position the Money text
+    screen.blit(text_Lives, (610, 10))  # Position the Lives text
     screen.blit(text_Money, (610, 30))  # Position the Money text
     screen.blit(text_Score, (610, 50))
     screen.blit(value_Score, (610+text_Score.get_width(), 50))
     pygame.draw.line(screen, (255, 255, 255), (610, 74), (740, 74), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
     screen.blit(text_tower, (610, 75))  # Position the Tower text
+    pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+    screen.blit(text_tower, (610, 60))  # Position the Tower text
     
 
-def draw_underbar(screen):
+def draw_underbar(screen, score):
     pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
-    font = pygame.font.SysFont("Arial", 18)
-    text_tower = font.render("Select Tower", True, (255, 255, 255))  
-    
-    #screen.blit(text_tower, (10, 610))  # Position the Tower text
-    #pygame.draw.line(screen, (255, 255, 255), (10, 635), (200, 635), 1) # Draw a line below the Tower text
+    font = pygame.font.SysFont("Arial", 16)
+    text_Score = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(text_Score, (605, 525)) # Position the Score text
+
 
 def draw_tower_stat(screen, tower):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
