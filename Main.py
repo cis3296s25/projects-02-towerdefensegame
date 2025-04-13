@@ -31,7 +31,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 550
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-FINAL_WAVE = 10
+FINAL_WAVE = 1
 
 IMG_NAMES = [
     "enemySample40x40",
@@ -379,6 +379,7 @@ def game():
         
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 5 wave
+                score += (money*2)
                 gameclear_screen(screen, score)
                 mixer.music.stop()
 
@@ -390,6 +391,7 @@ def game():
                 spawned_count = 0
                 last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
                 money += 10 * wave_number
+                score += int((wave_number**2) * (1000/(pygame.time.get_ticks()/1000)))
                 wave_started = False
 
         draw_sidebar(screen, lives, money, score) # makes enemy go behind sidebar instead of overtop it
