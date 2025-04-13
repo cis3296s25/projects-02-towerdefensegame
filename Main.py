@@ -17,6 +17,8 @@ from TowerData import towers_base
 BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
+SCORE_FILE = "scores.json"
+
 pygame.init()
 
 #code for background music
@@ -118,6 +120,10 @@ def game():
     mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
     mixer.music.set_volume(0.5)
     mixer.music.play(-1) #plays music after leaving homescreen
+
+    # score variables
+    high_score = False
+    top_five = False
 
     # tower variables
     placing_tower = False
@@ -363,7 +369,12 @@ def game():
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
-                    if gameover_screen(screen, score) == "restart":
+                    if (get_top_score(SCORE_FILE) < score): 
+                        high_score = True
+                    elif (is_top_five(SCORE_FILE, score)):
+                        top_five = True
+                    log_message(f"score updated {update_scores(SCORE_FILE, score)}")
+                    if gameover_screen(screen, score, SCORE_FILE, high_score, top_five) == "restart":
                         log_message("Restarting game...")
                         game()
                     else:
@@ -383,9 +394,13 @@ def game():
                 score += (money*2) # winning with extra money adds to your score
                 log_message(f"Lives increases score by: {lives*500}")
                 score += (lives*500) # winning with extra lives adds to your score
-                gameclear_screen(screen, score)
+                if (get_top_score(SCORE_FILE) < score): 
+                    high_score = True
+                elif (is_top_five(SCORE_FILE, score)):
+                    top_five = True
+                log_message(f"score updated {update_scores(SCORE_FILE, score)}")
+                gameclear_screen(screen, score, SCORE_FILE, high_score, top_five)
                 mixer.music.stop()
-
                 main()  # restart from homescreen
                 return
             else:
@@ -401,7 +416,7 @@ def game():
 
                 wave_started = False
 
-        draw_sidebar(screen, lives, money, score) # makes enemy go behind sidebar instead of overtop it
+        draw_sidebar(screen, lives, money, score, SCORE_FILE) # makes enemy go behind sidebar instead of overtop it
         draw_underbar(screen)
         draw_logs(screen, log_messages)
 
