@@ -392,8 +392,8 @@ def game():
                 money += 10 * wave_number
                 wave_started = False
 
-        draw_sidebar(screen, lives, money, score) # makes enemy go behind sidebar instead of overtop it
-        draw_underbar(screen)
+        draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
+        draw_underbar(screen, score)
         draw_logs(screen, log_messages)
 
 
