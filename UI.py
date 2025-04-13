@@ -144,7 +144,7 @@ def settings_screen(screen):
 
 
     while running:
-        screen.fill((30, 30, 30))
+        screen.fill((40, 40, 40))
         font = pygame.font.SysFont("Arial", 40)
         title = font.render("Settings", True, (255, 255, 255))
         screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 100))
@@ -238,12 +238,12 @@ def gameclear_screen(screen):
     clock = pygame.time.Clock()
 
     game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
-    game_clear_img = pygame.transform.smoothscale(game_clear_img, (400, 300))  # adjust size if you want
+    game_clear_img = pygame.transform.smoothscale(game_clear_img, (600, 500))  # adjust size if you want
 
     clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     sub_font = pygame.font.SysFont("Arial", 28)
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
-    prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 280))
+    prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 400))
 
     spores = [Spore(750, 600) for _ in range(50)] 
     while True:
