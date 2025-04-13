@@ -417,7 +417,7 @@ def game():
                 wave_started = False
 
         draw_sidebar(screen, lives, money, score, SCORE_FILE) # makes enemy go behind sidebar instead of overtop it
-        draw_underbar(screen)
+        draw_underbar(screen, score)
         draw_logs(screen, log_messages)
 
 
