@@ -296,7 +296,7 @@ def gameover_screen(screen):
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 waiting = False
 
-def draw_sidebar(screen, lives, money):
+def draw_sidebar(screen, lives, money, score):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
     font = pygame.font.SysFont("Arial", 18)
@@ -304,12 +304,15 @@ def draw_sidebar(screen, lives, money):
     # text
     text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
     text_Money = font.render(f"Money: {money}", True, (255, 255, 255))  # (text, antialias, color, background=None)
+    text_Score = font.render(f"Score: {score}", True, (255, 255, 255))
     text_tower = font.render("Towers", True, (255, 255, 255))  
     
     screen.blit(text_Lives, (610, 10))  # Position the Money text
     screen.blit(text_Money, (610, 30))  # Position the Money text
-    screen.blit(text_tower, (610, 60))  # Position the Tower text
-    pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+    screen.blit(text_Score, (610, 50))
+    pygame.draw.line(screen, (255, 255, 255), (610, 74), (740, 74), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+    screen.blit(text_tower, (610, 75))  # Position the Tower text
+    
 
 def draw_underbar(screen):
     pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
