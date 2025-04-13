@@ -146,7 +146,7 @@ def settings_screen(screen):
 
     while running:
         screen.fill((40, 40, 40))
-        font = pygame.font.SysFont("Arial", 40)
+        font = pygame.font.Font("fonts/BrickSans.ttf", 40)
         title = font.render("Settings", True, (255, 255, 255))
         screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 100))
 
@@ -242,15 +242,15 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five):
     game_clear_img = pygame.transform.smoothscale(game_clear_img, (600, 500))  # adjust size if you want
 
     clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-    sub_font = pygame.font.SysFont("Arial", 28)
+    sub_font = pygame.font.Font("fonts/BrickSans.ttf", 28)
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
     prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 500))
     if (high_score):
-        score_text = pygame.font.SysFont("Arial", 50).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
-        score_text = pygame.font.SysFont("Arial", 50).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
     else:
-        score_text = pygame.font.SysFont("Arial", 50).render(f"Score: {score}", True, (225, 225, 255))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"Score: {score}", True, (225, 225, 255))
     score_rect = score_text.get_rect(center=(screen.get_width() //2, 425))
     
 
@@ -282,16 +282,16 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
     gameover_sound.set_volume(0.4 * current_volume)
     gameover_sound.play()
 
-    gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
+    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
 
     if (high_score):
-        score_text = pygame.font.SysFont("Arial", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
-        score_text = pygame.font.SysFont("Arial", 25).render(f"Top Five Score: *{score}*", True, (173, 216, 23))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five Score: *{score}*", True, (173, 216, 23))
     else:
-        score_text = pygame.font.SysFont("Arial", 25).render(f"Score: {score}", True, (225, 0, 0))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
 
-    quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
+    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
 
     gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
     score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
@@ -319,7 +319,7 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
 def draw_sidebar(screen, lives, money, score, SCORE_FILE):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
-    font = pygame.font.SysFont("Arial", 18)
+    font = pygame.font.Font("fonts/BrickSans.ttf", 10)
     
     # text
     text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
@@ -345,14 +345,14 @@ def draw_sidebar(screen, lives, money, score, SCORE_FILE):
 
 def draw_underbar(screen, score):
     pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
-    font = pygame.font.SysFont("Arial", 16)
+    font = pygame.font.Font("fonts/BrickSans.ttf", 15)
     text_Score = font.render(f"Score: {score}", True, (255, 255, 255))
     screen.blit(text_Score, (605, 525)) # Position the Score text
 
 
 def draw_tower_stat(screen, tower):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
-    font = pygame.font.SysFont("Arial", 18)
+    font = pygame.font.Font("fonts/BrickSans.ttf", 12)
 
     # Create text for tower stats
     text_range = font.render(f"Range: {tower.range}", True, (255, 255, 255))  # White text for range
@@ -402,7 +402,7 @@ def draw_tower_stat(screen, tower):
     return upgrade_button_rect, sell_button_rect  # Return both button rects
 
 def number_wave(screen, wave_number):
-    font = pygame.font.SysFont("Arial", 18)
+    font = pygame.font.Font("fonts/BrickSans.ttf", 13)
     wave_text = font.render(f"Wave: {wave_number} of 10", True, (255, 255, 255))
     screen.blit(wave_text, (605, 360))  # Position the Wave text
 
