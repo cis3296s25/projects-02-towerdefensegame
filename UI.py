@@ -3,6 +3,7 @@ import sys #required for .exe creation
 import random
 from pygame import mixer
 import os
+import json
 
 from TowerData import towers_base
 import Settings
@@ -226,7 +227,7 @@ def settings_screen(screen):
         clock.tick(60)
 
 
-def gameclear_screen(screen, score):
+def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -244,7 +245,12 @@ def gameclear_screen(screen, score):
     sub_font = pygame.font.SysFont("Arial", 28)
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
     prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 500))
-    score_text = pygame.font.SysFont("Arial", 50).render(f"SCORE --> ***{score}***", True, (255, 0, 0))
+    if (high_score):
+        score_text = pygame.font.SysFont("Arial", 50).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+    elif (top_five):
+        score_text = pygame.font.SysFont("Arial", 50).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
+    else:
+        score_text = pygame.font.SysFont("Arial", 50).render(f"Score: {score}", True, (225, 225, 255))
     score_rect = score_text.get_rect(center=(screen.get_width() //2, 425))
     
 
@@ -267,7 +273,7 @@ def gameclear_screen(screen, score):
         pygame.display.flip()
         clock.tick(60)
 
-def gameover_screen(screen, score):
+def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -277,7 +283,14 @@ def gameover_screen(screen, score):
     gameover_sound.play()
 
     gameover_text = pygame.font.SysFont("Arial", 50).render("Game Over", True, (255, 0, 0))
-    score_text = pygame.font.SysFont("Arial", 25).render(f"Score: {score}", True, (255, 0, 0))
+
+    if (high_score):
+        score_text = pygame.font.SysFont("Arial", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+    elif (top_five):
+        score_text = pygame.font.SysFont("Arial", 25).render(f"Top Five Score: *{score}*", True, (173, 216, 23))
+    else:
+        score_text = pygame.font.SysFont("Arial", 25).render(f"Score: {score}", True, (225, 0, 0))
+
     quit_text = pygame.font.SysFont("Arial", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
 
     gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
@@ -303,7 +316,7 @@ def gameover_screen(screen, score):
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 waiting = False
 
-def draw_sidebar(screen, lives, money):
+def draw_sidebar(screen, lives, money, score, SCORE_FILE):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
     font = pygame.font.SysFont("Arial", 18)
@@ -311,10 +324,21 @@ def draw_sidebar(screen, lives, money):
     # text
     text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
     text_Money = font.render(f"Money: {money}", True, (255, 255, 255))  # (text, antialias, color, background=None)
+    text_Score = font.render(f"Score: ", True, (255, 255, 255))
+    if (get_top_score(SCORE_FILE) < score ):
+        value_Score = font.render(f"**{score}**", True, (138, 43, 226))
+    elif (is_top_five(SCORE_FILE, score)):
+        value_Score = font.render(f"*{score}*", True, (173, 216, 23))
+    else:
+        value_Score = font.render(f"{score}", True, (255, 255, 255))
     text_tower = font.render("Towers", True, (255, 255, 255))  
     
     screen.blit(text_Lives, (610, 10))  # Position the Lives text
     screen.blit(text_Money, (610, 30))  # Position the Money text
+    screen.blit(text_Score, (610, 50))
+    screen.blit(value_Score, (610+text_Score.get_width(), 50))
+    pygame.draw.line(screen, (255, 255, 255), (610, 74), (740, 74), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+    screen.blit(text_tower, (610, 75))  # Position the Tower text
     pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
     screen.blit(text_tower, (610, 60))  # Position the Tower text
     
@@ -423,4 +447,35 @@ def draw_grid(screen):
             pygame.draw.rect(grid_surface, (255, 255, 255, 100), (x, y, 40, 40), 1)  # Draw on transparent surface
 
     screen.blit(grid_surface, (0, 0))
+
+def load_scores(SCORE_FILE):
+    if not os.path.exists(SCORE_FILE):
+        return[]
+    with open(SCORE_FILE, "r") as file:
+        try: 
+            return json.load(file) 
+        except json.JSONDecodeError:
+            return[]
+
+def save_scores(SCORE_FILE, scores):
+    with open(SCORE_FILE, "w") as file: 
+        json.dump(scores, file)
+
+def update_scores(SCORE_FILE, score):
+    scores = load_scores(SCORE_FILE)
+    scores.append(score)
+    scores.sort(reverse = True)
+    scores = scores[:5]
+    save_scores(SCORE_FILE, scores)
+    return scores
+
+def get_top_score(SCORE_FILE):
+    scores = load_scores(SCORE_FILE)
+    return max(scores)
+
+def is_top_five(SCORE_FILE, score):
+    scores = load_scores(SCORE_FILE)
+    if len(scores) < 5:
+        return True
+    return score > min(scores)
     
