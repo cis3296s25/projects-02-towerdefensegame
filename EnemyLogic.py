@@ -40,6 +40,7 @@ class Enemy:
         self.waypoints = waypoints if waypoints else WAYPOINTS
         self.color = color
         self.money = mob_data[color]["Money"]
+        self.score = mob_data[color]["Score"]
         self.speed = mob_data[color]["Speed"]
         self.hp = mob_data[color]["Health"]
         self.max_hp = mob_data[color]["Health"]

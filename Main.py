@@ -134,6 +134,7 @@ def game():
     wave_number = 1
     lives = 25  # Starting number of lives
     money = 550  # Starting amount of money
+    score = 0
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
@@ -355,10 +356,12 @@ def game():
                 if enemy.hp <= 0 and enemy.death_animation_done:
                     enemies.remove(enemy)
                     money += enemy.money
+                    score += enemy.score
             else:
                 lives -= enemy.dmg
                 enemies.remove(enemy)
                 money += enemy.money  # increase money if enemy reaches end
+                score -= enemy.score
                 if lives <= 0:
                     if gameover_screen(screen) == "restart":
                         log_message("Restarting game...")
@@ -389,7 +392,7 @@ def game():
                 money += 10 * wave_number
                 wave_started = False
 
-        draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
+        draw_sidebar(screen, lives, money, score) # makes enemy go behind sidebar instead of overtop it
         draw_underbar(screen)
         draw_logs(screen, log_messages)
 
