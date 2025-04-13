@@ -134,7 +134,7 @@ def game():
     wave_number = 1
     lives = 25  # Starting number of lives
     money = 550  # Starting amount of money
-    score = 0
+    score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
 
@@ -237,6 +237,7 @@ def game():
                     if not wave_started:
                         wave_started = True
                         log_message("Wave started!")
+                        wave_start_time = pygame.time.get_ticks()
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
@@ -303,7 +304,6 @@ def game():
             ############################### END OF TOWER PLACEMENT CODE ########################################
             
         current_time = pygame.time.get_ticks()
-
         if wave_started and spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
@@ -378,20 +378,27 @@ def game():
         # end enemy loop
         
         if not enemies and spawned_count == len(current_wave_enemies):
-            if wave_number == FINAL_WAVE: # game clear after 5 wave
-                score += (money*2)
+            if wave_number == FINAL_WAVE: # game clear after 10 wave
+                log_message(f"Money increase score by: {money*2}")
+                score += (money*2) # winning with extra money adds to your score
+                log_message(f"Lives increases score by: {lives*500}")
+                score += (lives*500) # winning with extra lives adds to your score
                 gameclear_screen(screen, score)
                 mixer.music.stop()
 
                 main()  # restart from homescreen
                 return
             else:
+                wave_end_time = pygame.time.get_ticks()
                 wave_number += 1
                 current_wave_enemies = get_wave_data(wave_number)
                 spawned_count = 0
                 last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
                 money += 10 * wave_number
-                score += int((wave_number**2) * (1000/(pygame.time.get_ticks()/1000)))
+                log_message(f"It took {((wave_end_time-wave_start_time)/1000)} seconds to beat the wave")
+                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
+                score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
+
                 wave_started = False
 
         draw_sidebar(screen, lives, money, score) # makes enemy go behind sidebar instead of overtop it
