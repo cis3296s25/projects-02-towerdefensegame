@@ -118,7 +118,7 @@ def log_message(message):
 
 def game():
     mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
-    mixer.music.set_volume(0.5)
+    mixer.music.set_volume(Settings.music_volume)
     mixer.music.play(-1) #plays music after leaving homescreen
 
     # score variables

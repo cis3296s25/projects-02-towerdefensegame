@@ -117,7 +117,8 @@ def settings_screen(screen):
     running = True
 
     # Volume slider setup
-    volume = mixer.music.get_volume()
+    volume = Settings.music_volume
+    mixer.music.set_volume(volume)
     muted = volume == 0
     sfx_muted = Settings.sfx_volume == 0
     dragging_music = False
@@ -174,18 +175,6 @@ def settings_screen(screen):
         sfx_speaker_icon = speaker_mute if sfx_muted else speaker_high if sfx_v > 0.66 else speaker_med if sfx_v > 0.33 else speaker_low
         screen.blit(sfx_speaker_icon, sfx_speaker_rect)
 
-        # Choose speaker icon
-        #if muted:
-        #    icon = speaker_mute
-        #elif volume <= 0.33:
-        #    icon = speaker_low
-        #elif volume <= 0.66:
-        #    icon = speaker_med
-       # else:
-        #    icon = speaker_high
-
-        #screen.blit(icon, speaker_rect)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -217,6 +206,7 @@ def settings_screen(screen):
                     muted = volume == 0
                     mixer.music.set_volume(0 if muted else volume)
                     handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+                    Settings.music_volume = volume
                 if dragging_sfx:
                     mouse_x = event.pos[0]
                     new_sfx_volume  = max(0, min(1, (mouse_x - sfx_slider_rect.x) / sfx_slider_rect.width))
