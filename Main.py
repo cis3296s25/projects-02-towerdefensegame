@@ -464,6 +464,8 @@ def main():
             game()
         elif result == "settings":
             settings_screen(screen)
+        elif result == "leaderboard":
+            leaderboard_screen(screen, SCORE_FILE)
 
 
 if __name__ == "__main__":

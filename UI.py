@@ -34,16 +34,19 @@ def homescreen(screen):
     logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
     play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
     settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
+    leaderboard_btn = pygame.image.load("images/Homescreen/leaderboard.png").convert_alpha()
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (800, 650))
     play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
     settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
+    leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
     settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
+    leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - 10)))
 
     spores = [Spore(750, 600) for _ in range(50)]
 
@@ -58,6 +61,7 @@ def homescreen(screen):
         screen.blit(logo, logo_rect)
         screen.blit(play_btn, play_rect)
         screen.blit(settings_btn, settings_rect)
+        screen.blit(leaderboard_btn, leaderboard_rect)
         
         for event in pygame.event.get():
 
@@ -72,6 +76,8 @@ def homescreen(screen):
                         return "play"
                     elif settings_rect.collidepoint(mouse_pos):
                         return "settings"
+                    elif leaderboard_rect.collidepoint(mouse_pos):
+                        return "leaderboard"
 
         pygame.display.flip()
         clock.tick(60)
@@ -479,3 +485,34 @@ def is_top_five(SCORE_FILE, score):
         return True
     return score > min(scores)
     
+def leaderboard_screen(screen, SCORE_FILE):
+    scores = load_scores(SCORE_FILE)
+
+    screen.fill((0,0,0))
+    pygame.font.init()
+    font = pygame.font.SysFont("Arial", 30)
+    smallFont = pygame.font.SysFont("Arial", 15)
+    white = (255, 255, 255)
+
+    title = font.render("***TOP SCORES***", True, white)
+    screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+
+    return_home = smallFont.render("press esc or space to return to home page", True, white)
+    screen.blit (return_home, (screen.get_width()-return_home.get_width()-15, screen.get_height()-return_home.get_height()-15))
+
+    for i, score in enumerate(scores):
+        line = f"{i+1}. {score}"
+        text = font.render(line, True, white)
+        screen.blit(text, (100, 120 + i * 40))
+
+    pygame.display.flip()
+
+    #space or esc to quit
+    waiting = True 
+    while waiting: 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE):
+                waiting = False
