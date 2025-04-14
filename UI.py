@@ -484,14 +484,14 @@ def leaderboard_screen(screen, SCORE_FILE):
     screen.fill((0,0,0))
     pygame.font.init()
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 30)
-    smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 15)
+    smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
     white = (255, 255, 255)
 
     title = font.render("***TOP SCORES***", True, white)
     screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
 
-    return_home = smallFont.render("press esc or space to return to home page", True, white)
-    screen.blit (return_home, (screen.get_width()-return_home.get_width()-15, screen.get_height()-return_home.get_height()-15))
+    return_home = smallFont.render("Press ESC or SPACE keys to return to home", True, white)
+    screen.blit (return_home, (screen.get_width()//2-return_home.get_width()//2, screen.get_height()-return_home.get_height()-15))
 
     for i, score in enumerate(scores):
         line = f"{i+1}. {score}"
@@ -501,14 +501,17 @@ def leaderboard_screen(screen, SCORE_FILE):
     pygame.display.flip()
 
     #space or esc to quit
-    waiting = True 
-    while waiting: 
+    running = True 
+    while running: 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE):
-                waiting = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_SPACE:
+                    running = False
 
 def instructions_screen(screen, INSTRUCTIONS_FILE):
     pygame.font.init()
@@ -535,17 +538,21 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
             text_surface = font.render(line.strip(), True, (255, 255, 255))
             screen.blit(text_surface, (50, 50+i * 30))
 
-        page_nav_text = font.render(f"Use left and right arrow keys to navigate", True, (255, 255, 255))
+        page_dir_text = font.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
+        page_nav_text = font.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
         page_num_text = font.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-        screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 40))
-        screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 40))   
+        screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
+        screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
+        screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))   
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_SPACE:
                     running = False
                 elif event.key == pygame.K_LEFT and current_page > 0:
                     current_page -= 1
