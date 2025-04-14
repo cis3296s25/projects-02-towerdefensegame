@@ -1,0 +1,41 @@
+-- Game Instructions --
+-- Gameplay --
+    This is a tower defense game. In this game, there will be enemies — the enemies are mushrooms.
+
+    To defeat the enemies, you must place towers to defend your home.
+    If the enemies reach the end of the path, you will lose lives.
+
+-- Towers --
+    To place a tower, you need to use money.
+    You start the game with some money, and you can earn more by defeating mushrooms.
+
+    Once you have enough money, you can click on a tower, then click on an empty square (any square that is not part of the path).
+    This will place the tower.
+
+    Different towers have different mechanics — some shoot fast, some slow, some deal splash damage, etc.
+
+    You can upgrade towers using money as well.
+    The upgrade cost will steadily increase with each level.
+
+    When a tower reaches its max level, the "Upgrade" button will change to say "Max Upgrades."
+
+    You can also sell a tower for half of its total cost.
+
+-- Game Play Controls --
+    Press Start to begin the round (bottom right).
+    There is a Speed Up button to make the waves move faster (on top of start button).
+    Press ESC to pause the game.
+
+-- Score --
+    Your score increases as you kill mushrooms.
+    You also get bonus points for defeating a wave quickly.
+
+    At the end of the game, you earn additional points for:
+
+    Extra money remaining
+    Extra lives remaining
+    Your score color changes based on performance:
+
+    White = Normal
+    Green = Top 5 score
+    Purple = New high score
