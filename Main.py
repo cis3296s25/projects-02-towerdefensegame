@@ -416,8 +416,8 @@ def game():
 
                 wave_started = False
 
-        draw_sidebar(screen, lives, money, score, SCORE_FILE) # makes enemy go behind sidebar instead of overtop it
-        draw_underbar(screen, score)
+        draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
+        draw_underbar(screen, SCORE_FILE, score)
         draw_logs(screen, log_messages)
 
 
@@ -464,6 +464,8 @@ def main():
             game()
         elif result == "settings":
             settings_screen(screen)
+        elif result == "leaderboard":
+            leaderboard_screen(screen, SCORE_FILE)
 
 
 if __name__ == "__main__":

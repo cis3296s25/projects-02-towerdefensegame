@@ -34,16 +34,19 @@ def homescreen(screen):
     logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
     play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
     settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
+    leaderboard_btn = pygame.image.load("images/Homescreen/leaderboard.png").convert_alpha()
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (800, 650))
     play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
     settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
+    leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
     settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
+    leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - 10)))
 
     spores = [Spore(750, 600) for _ in range(50)]
 
@@ -58,7 +61,8 @@ def homescreen(screen):
         screen.blit(logo, logo_rect)
         screen.blit(play_btn, play_rect)
         screen.blit(settings_btn, settings_rect)
-        
+        screen.blit(leaderboard_btn, leaderboard_rect)
+
         for event in pygame.event.get():
 
             mouse_pos = pygame.mouse.get_pos()
@@ -72,6 +76,8 @@ def homescreen(screen):
                         return "play"
                     elif settings_rect.collidepoint(mouse_pos):
                         return "settings"
+                    elif leaderboard_rect.collidepoint(mouse_pos):
+                        return "leaderboard"
 
         pygame.display.flip()
         clock.tick(60)
@@ -316,7 +322,7 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 waiting = False
 
-def draw_sidebar(screen, lives, money, score, SCORE_FILE):
+def draw_sidebar(screen, lives, money):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
     
     font = pygame.font.Font("fonts/BrickSans.ttf", 10)
@@ -324,6 +330,18 @@ def draw_sidebar(screen, lives, money, score, SCORE_FILE):
     # text
     text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
     text_Money = font.render(f"Money: {money}", True, (255, 255, 255))  # (text, antialias, color, background=None)
+    text_tower = font.render("Towers", True, (255, 255, 255))  
+    screen.blit(text_Lives, (610, 10))  # Position the Lives text
+    screen.blit(text_Money, (610, 30))  # Position the Money text
+    screen.blit(text_tower, (610, 60))  # Position the Tower text
+    pygame.draw.line(screen, (255, 255, 255), (610, 80), (740, 80), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+    
+    
+
+def draw_underbar(screen, SCORE_FILE, score):
+    pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
+    font = pygame.font.Font("fonts/BrickSans.ttf", 15)
+
     text_Score = font.render(f"Score: ", True, (255, 255, 255))
     if (get_top_score(SCORE_FILE) < score ):
         value_Score = font.render(f"**{score}**", True, (138, 43, 226))
@@ -331,24 +349,9 @@ def draw_sidebar(screen, lives, money, score, SCORE_FILE):
         value_Score = font.render(f"*{score}*", True, (173, 216, 23))
     else:
         value_Score = font.render(f"{score}", True, (255, 255, 255))
-    text_tower = font.render("Towers", True, (255, 255, 255))  
-    
-    screen.blit(text_Lives, (610, 10))  # Position the Lives text
-    screen.blit(text_Money, (610, 30))  # Position the Money text
-    screen.blit(text_Score, (610, 50))
-    screen.blit(value_Score, (610+text_Score.get_width(), 50))
-    pygame.draw.line(screen, (255, 255, 255), (610, 74), (740, 74), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
-    screen.blit(text_tower, (610, 75))  # Position the Tower text
-    pygame.draw.line(screen, (255, 255, 255), (610, 85), (740, 85), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
-    screen.blit(text_tower, (610, 60))  # Position the Tower text
-    
 
-def draw_underbar(screen, score):
-    pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
-    font = pygame.font.Font("fonts/BrickSans.ttf", 15)
-    text_Score = font.render(f"Score: {score}", True, (255, 255, 255))
-    screen.blit(text_Score, (605, 525)) # Position the Score text
-
+    screen.blit(text_Score, (605, 525))
+    screen.blit(value_Score, (605+text_Score.get_width(), 525))
 
 def draw_tower_stat(screen, tower):
     pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
@@ -479,3 +482,34 @@ def is_top_five(SCORE_FILE, score):
         return True
     return score > min(scores)
     
+def leaderboard_screen(screen, SCORE_FILE):
+    scores = load_scores(SCORE_FILE)
+
+    screen.fill((0,0,0))
+    pygame.font.init()
+    font = pygame.font.SysFont("fonts/BrickSans.ttf", 30)
+    smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 15)
+    white = (255, 255, 255)
+
+    title = font.render("***TOP SCORES***", True, white)
+    screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+
+    return_home = smallFont.render("press esc or space to return to home page", True, white)
+    screen.blit (return_home, (screen.get_width()-return_home.get_width()-15, screen.get_height()-return_home.get_height()-15))
+
+    for i, score in enumerate(scores):
+        line = f"{i+1}. {score}"
+        text = font.render(line, True, white)
+        screen.blit(text, (100, 120 + i * 40))
+
+    pygame.display.flip()
+
+    #space or esc to quit
+    waiting = True 
+    while waiting: 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE):
+                waiting = False
