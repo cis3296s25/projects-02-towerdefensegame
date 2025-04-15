@@ -227,7 +227,9 @@ def game():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    settings_screen(screen)
+                    result = settings_screen(screen)
+                    if result == "achievements":
+                        achievements_screen(screen, achievements)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
             
@@ -597,11 +599,15 @@ def main():
         if result == "play":
             game()
         elif result == "settings":
-            settings_screen(screen)
+            setting_result = settings_screen(screen)
+            if setting_result == "achievements":
+                achievements_screen(screen, achievements)
         elif result == "leaderboard":
             leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE)
         elif result == "information":
             instructions_screen(screen, INSTRUCTIONS_FILE)
+        elif result == "achievements":
+            achievements_screen(screen, achievements)
 
 
 if __name__ == "__main__":
