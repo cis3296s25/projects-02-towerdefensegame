@@ -7,6 +7,7 @@ import json
 
 from TowerData import towers_base
 import Settings
+from Achievements import achievements
 
 class Spore:
     def __init__(self, screen_width, screen_height):
@@ -90,6 +91,8 @@ def homescreen(screen):
                         return "leaderboard"
                     elif information_rect.collidepoint(mouse_pos):
                         return "information"
+                    elif achievements_rect.collidepoint(mouse_pos):
+                        return "achievements"
 
         pygame.display.flip()
         clock.tick(60)
@@ -127,6 +130,10 @@ def pause_screen(screen, mixer):
 def settings_screen(screen):
     clock = pygame.time.Clock()
     running = True
+
+    achievements_btn = pygame.image.load("images/Homescreen/achievementsbutton.png").convert_alpha()
+    achievements_btn = pygame.transform.smoothscale(achievements_btn, (40, 40))
+    achievements_rect = achievements_btn.get_rect(bottomleft = ((103), (screen.get_height() - 10)))
 
     # Volume slider setup
     volume = Settings.music_volume
@@ -204,8 +211,12 @@ def settings_screen(screen):
                     sfx_muted = not sfx_muted
                     Settings.sfx_volume = 0 if sfx_muted else 0.5
                     sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5
+                elif achievements_rect.collidepoint(event.pos):
+                    return "achievements"
                 elif exit_rect.collidepoint(event.pos):
                     return
+                
+
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_music = False
@@ -230,6 +241,8 @@ def settings_screen(screen):
                 return  # Go back to game or menu
             
         screen.blit(exit_btn, exit_rect)
+        screen.blit(achievements_btn, achievements_rect)
+
 
         pygame.display.flip()
         clock.tick(60)
@@ -635,6 +648,100 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
                     current_page -= 1
                 elif event.key == pygame.K_RIGHT and current_page < (total_pages - 1):
                     current_page += 1
+
+        pygame.display.flip()
+        clock.tick(60)
+
+def achievements_screen(screen, achievements):
+    clock = pygame.time.Clock()
+    running = True
+    font = pygame.font.Font("fonts/BrickSans.ttf", 13)
+    big_font = pygame.font.Font("fonts/BrickSans.ttf", 20)
+    
+    # Load and scale exit button (same as settings screen)
+    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
+    exit_btn = pygame.transform.scale(exit_btn, (40, 40))
+    exit_rect = exit_btn.get_rect(topleft=(20, 20))
+
+    # Calculate progress
+    unlocked = sum(1 for a in achievements.values() if a["unlocked"])
+    total = len(achievements)
+    
+    # Layout variables
+    padding = 20
+    card_width = 200
+    card_height = 100
+    cols = 3
+    scroll_y = 0
+    scroll_speed = 20
+    max_scroll = ((total + cols - 1) // cols) * (card_height + padding) - 400
+
+    def draw_wrapped_text(surface, text, font, color, x, y, max_width):
+        words = text.split()
+        lines = []
+        current_line = ""
+
+        for word in words:
+            test_line = current_line + word + " "
+            if font.size(test_line)[0] <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line.strip())
+                current_line = word + " "
+        lines.append(current_line.strip())
+
+        for i, line in enumerate(lines):
+            rendered = font.render(line, True, color)
+            surface.blit(rendered, (x, y + i * font.get_linesize()))
+
+
+    while running:
+        screen.fill((20, 20, 20))
+        mouse = pygame.mouse.get_pos()
+
+        screen.blit(exit_btn, exit_rect)
+
+        # Title and Progress
+        title = big_font.render("Achievements", True, (255, 255, 255))
+        screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 20))
+
+        progress = font.render(f"{unlocked}/{total} Unlocked", True, (200, 200, 200))
+        screen.blit(progress, (screen.get_width() // 2 - progress.get_width() // 2, 60))
+
+
+        # Draw achievements grid
+        start_y = 110 + scroll_y
+        achievements_list = list(achievements.items())
+        for idx, (name, data) in enumerate(achievements_list):
+            row = idx // cols
+            col = idx % cols
+            x = padding + col * (card_width + padding)
+            y = start_y + row * (card_height + padding)
+
+            # Card background
+            bg_color = (60, 60, 60) if not data["unlocked"] else (100, 200, 100)
+            pygame.draw.rect(screen, bg_color, (x, y, card_width, card_height), border_radius=5)
+
+            # Title
+            title = font.render(name, True, (255, 255, 255))
+            screen.blit(title, (x + 10, y + 10))
+
+            # Description
+            draw_wrapped_text(screen, data["description"], font, (180, 180, 180), x + 10, y + 40, card_width - 20)
+
+
+        # Handle events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_rect.collidepoint(mouse):
+                    return
+                if event.button == 4:  # scroll up
+                    scroll_y = min(scroll_y + scroll_speed, 0)
+                if event.button == 5:  # scroll down
+                    scroll_y = max(scroll_y - scroll_speed, -max_scroll)
 
         pygame.display.flip()
         clock.tick(60)

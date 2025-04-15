@@ -20,7 +20,7 @@ achievements = {
     "Sporeshield Shatterer": {
         "unlocked": False,
         "category": "Combat",
-        "description": "Break the Sporeshield in under 5 seconds (time starts when first bit of damage is dealt)"
+        "description": "Break the Sporeshield in under 5 seconds"
     },
     "Flawless": {
         "unlocked": False,
@@ -28,7 +28,7 @@ achievements = {
         "description": "Beat the game without losing lives"
     },
 
-    "Clutch Save": {
+    "Barely Breathing": {
         "unlocked": False,
         "category": "Combat",
         "description": "Win the game with only 1 life remaining"
@@ -153,7 +153,7 @@ def check_achievements(state, notifications_list):
         unlock_achievement("Flawless", notifications_list)
 
     if state["lives"] == 1 and state["game_won"]:
-        unlock_achievement("Clutch Save", notifications_list)
+        unlock_achievement("Barely Breathing", notifications_list)
 
     # Tower usage
     if len(state["tower_types"]) == 3:  # adjust based on # of tower types
