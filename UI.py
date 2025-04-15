@@ -229,7 +229,7 @@ def settings_screen(screen):
         clock.tick(60)
 
 
-def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time):
+def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time, time_high_score, time_top_five):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -255,7 +255,12 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"Score: {score}", True, (255, 255, 255))
     score_rect = score_text.get_rect(center=(screen.get_width() //2, 375))
 
-    time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
+    if (time_high_score):
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (138, 43, 226))
+    elif (time_top_five):
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (173, 216, 23))
+    else:
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
     time_rect = time_text.get_rect(center=(screen.get_width() //2, 450))
 
     spores = [Spore(750, 600) for _ in range(50)] 
@@ -476,6 +481,11 @@ def update_scores(SCORE_FILE, score, sort_method):
 
 def get_top_score(SCORE_FILE, sort_method):
     scores = load_scores(SCORE_FILE)
+    if not scores: 
+        if (sort_method == "score"): 
+            return 0
+        elif (sort_method == "time"):
+            return float('inf')
     if (sort_method == "score"):
         return (max(scores))
     elif (sort_method == "time"):

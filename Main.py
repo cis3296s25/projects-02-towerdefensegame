@@ -38,7 +38,7 @@ SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 550
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
-FINAL_WAVE = 10
+FINAL_WAVE = 1
 
 IMG_NAMES = [
     "enemySample40x40",
@@ -130,6 +130,8 @@ def game():
     # score variables
     high_score = False
     top_five = False
+    time_high_score = False
+    time_top_five = False
     total_wave_time = 0
 
     # tower variables
@@ -446,6 +448,7 @@ def game():
                 log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
                 score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
                 total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
+                total_wave_time = round(total_wave_time, 2)
 
                 # bonus points
                 log_message(f"Money increase score by: {money*2}")
@@ -457,6 +460,10 @@ def game():
                     high_score = True
                 elif (is_top_five(SCORE_FILE, score, "score")):
                     top_five = True
+                if (get_top_score(TOTAL_WAVE_TIME_FILE, "time") > total_wave_time): 
+                    time_high_score = True
+                elif (is_top_five(TOTAL_WAVE_TIME_FILE, total_wave_time, "time")):
+                    time_top_five = True
 
                 # final score and time messaging
                 log_message(f"Final score is {score}")
@@ -474,7 +481,7 @@ def game():
                 print("[DEBUG] Game Won:", game_state["game_won"])
 
                 check_achievements(game_state, achievement_notifications)
-                gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time)
+                gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time, time_high_score, time_top_five)
                 
                 mixer.music.stop()
                 main()  # restart from homescreen
