@@ -13,6 +13,7 @@ from Button import Button
 from UI import *
 from os.path import abspath, dirname
 from TowerData import towers_base
+from Achievements import unlock_achievement, check_achievements
 
 BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
@@ -139,7 +140,7 @@ def game():
     #Wave Logic
     wave_number = 1
     lives = 25  # Starting number of lives
-    money = 550  # Starting amount of money
+    money = 5500  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
@@ -192,6 +193,34 @@ def game():
     show_wave = True
     towerButton = None
     fps = 60
+
+    game_state = {
+        "kills": 0,
+        "waves_survived": 0,
+        "boss_defeated": False,
+        "lives": 25,
+        "lives_lost": 0,
+        "towers_placed": 0,
+        "gold": 0,
+        "upgrades_used": 0,
+        "towers_sold": 0,
+        "towers_sold_this_wave": 0,
+        "tower_types": set(),
+        "one_life_remaining": False,
+        "no_upgrades_wave": True,
+        "start_money": 0,  # used to check Last Cent
+        "witch_dmg_this_wave": 0,  # used for Witching Hour
+        "archer_wave_kills": 0,  # used for Sniper
+        "wave_started": False,
+        "game_won": False,
+        "sold_mid_wave": False,
+        "wave_completed": False,
+        "wave": 0,
+        "maxed_towers": 0,
+        "one_tower_challenge": False,
+    }
+
+
     while running:
 
         for event in pygame.event.get():
@@ -215,7 +244,12 @@ def game():
                             log_message("Tower is already at max upgrade!")
                         elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
                             money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
-                            selected_tower.do_upgrade()
+                            selected_tower.do_upgrade(game_state)
+                            game_state["upgrades_used"] += 1
+                            game_state["no_upgrades_wave"] = False
+
+                            check_achievements(game_state)
+                            
                         elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
                             log_message("Not enough money to upgrade tower!")
                 
@@ -231,6 +265,12 @@ def game():
                         log_message(f"Refunded: {total_cost // 2}")
 
                         towers.remove(selected_tower)  # Remove the tower from the list
+                        game_state["towers_sold"] += 1
+                        game_state["towers_sold_this_wave"] += 1
+                        if wave_started:
+                            game_state["sold_mid_wave"] = True
+                        check_achievements(game_state)
+
                         tower_positions.remove((selected_tower.x, selected_tower.y))  # Free up the position
                         selected_tower = None  # Deselect the tower
                         show_stats = False  # Hide the stats screen
@@ -242,8 +282,12 @@ def game():
                 elif start_wave_button.draw(screen):
                     if not wave_started:
                         wave_started = True
+                        
                         log_message("Wave started!")
                         wave_start_time = pygame.time.get_ticks()
+                        game_state["wave_completed"] = False
+                        game_state["start_money"] = money
+                        check_achievements(game_state)
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
@@ -283,10 +327,15 @@ def game():
                                 money -= temporary_tower.cost  
                                 log_message(f"Placing tower at: ({grid_x}, {grid_y})")
                                 
-                                towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name))
+                                towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name, game_state))
                                 tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
                                 placing_tower = False
                                 temporary_tower = None
+                                game_state["towers_placed"] += 1
+                                game_state["tower_types"] = {tower.tower_name for tower in towers}
+                                game_state["tower_types"].add(towerButton.name)
+                                check_achievements(game_state)
+
                             else:
                                 log_message("Not enough money to place tower!")
                 elif not show_stats and find_button(mouse_x, mouse_y):
@@ -294,7 +343,7 @@ def game():
                     towerButton = find_button(mouse_x, mouse_y)
                     placing_tower = True
                     log_message(towerButton.name)
-                    temporary_tower = Tower(0, 0, screen, towerButton.name)
+                    temporary_tower = Tower(0, 0, screen, towerButton.name, game_state)
                 elif cancelButton.draw(screen):
                     # Cancel tower placement
                     placing_tower = False
@@ -363,9 +412,18 @@ def game():
                     enemies.remove(enemy)
                     money += enemy.money
                     score += enemy.score
+                    game_state["kills"] += 1
+                    if enemy.killed_by == "Archer":
+                        game_state["archer_wave_kills"] += 1
+                    check_achievements(game_state)
+
             else:
                 lives -= enemy.dmg
                 enemies.remove(enemy)
+                game_state["lives"] = lives
+                game_state["lives_lost"] += enemy.dmg
+                if lives == 1:
+                    game_state["one_life_remaining"] = True
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
@@ -386,6 +444,9 @@ def game():
             if getattr(enemy, "is_boss", False):
                 draw_boss_health_bar(screen, enemy)
                 break  # Only one boss expected at a time
+
+            
+
         # end enemy loop
         
         if not enemies and spawned_count == len(current_wave_enemies):
@@ -399,13 +460,43 @@ def game():
                 elif (is_top_five(SCORE_FILE, score)):
                     top_five = True
                 log_message(f"score updated {update_scores(SCORE_FILE, score)}")
+                game_state["gold"] = money
+                game_state["game_won"] = True
+                game_state["lives"] = lives
+                if getattr(enemy, "is_boss", False) and enemy.hp <= 0 and not game_state["boss_defeated"]:
+                    game_state["boss_defeated"] = True
+
+                print("[DEBUG] Final Lives:", game_state["lives"])
+                print("[DEBUG] Game Won:", game_state["game_won"])
+
+                check_achievements(game_state)
                 gameclear_screen(screen, score, SCORE_FILE, high_score, top_five)
+                
                 mixer.music.stop()
                 main()  # restart from homescreen
                 return
             else:
                 wave_end_time = pygame.time.get_ticks()
                 wave_number += 1
+                game_state["wave"] = wave_number
+                game_state["wave_completed"] = True
+                if len(towers) == 1:
+                    game_state["one_tower_challenge"] = True
+                else:
+                    game_state["one_tower_challenge"] = False
+
+                game_state["waves_survived"] += 1
+                check_achievements(game_state)
+                game_state["towers_sold_this_wave"] = 0
+                game_state["archer_wave_kills"] = 0
+                game_state["witch_dmg_this_wave"] = 0
+                game_state["tower_types"] = set()
+                game_state["no_upgrades_wave"] = True
+                
+
+                #check_achievements(game_state)
+
+
                 current_wave_enemies = get_wave_data(wave_number)
                 spawned_count = 0
                 last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
@@ -432,6 +523,7 @@ def game():
 
         if not wave_started: #only appears when wave hasnt started yet
             start_wave_button.draw(screen)
+            
 
          
 

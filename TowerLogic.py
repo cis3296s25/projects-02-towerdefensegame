@@ -20,7 +20,7 @@ ENEMY_PATHS = [
 ]
 
 class Tower:
-    def __init__(self, x, y, screen, tower_name):
+    def __init__(self, x, y, screen, tower_name, game_state):
 
         self.x = x
         self.y = y
@@ -37,6 +37,7 @@ class Tower:
         self.target = None
         self.upgrade = 0
         self.attack_sound = None
+        self.game_state = game_state
 
         # Load animation frames from folder
         folder = f"{tower_name}Tower"
@@ -87,14 +88,6 @@ class Tower:
         for projectile in self.projectiles:
             projectile.draw()
 
-    #def enemy_in_range(self, enemy):
-    #    dx = enemy.x - self.x  # get x distance between enemy and tower
-    #    dy = enemy.y - self.y  # get y distance between enemy and tower
-    #    dist = (dx ** 2 + dy ** 2) ** 0.5  # get distance between enemy and tower
-    #    if dist <= self.range:
-    #        return True
-    #    return False
-
     def update_animation(self, fps):
         if self.animating:
             current_time = pygame.time.get_ticks()
@@ -133,6 +126,8 @@ class Tower:
                     # Skip boss while transforming
                     if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
                         continue
+                    
+                    enemy.killed_by = self.tower_name
 
                     if self.get_distance(enemy) <= self.range:
                         self.target = enemy
@@ -148,6 +143,8 @@ class Tower:
 
             if enemy_hit: # bear attack sound
                 self.attacksound()
+                if self.tower_name == "Witch":
+                    self.game_state["witch_dmg_this_wave"] += self.damage
         else:
             for enemy in enemies:
                 if enemy.hp > 0:
@@ -168,9 +165,13 @@ class Tower:
                         self.attacksound() # play witch and archer attack sound when shooting
 
                         self.target.hp -= projectile.damage
+                        if self.tower_name == "Witch":
+                            self.game_state["witch_dmg_this_wave"] += projectile.damage
+
 
                         # Only mark as dying if NOT Phase 1 boss
                         if self.target.hp <= 0:
+                            self.target.killed_by = self.tower_name
                             if getattr(self.target, "is_boss", False) and getattr(self.target, "phase", 1) == 1:
                                 pass
                             else:
@@ -191,7 +192,7 @@ class Tower:
         # Update all fireballs
         self.projectiles.update()
 
-    def do_upgrade(self):
+    def do_upgrade(self, game_state):
         if self.upgrade == 3:
             print("Max upgrade reached")
         else:
@@ -199,6 +200,8 @@ class Tower:
             self.damage = towers_base[self.tower_name]["upgrades"][self.upgrade]["damage"]
             self.cooldown = towers_base[self.tower_name]["upgrades"][self.upgrade]["cooldown"]
             self.range = towers_base[self.tower_name]["upgrades"][self.upgrade]["range"]
+            if self.upgrade == 3:
+                game_state["maxed_towers"] += 1
 
     def get_distance(self, enemy):
         enemy_center_x = enemy.rect.centerx
@@ -207,10 +210,3 @@ class Tower:
         dy = enemy_center_y - self.y
         dist = (dx ** 2 + dy ** 2) ** 0.5
         return dist
-    # def attack(self, enemies):
-    #     if self.can_attack(enemy):
-    #         self.attack_time = pygame.time.get_ticks() + self.cooldown * 1000
-    #         self.anim_index = 0
-    #         self.animating = True
-    #         return True
-    #     return False
