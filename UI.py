@@ -248,19 +248,19 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
     prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 500))
     if (high_score):
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 40).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 40).render(f"Top Five: *{score}*", True, (173, 216, 23))
     else:
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"Score: {score}", True, (255, 255, 255))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 40).render(f"Score: {score}", True, (255, 255, 255))
     score_rect = score_text.get_rect(center=(screen.get_width() //2, 375))
 
     if (time_high_score):
-        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (138, 43, 226))
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render(f"Time Taken: {total_wave_time}", True, (138, 43, 226))
     elif (time_top_five):
-        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (173, 216, 23))
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render(f"Time Taken: {total_wave_time}", True, (173, 216, 23))
     else:
-        time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
+        time_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
     time_rect = time_text.get_rect(center=(screen.get_width() //2, 450))
 
     spores = [Spore(750, 600) for _ in range(50)] 
@@ -297,7 +297,7 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
     if (high_score):
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five Score: *{score}*", True, (173, 216, 23))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
     else:
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
 
