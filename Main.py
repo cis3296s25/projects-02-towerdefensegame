@@ -48,6 +48,7 @@ IMG_NAMES = [
     "fastforwardwave",
     "archerSample",
     "bearSample",
+    "slow",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -62,6 +63,7 @@ cancelImage = IMAGES["cancel_button"] #generate cancel button image
 fastForwardImage = IMAGES["fastforwardwave"] #generate fast forward button image
 archerImage = IMAGES["archerSample"] #generate archer tower image
 bearImage = IMAGES["bearSample"] #generate bear tower image
+slowImage = IMAGES["slow"]
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -159,10 +161,11 @@ def game():
     witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\ncost: 100\natk: 10") # (x, y, image, single_click, tower_name, tool_tip)
     archerButton = Button(680, 95, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\ncost: 80\natk: 8")
     bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\ncost: 120\natk: 25")
+    slowButton = Button(680, 140, IMAGES["slow"], True, "Slow", tooltip_text="Slow\ncost: 100\natk: slow")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [archerButton, bearButton, witchButton]
+    buttons = [archerButton, bearButton, witchButton, slowButton]
 
     def find_button(x, y):
         for button in buttons:
@@ -291,9 +294,9 @@ def game():
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     grid_x = mouse_x // 40 * 40
                     grid_y = mouse_y // 40 * 40
-                    if mouse_x > 600:
+                    if mouse_x > 600 or mouse_y > 400:
                         log_message("Clicked on sidebar")
-                    else:   
+                    else:
                         selected_tower = select_tower(grid_x, grid_y, towers)
                         if selected_tower:
                             log_message(f"Selected Tower at ({grid_x}, {grid_y})")

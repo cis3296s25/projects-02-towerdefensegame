@@ -3,6 +3,7 @@ import pygame as pg
 from pygame import mixer
 import os
 
+from EnemyData import mob_data
 from ProjectileLogic import Projectile
 from TowerData import towers_base
 import Settings
@@ -117,16 +118,26 @@ class Tower:
             self.attack_sound.play(fade_ms=100)
 
     # fixes towers not attacking giant: come back to here if any problems
-    def take_aim(self, enemies):
+    def apply_env_effects(self, enemies):
+        for enemy in enemies:
+            og_speed = mob_data[enemy.color]["Speed"]
+            speed = og_speed/2
+            if self.get_distance(enemy) <= self.range:
+                self.target = enemy
+                self.target.speed = speed
+            else:
+                enemy.speed = og_speed
+
+
+    def deal_aoe(self, enemies):
         if self.aoeDmg:
             enemy_hit = False
-            
             for enemy in enemies:
                 if enemy.hp > 0:
                     # Skip boss while transforming
                     if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
                         continue
-                    
+
                     enemy.killed_by = self.tower_name
 
                     if self.get_distance(enemy) <= self.range:
@@ -141,42 +152,43 @@ class Tower:
                             else:
                                 enemy.is_dying = True
 
-            if enemy_hit: # bear attack sound
+            if enemy_hit:  # bear attack sound
                 self.attacksound()
                 if self.tower_name == "Witch":
                     self.game_state["witch_dmg_this_wave"] += self.damage
-        else:
-            for enemy in enemies:
-                if enemy.hp > 0:
-                    # Skip boss while transforming
-                    if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
-                        continue
 
-                    dist = self.get_distance(enemy)
-                    if dist <= self.range:
-                        self.target = enemy
-                        projectile = Projectile(self.x, self.y, self.projectile,
-                                                self.range, towers_base[self.tower_name]["projectile"]["frenetic"], self.target,
-                                                speed=towers_base[self.tower_name]["projectile"]["speed"],
-                                                screen=self.screen, damage=self.damage)
-                        self.projectiles.add(projectile)
-                        self.attack_time = pygame.time.get_ticks()
+    def take_aim(self, enemies):
+        for enemy in enemies:
+            if enemy.hp > 0:
+                # Skip boss while transforming
+                if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
+                    continue
 
-                        self.attacksound() # play witch and archer attack sound when shooting
+                dist = self.get_distance(enemy)
+                if dist <= self.range:
+                    self.target = enemy
+                    projectile = Projectile(self.x, self.y, self.projectile,
+                                            self.range, towers_base[self.tower_name]["projectile"]["frenetic"], self.target,
+                                            speed=towers_base[self.tower_name]["projectile"]["speed"],
+                                            screen=self.screen, damage=self.damage)
+                    self.projectiles.add(projectile)
+                    self.attack_time = pygame.time.get_ticks()
 
-                        self.target.hp -= projectile.damage
-                        if self.tower_name == "Witch":
-                            self.game_state["witch_dmg_this_wave"] += projectile.damage
+                    self.attacksound() # play witch and archer attack sound when shooting
+
+                    self.target.hp -= projectile.damage
+                    if self.tower_name == "Witch":
+                        self.game_state["witch_dmg_this_wave"] += projectile.damage
 
 
-                        # Only mark as dying if NOT Phase 1 boss
-                        if self.target.hp <= 0:
-                            self.target.killed_by = self.tower_name
-                            if getattr(self.target, "is_boss", False) and getattr(self.target, "phase", 1) == 1:
-                                pass
-                            else:
-                                self.target.is_dying = True
-                        break
+                    # Only mark as dying if NOT Phase 1 boss
+                    if self.target.hp <= 0:
+                        self.target.killed_by = self.tower_name
+                        if getattr(self.target, "is_boss", False) and getattr(self.target, "phase", 1) == 1:
+                            pass
+                        else:
+                            self.target.is_dying = True
+                    break
 
 
     def attack(self, enemies, fps):
@@ -186,7 +198,12 @@ class Tower:
             self.projectiles.update()
         else:
             if pygame.time.get_ticks() - self.attack_time > (self.cooldown * 1000) * (60 / fps):
-                self.take_aim(enemies)
+                if self.aoeDmg:
+                    self.deal_aoe(enemies)
+                if towers_base[self.tower_name]["aoeEnv"]:
+                    self.apply_env_effects(enemies)
+                else:
+                    self.take_aim(enemies)
 
     def update(self):
         # Update all fireballs
