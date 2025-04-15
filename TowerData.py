@@ -8,6 +8,7 @@ towers_base = {
             "frenetic": True
         },
         "aoeDmg": False,
+        "aoeEnv": False,
         "cooldown": 2,
         "cost": 100,
         "upgrades": {
@@ -25,6 +26,7 @@ towers_base = {
             "frenetic": False
         },
         "aoeDmg": False,
+        "aoeEnv": False,
         "cooldown": 1.5,
         "cost": 80,
         "upgrades": {
@@ -42,6 +44,7 @@ towers_base = {
             "frenetic": False
         },
         "aoeDmg": True,
+        "aoeEnv": False,
         "cooldown": 2.8,
         "cost": 120,
         "upgrades": {
@@ -50,5 +53,24 @@ towers_base = {
             3: {"cost": 120, "damage": 45, "cooldown": 2.0, "range": 80},
         }
     },
+"Slow": {
+        "range": 50,
+        "damage": 0,
+        "projectile": {
+            "name": "none",
+            "speed": 6,
+            "frenetic": False
+        },
+        "aoeDmg": False,
+        "aoeEnv": True,
+        "cooldown": 0,
+        "cost": 120,
+        "upgrades": {
+            1: {"cost": 60, "damage": 0, "cooldown": 0, "range": 60},
+            2: {"cost": 80, "damage": 0, "cooldown": 0, "range": 80},
+            3: {"cost": 120, "damage": 0, "cooldown":0, "range": 120},
+        }
+    },
+
 }
 
