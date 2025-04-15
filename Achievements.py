@@ -1,4 +1,4 @@
-
+import pygame
 
 achievements = {
     # --- Combat Achievements ---
@@ -122,78 +122,82 @@ achievements = {
 }
 
 
-def unlock_achievement (name):
+def unlock_achievement(name, notifications_list=None):
     if name in achievements and not achievements[name]["unlocked"]:
         achievements[name]["unlocked"] = True
         print(f"Achievement Unlocked: {name} - {achievements[name]['description']}")
 
+        if notifications_list is not None:
+            notifications_list.append((name, pygame.time.get_ticks()))
+    print("[DEBUG] Notifications List:", notifications_list)
 
-def check_achievements(state):
+
+
+def check_achievements(state, notifications_list):
     # Kill-based
     if state["kills"] >= 1:
-        unlock_achievement("First Blood")
+        unlock_achievement("First Blood", notifications_list)
     # Wave-based
     if state["waves_survived"] >= 5:
-        unlock_achievement("Wave Warrior")
+        unlock_achievement("Wave Warrior", notifications_list)
 
     # Boss kill
     if state["boss_defeated"]:
-        unlock_achievement("Boss Slayer")
+        unlock_achievement("Boss Slayer", notifications_list)
 
     # Money-based
     if state["gold"] >= 1000 and state["game_won"]:
-        unlock_achievement("Economist")
+        unlock_achievement("Economist", notifications_list)
 
     if state["lives"] == 25 and state["game_won"]:
-        unlock_achievement("Flawless")
+        unlock_achievement("Flawless", notifications_list)
 
     if state["lives"] == 1 and state["game_won"]:
-        unlock_achievement("Clutch Save")
+        unlock_achievement("Clutch Save", notifications_list)
 
     # Tower usage
     if len(state["tower_types"]) == 3:  # adjust based on # of tower types
-        unlock_achievement("Balanced Loadout")
+        unlock_achievement("Balanced Loadout", notifications_list)
 
     if state["towers_placed"] >= 20:
-        unlock_achievement("Tower Tycoon")
+        unlock_achievement("Tower Tycoon", notifications_list)
 
     # Selling towers
     if state["towers_sold_this_wave"] >= 3:
-        unlock_achievement("Refund Master")
+        unlock_achievement("Refund Master", notifications_list)
 
     if state["sold_mid_wave"]:
-        unlock_achievement("Oops!")
+        unlock_achievement("Oops!", notifications_list)
     
-    if state["start_money"] == 0:
-        unlock_achievement("Last Cent")
+    if state["start_money"] == 0 and state["wave_completed"]:
+        unlock_achievement("Last Cent", notifications_list)
 
     if state["wave"] == 6 and state["upgrades_used"] == 0:
-        unlock_achievement("Raw Power")
+        unlock_achievement("Raw Power", notifications_list)
     
     if state["archer_wave_kills"] >= 10:
-        unlock_achievement("Sniper")
+        unlock_achievement("Sniper", notifications_list)
 
     if state["witch_dmg_this_wave"] >= 300:
-        unlock_achievement("Witching Hour")
+        unlock_achievement("Witching Hour", notifications_list)
 
     if state["tower_types"] == {"Bear"} and state["wave_completed"]:
-        unlock_achievement("Bear Force One")
-
-####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
+        unlock_achievement("Bear Force One", notifications_list)
 
     if state["upgrades_used"] == 0 and state["wave_completed"] >= 1 and state["towers_placed"] > 0:
-        unlock_achievement("No Upgrades, No Problem")
+        unlock_achievement("No Upgrades, No Problem", notifications_list)
 
     if state["maxed_towers"] >= 1:
-        unlock_achievement("Maxed Out")
+        unlock_achievement("Maxed Out", notifications_list)
     
     if state["maxed_towers"] == 3:
-        unlock_achievement("Triple Threat")
+        unlock_achievement("Triple Threat", notifications_list)
 
     if state["kills"] == 0 and state["wave_completed"]:
-        unlock_achievement("Pacifist")
+        unlock_achievement("Pacifist", notifications_list)
     
     if state['wave_completed'] and state["one_tower_challenge"] and state["lives"] == 25:
-        unlock_achievement("One Man Army")
+        unlock_achievement("One Man Army", notifications_list)
 
+####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
 

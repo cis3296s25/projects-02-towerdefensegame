@@ -15,6 +15,7 @@ from os.path import abspath, dirname
 from TowerData import towers_base
 from Achievements import unlock_achievement, check_achievements
 
+
 BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
@@ -28,6 +29,7 @@ mixer.init()
 boss_scream_sound = mixer.Sound(BASE_PATH + "/sounds/bossScream.flac")
 boss_battle_music = BASE_PATH + "/sounds/bossbattle.wav"
 
+banner_font = pygame.font.Font("fonts/BrickSans.ttf", 14)
 
 
 SCREEN_WIDTH = 750
@@ -118,6 +120,7 @@ def log_message(message):
 ############################## END OF LOGGING ###############################
 
 def game():
+
     mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
     mixer.music.set_volume(Settings.music_volume)
     mixer.music.play(-1) #plays music after leaving homescreen
@@ -140,7 +143,7 @@ def game():
     #Wave Logic
     wave_number = 1
     lives = 25  # Starting number of lives
-    money = 5500  # Starting amount of money
+    money = 0  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
@@ -172,21 +175,6 @@ def game():
     start_wave_button = Button(700, 350, start_wave_btn_img, True)
 
     wave_started = False
-    
-
-    # Load and scale speaker icons
-    speaker_img_muted = pygame.transform.scale(
-        pygame.image.load(IMAGE_PATH + "mute.png").convert_alpha(), (24, 24)
-    )
-    speaker_img_low = pygame.transform.scale(
-        pygame.image.load(IMAGE_PATH + "low-volume.png").convert_alpha(), (24, 24)
-    )
-    speaker_img_medium = pygame.transform.scale(
-        pygame.image.load(IMAGE_PATH + "medium-volume.png").convert_alpha(), (24, 24)
-    )
-    speaker_img_high = pygame.transform.scale(
-        pygame.image.load(IMAGE_PATH + "high-volume.png").convert_alpha(), (24, 24)
-    )
 
     running = True
     show_stats = False
@@ -220,6 +208,8 @@ def game():
         "one_tower_challenge": False,
     }
 
+    achievement_notifications = []  # holds (achievement_name, timestamp)
+
 
     while running:
 
@@ -232,11 +222,7 @@ def game():
                     settings_screen(screen)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                #if handle_rect.collidepoint(event.pos):
-                   # dragging_volume = True
-                #elif speaker_rect.collidepoint(event.pos):
-                    #muted = not muted
-                    #mixer.music.set_volume(0 if muted else volume)
+            
                 if show_stats and selected_tower:
                     if upgrade_button_rect.collidepoint(event.pos):
                         log_message("Upgrade button clicked!")
@@ -248,7 +234,7 @@ def game():
                             game_state["upgrades_used"] += 1
                             game_state["no_upgrades_wave"] = False
 
-                            check_achievements(game_state)
+                            check_achievements(game_state, achievement_notifications)
                             
                         elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
                             log_message("Not enough money to upgrade tower!")
@@ -269,7 +255,7 @@ def game():
                         game_state["towers_sold_this_wave"] += 1
                         if wave_started:
                             game_state["sold_mid_wave"] = True
-                        check_achievements(game_state)
+                        check_achievements(game_state, achievement_notifications)
 
                         tower_positions.remove((selected_tower.x, selected_tower.y))  # Free up the position
                         selected_tower = None  # Deselect the tower
@@ -287,7 +273,7 @@ def game():
                         wave_start_time = pygame.time.get_ticks()
                         game_state["wave_completed"] = False
                         game_state["start_money"] = money
-                        check_achievements(game_state)
+                        check_achievements(game_state, achievement_notifications)
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
@@ -334,7 +320,7 @@ def game():
                                 game_state["towers_placed"] += 1
                                 game_state["tower_types"] = {tower.tower_name for tower in towers}
                                 game_state["tower_types"].add(towerButton.name)
-                                check_achievements(game_state)
+                                check_achievements(game_state, achievement_notifications)
 
                             else:
                                 log_message("Not enough money to place tower!")
@@ -415,7 +401,7 @@ def game():
                     game_state["kills"] += 1
                     if enemy.killed_by == "Archer":
                         game_state["archer_wave_kills"] += 1
-                    check_achievements(game_state)
+                    check_achievements(game_state, achievement_notifications)
 
             else:
                 lives -= enemy.dmg
@@ -469,7 +455,7 @@ def game():
                 print("[DEBUG] Final Lives:", game_state["lives"])
                 print("[DEBUG] Game Won:", game_state["game_won"])
 
-                check_achievements(game_state)
+                check_achievements(game_state, achievement_notifications)
                 gameclear_screen(screen, score, SCORE_FILE, high_score, top_five)
                 
                 mixer.music.stop()
@@ -486,7 +472,7 @@ def game():
                     game_state["one_tower_challenge"] = False
 
                 game_state["waves_survived"] += 1
-                check_achievements(game_state)
+                check_achievements(game_state, achievement_notifications)
                 game_state["towers_sold_this_wave"] = 0
                 game_state["archer_wave_kills"] = 0
                 game_state["witch_dmg_this_wave"] = 0
@@ -542,6 +528,33 @@ def game():
         font = pygame.font.SysFont("Arial", 14)
         pos_text = font.render(f"({mouse_x}, {mouse_y})", True, (200, 200, 200))
         screen.blit(pos_text, (10, 10))
+
+        # Show unlocked achievements for 3 seconds
+        # === Styled achievement banner display ===
+        banner_height = 40
+        banner_width = 400
+        padding = 10
+
+        now = pygame.time.get_ticks()
+        achievement_notifications = [
+            (name, ts) for name, ts in achievement_notifications if now - ts < 3000
+        ]
+
+        for i, (name, ts) in enumerate(achievement_notifications):
+            banner_x = 10
+            banner_y = 10 + i * (banner_height + 10)
+
+            # Background banner
+            pygame.draw.rect(screen, (255, 68, 58), (banner_x, banner_y, banner_width, banner_height), border_radius=8)
+
+            # Border
+            pygame.draw.rect(screen, (61, 43, 36), (banner_x, banner_y, banner_width, banner_height), 2, border_radius=8)
+
+            # Text
+            text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
+            screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
+
+
 
         pygame.display.flip()
         clock.tick(fps) # Control the frame rate / speed of the game
