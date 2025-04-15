@@ -21,6 +21,7 @@ IMAGE_PATH = BASE_PATH + "/images/"
 
 SCORE_FILE = "scores.json"
 INSTRUCTIONS_FILE = "instructions.txt"
+TOTAL_WAVE_TIME_FILE = "total_wave_time.json"
 
 pygame.init()
 
@@ -129,6 +130,9 @@ def game():
     # score variables
     high_score = False
     top_five = False
+    time_high_score = False
+    time_top_five = False
+    total_wave_time = 0
 
     # tower variables
     placing_tower = False
@@ -142,9 +146,9 @@ def game():
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
-    wave_number = 1
+    wave_number = 0
     lives = 25  # Starting number of lives
-    money = 0  # Starting amount of money
+    money = 550  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
@@ -414,11 +418,11 @@ def game():
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
-                    if (get_top_score(SCORE_FILE) < score): 
+                    if (get_top_score(SCORE_FILE, "score") < score): 
                         high_score = True
-                    elif (is_top_five(SCORE_FILE, score)):
+                    elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
-                    log_message(f"score updated {update_scores(SCORE_FILE, score)}")
+                    log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
                     if gameover_screen(screen, score, SCORE_FILE, high_score, top_five) == "restart":
                         log_message("Restarting game...")
                         game()
@@ -438,15 +442,35 @@ def game():
         
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 10 wave
+                # accounting final wave's points and time
+                wave_end_time = pygame.time.get_ticks()
+                log_message(f"It took {((wave_end_time-wave_start_time)/1000)} seconds to beat the wave")
+                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
+                score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
+                total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
+                total_wave_time = round(total_wave_time, 2)
+
+                # bonus points
                 log_message(f"Money increase score by: {money*2}")
                 score += (money*2) # winning with extra money adds to your score
                 log_message(f"Lives increases score by: {lives*500}")
                 score += (lives*500) # winning with extra lives adds to your score
-                if (get_top_score(SCORE_FILE) < score): 
+                # lets you know relative leaderboard positioning
+                if (get_top_score(SCORE_FILE, "score") < score): 
                     high_score = True
-                elif (is_top_five(SCORE_FILE, score)):
+                elif (is_top_five(SCORE_FILE, score, "score")):
                     top_five = True
-                log_message(f"score updated {update_scores(SCORE_FILE, score)}")
+                if (get_top_score(TOTAL_WAVE_TIME_FILE, "time") > total_wave_time): 
+                    time_high_score = True
+                elif (is_top_five(TOTAL_WAVE_TIME_FILE, total_wave_time, "time")):
+                    time_top_five = True
+
+                # final score and time messaging
+                log_message(f"Final score is {score}")
+                log_message(f"Score updated {update_scores(SCORE_FILE, score, "score")}")
+                log_message(f"Final win time is {total_wave_time}")
+                log_message(f"Time score updated{update_scores(TOTAL_WAVE_TIME_FILE, total_wave_time, "time")}")
+
                 game_state["gold"] = money
                 game_state["game_won"] = True
                 game_state["lives"] = lives
@@ -457,7 +481,7 @@ def game():
                 print("[DEBUG] Game Won:", game_state["game_won"])
 
                 check_achievements(game_state, achievement_notifications)
-                gameclear_screen(screen, score, SCORE_FILE, high_score, top_five)
+                gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time, time_high_score, time_top_five)
                 
                 mixer.music.stop()
                 main()  # restart from homescreen
@@ -491,6 +515,7 @@ def game():
                 log_message(f"It took {((wave_end_time-wave_start_time)/1000)} seconds to beat the wave")
                 log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
                 score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
+                total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
 
                 wave_started = False
 
@@ -571,7 +596,7 @@ def main():
         elif result == "settings":
             settings_screen(screen)
         elif result == "leaderboard":
-            leaderboard_screen(screen, SCORE_FILE)
+            leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE)
         elif result == "information":
             instructions_screen(screen, INSTRUCTIONS_FILE)
 
