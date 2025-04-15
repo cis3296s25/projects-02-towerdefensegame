@@ -229,7 +229,7 @@ def settings_screen(screen):
         clock.tick(60)
 
 
-def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five):
+def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time):
     BASE_PATH = os.path.abspath(os.path.dirname(__file__))
     mixer.music.stop()
 
@@ -243,18 +243,20 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five):
     game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
     game_clear_img = pygame.transform.smoothscale(game_clear_img, (600, 500))  # adjust size if you want
 
-    clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 75))
     sub_font = pygame.font.Font("fonts/BrickSans.ttf", 28)
     prompt_text = sub_font.render("Click or press any key to return to title", True, (255, 255, 255))
     prompt_rect = prompt_text.get_rect(center=(screen.get_width() // 2, 500))
     if (high_score):
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"Top Five SCORE: *{score}*", True, (173, 216, 23))
     else:
-        score_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render(f"Score: {score}", True, (225, 225, 255))
-    score_rect = score_text.get_rect(center=(screen.get_width() //2, 425))
-    
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 60).render(f"Score: {score}", True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(screen.get_width() //2, 375))
+
+    time_text = pygame.font.Font("fonts/BrickSans.ttf", 35).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
+    time_rect = time_text.get_rect(center=(screen.get_width() //2, 450))
 
     spores = [Spore(750, 600) for _ in range(50)] 
     while True:
@@ -265,6 +267,7 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five):
         screen.blit(game_clear_img, clear_rect)
         screen.blit(prompt_text, prompt_rect)
         screen.blit(score_text, score_rect)
+        screen.blit(time_text, time_rect)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -339,9 +342,9 @@ def draw_underbar(screen, SCORE_FILE, score):
     font = pygame.font.Font("fonts/BrickSans.ttf", 15)
 
     text_Score = font.render(f"Score: ", True, (255, 255, 255))
-    if (get_top_score(SCORE_FILE) < score ):
+    if (get_top_score(SCORE_FILE, "score") < score ):
         value_Score = font.render(f"**{score}**", True, (138, 43, 226))
-    elif (is_top_five(SCORE_FILE, score)):
+    elif (is_top_five(SCORE_FILE, score, "score")):
         value_Score = font.render(f"*{score}*", True, (173, 216, 23))
     else:
         value_Score = font.render(f"{score}", True, (255, 255, 255))
@@ -460,49 +463,89 @@ def save_scores(SCORE_FILE, scores):
     with open(SCORE_FILE, "w") as file: 
         json.dump(scores, file)
 
-def update_scores(SCORE_FILE, score):
+def update_scores(SCORE_FILE, score, sort_method):
     scores = load_scores(SCORE_FILE)
     scores.append(score)
-    scores.sort(reverse = True)
+    if (sort_method == "score"):
+        scores.sort(reverse = True)
+    elif (sort_method == "time"):
+        scores.sort(reverse = False)
     scores = scores[:5]
     save_scores(SCORE_FILE, scores)
     return scores
 
-def get_top_score(SCORE_FILE):
+def get_top_score(SCORE_FILE, sort_method):
     scores = load_scores(SCORE_FILE)
-    return max(scores)
+    if (sort_method == "score"):
+        return (max(scores))
+    elif (sort_method == "time"):
+        return (min(scores))
 
-def is_top_five(SCORE_FILE, score):
+def is_top_five(SCORE_FILE, score, sort_method):
     scores = load_scores(SCORE_FILE)
-    if len(scores) < 5:
+    if (len(scores) < 5):
         return True
-    return score > min(scores)
+    if (sort_method == "score"):
+        return (score > min(scores))
+    elif (sort_method == "time"):
+        return (score > max(scores))
     
-def leaderboard_screen(screen, SCORE_FILE):
-    scores = load_scores(SCORE_FILE)
-
-    screen.fill((0,0,0))
+def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
     pygame.font.init()
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 30)
     smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
     white = (255, 255, 255)
+    clock = pygame.time.Clock()
 
-    title = font.render("***TOP SCORES***", True, white)
-    screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+    scores = load_scores(SCORE_FILE)
+    times = load_scores(TOTAL_WAVE_TIME_FILE)
 
-    return_home = smallFont.render("Press ESC or SPACE keys to return to home", True, white)
-    screen.blit (return_home, (screen.get_width()//2-return_home.get_width()//2, screen.get_height()-return_home.get_height()-15))
+    total_pages = 2
+    current_page = 0 
 
-    for i, score in enumerate(scores):
-        line = f"{i+1}. {score}"
-        text = font.render(line, True, white)
-        screen.blit(text, (100, 120 + i * 40))
-
-    pygame.display.flip()
+    spores = [Spore(750, 600) for _ in range(50)]
 
     #space or esc to quit
     running = True 
     while running: 
+        
+        screen.fill((15, 15, 20))
+        
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
+
+        if current_page == 0:
+            for i, score in enumerate(scores):
+                line = f"{i+1}. {score}"
+                text = font.render(line, True, white)
+                screen.blit(text, (100, 120 + i * 40))
+            title = font.render("***TOP SCORES***", True, white)
+            screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+
+            page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
+            page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
+            page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
+
+            screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
+            screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
+            screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
+        elif current_page == 1:
+            for i, time in enumerate(times):
+                line = f"{i+1}. {time} seconds"
+                text = font.render(line, True, white)
+                screen.blit(text, (100, 120 + i * 40))
+            title = font.render("***TOP TIMES***", True, white)
+            screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+
+            page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
+            page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
+            page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
+
+            screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
+            screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
+            screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -512,9 +555,16 @@ def leaderboard_screen(screen, SCORE_FILE):
                     running = False
                 elif event.key == pygame.K_SPACE:
                     running = False
+                elif event.key == pygame.K_LEFT and current_page > 0:
+                    current_page -= 1
+                elif event.key == pygame.K_RIGHT and current_page < (total_pages - 1):
+                    current_page += 1
+        pygame.display.flip()
+        clock.tick(60)
 
 def instructions_screen(screen, INSTRUCTIONS_FILE):
     pygame.font.init()
+    clock = pygame.time.Clock()
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
 
     try:
@@ -527,16 +577,27 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
     total_pages = (len(instructions)+lines_per_page-1) // lines_per_page
     current_page = 0 
 
+    spores = [Spore(screen.get_width(), screen.get_height()) for _ in range(50)]
+
+    
+
     running = True
     while running:
-        screen.fill((0,0,0))
+        screen.fill((15, 15, 20))
+
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
 
         start = current_page * lines_per_page
         end = start + lines_per_page
 
+        title = font.render("***GAME INSTRUCTIONS***", True, (255, 255, 255))
+        screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+
         for i, line in enumerate(instructions[start:end]):
             text_surface = font.render(line.strip(), True, (255, 255, 255))
-            screen.blit(text_surface, (50, 50+i * 30))
+            screen.blit(text_surface, (50, 50+i * 30 + 30))
 
         page_dir_text = font.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
         page_nav_text = font.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
@@ -559,5 +620,5 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
                 elif event.key == pygame.K_RIGHT and current_page < (total_pages - 1):
                     current_page += 1
 
-        
         pygame.display.flip()
+        clock.tick(60)
