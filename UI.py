@@ -36,6 +36,8 @@ def homescreen(screen):
     settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
     leaderboard_btn = pygame.image.load("images/Homescreen/leaderboard.png").convert_alpha()
     information_btn = pygame.image.load("images/Homescreen/information.png").convert_alpha()
+    achievements_btn = pygame.image.load("images/Homescreen/achievementsbutton.png").convert_alpha()
+
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (800, 650))
@@ -43,13 +45,16 @@ def homescreen(screen):
     settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
     leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
     information_btn = pygame.transform.smoothscale(information_btn, (40, 40))
+    achievements_btn = pygame.transform.smoothscale(achievements_btn, (40, 40))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
     settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
-    leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - 10)))
+    leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - (-5))))
     information_rect = information_btn.get_rect(bottomright = ((screen.get_width()-10), (screen.get_height() - 10)))
+    achievements_rect = achievements_btn.get_rect(bottomleft = ((103), (screen.get_height() - 10)))
+
 
     spores = [Spore(750, 600) for _ in range(50)]
 
@@ -66,6 +71,7 @@ def homescreen(screen):
         screen.blit(settings_btn, settings_rect)
         screen.blit(leaderboard_btn, leaderboard_rect)
         screen.blit(information_btn, information_rect)
+        screen.blit(achievements_btn, achievements_rect)
 
         for event in pygame.event.get():
 
