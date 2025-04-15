@@ -35,18 +35,21 @@ def homescreen(screen):
     play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
     settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
     leaderboard_btn = pygame.image.load("images/Homescreen/leaderboard.png").convert_alpha()
+    information_btn = pygame.image.load("images/Homescreen/information.png").convert_alpha()
 
     # size of pngs
     logo = pygame.transform.smoothscale(logo, (800, 650))
     play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
     settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
     leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
+    information_btn = pygame.transform.smoothscale(information_btn, (40, 40))
 
     # Get rects for positioning
     logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
     play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
     settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
     leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - 10)))
+    information_rect = information_btn.get_rect(bottomright = ((screen.get_width()-10), (screen.get_height() - 10)))
 
     spores = [Spore(750, 600) for _ in range(50)]
 
@@ -62,6 +65,7 @@ def homescreen(screen):
         screen.blit(play_btn, play_rect)
         screen.blit(settings_btn, settings_rect)
         screen.blit(leaderboard_btn, leaderboard_rect)
+        screen.blit(information_btn, information_rect)
 
         for event in pygame.event.get():
 
@@ -78,6 +82,8 @@ def homescreen(screen):
                         return "settings"
                     elif leaderboard_rect.collidepoint(mouse_pos):
                         return "leaderboard"
+                    elif information_rect.collidepoint(mouse_pos):
+                        return "information"
 
         pygame.display.flip()
         clock.tick(60)
@@ -478,14 +484,14 @@ def leaderboard_screen(screen, SCORE_FILE):
     screen.fill((0,0,0))
     pygame.font.init()
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 30)
-    smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 15)
+    smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
     white = (255, 255, 255)
 
     title = font.render("***TOP SCORES***", True, white)
     screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
 
-    return_home = smallFont.render("press esc or space to return to home page", True, white)
-    screen.blit (return_home, (screen.get_width()-return_home.get_width()-15, screen.get_height()-return_home.get_height()-15))
+    return_home = smallFont.render("Press ESC or SPACE keys to return to home", True, white)
+    screen.blit (return_home, (screen.get_width()//2-return_home.get_width()//2, screen.get_height()-return_home.get_height()-15))
 
     for i, score in enumerate(scores):
         line = f"{i+1}. {score}"
@@ -495,11 +501,63 @@ def leaderboard_screen(screen, SCORE_FILE):
     pygame.display.flip()
 
     #space or esc to quit
-    waiting = True 
-    while waiting: 
+    running = True 
+    while running: 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE):
-                waiting = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_SPACE:
+                    running = False
+
+def instructions_screen(screen, INSTRUCTIONS_FILE):
+    pygame.font.init()
+    font = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
+
+    try:
+        with open(INSTRUCTIONS_FILE, "r") as file:
+            instructions = file.readlines()
+    except FileNotFoundError:
+        instructions = ["Instructions file not found"]
+
+    lines_per_page = 12
+    total_pages = (len(instructions)+lines_per_page-1) // lines_per_page
+    current_page = 0 
+
+    running = True
+    while running:
+        screen.fill((0,0,0))
+
+        start = current_page * lines_per_page
+        end = start + lines_per_page
+
+        for i, line in enumerate(instructions[start:end]):
+            text_surface = font.render(line.strip(), True, (255, 255, 255))
+            screen.blit(text_surface, (50, 50+i * 30))
+
+        page_dir_text = font.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
+        page_nav_text = font.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
+        page_num_text = font.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
+
+        screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
+        screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
+        screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))   
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_SPACE:
+                    running = False
+                elif event.key == pygame.K_LEFT and current_page > 0:
+                    current_page -= 1
+                elif event.key == pygame.K_RIGHT and current_page < (total_pages - 1):
+                    current_page += 1
+
+        
+        pygame.display.flip()

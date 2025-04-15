@@ -18,6 +18,7 @@ BASE_PATH = abspath(dirname(__file__))
 IMAGE_PATH = BASE_PATH + "/images/"
 
 SCORE_FILE = "scores.json"
+INSTRUCTIONS_FILE = "instructions.txt"
 
 pygame.init()
 
@@ -466,6 +467,8 @@ def main():
             settings_screen(screen)
         elif result == "leaderboard":
             leaderboard_screen(screen, SCORE_FILE)
+        elif result == "information":
+            instructions_screen(screen, INSTRUCTIONS_FILE)
 
 
 if __name__ == "__main__":
