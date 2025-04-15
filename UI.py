@@ -719,15 +719,15 @@ def achievements_screen(screen, achievements):
             y = start_y + row * (card_height + padding)
 
             # Card background
-            bg_color = (60, 60, 60) if not data["unlocked"] else (100, 200, 100)
+            bg_color = (60, 60, 60) if not data["unlocked"] else (255, 68, 58)
             pygame.draw.rect(screen, bg_color, (x, y, card_width, card_height), border_radius=5)
 
             # Title
-            title = font.render(name, True, (255, 255, 255))
+            title = font.render(name, True, (239, 176, 125))
             screen.blit(title, (x + 10, y + 10))
 
             # Description
-            draw_wrapped_text(screen, data["description"], font, (180, 180, 180), x + 10, y + 40, card_width - 20)
+            draw_wrapped_text(screen, data["description"], font, (239, 176, 125), x + 10, y + 40, card_width - 20)
 
 
         # Handle events
