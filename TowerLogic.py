@@ -160,8 +160,7 @@ class Tower:
                 if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
                     continue
 
-                dist = self.get_distance(enemy)
-                if dist <= self.range:
+                if self.get_distance(enemy) <= self.range:
                     self.target = enemy
                     if towers_base[self.tower_name]["has_projectile"]:
                         projectile = Projectile(self.x, self.y, self.projectile,
@@ -219,7 +218,7 @@ class Tower:
     def get_distance(self, enemy):
         enemy_center_x = enemy.rect.centerx
         enemy_center_y = enemy.rect.centery
-        dx = enemy_center_x - self.x
-        dy = enemy_center_y - self.y
+        dx = enemy_center_x - self.rect.centerx
+        dy = enemy_center_y - self.rect.centery
         dist = (dx ** 2 + dy ** 2) ** 0.5
-        return dist
+        return abs(dist)
