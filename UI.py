@@ -392,6 +392,31 @@ def draw_underbar(screen, SCORE_FILE, score):
    screen.blit(text_Score, (605, 525))
    screen.blit(value_Score, (605+text_Score.get_width(), 525))
 
+def wave_description(wave):
+    if wave == 1:
+        return "Wave 1: The Red Menace\nA small group of Red shrooms is testing your defenses. They may be weak, but don’t \nunderestimate them!"
+    elif wave == 2:
+        return "You Earned: $20 for beating the wave! \nWave 2: Red Rush\nThe Red shrooms are back, and this time there are more of them! Can your towers \nhandle the swarm?"
+    elif wave == 3:
+        return "You Earned: $30 for beating the wave! \nWave 3: Feeling Blue\nThe Reds have brought reinforcements! Blue shrooms join the fight, adding a bit more \nspeed to the mix."
+    elif wave == 4:
+        return "You Earned: $40 for beating the wave! \nWave 4: Purple Trouble\nThe Blues are stepping up their game, and Purple shrooms have joined the fray. Watch \nout for their resilience!"
+    elif wave == 5:
+        return "You Earned: $50 for beating the wave! \nWave 5: Glowing Chaos\nThe battlefield lights up as Glowing shrooms enter the fight. Their eerie glow hides \ntheir true danger!"
+    elif wave == 6:
+        return "You Earned: $60 for beating the wave! \nWave 6: Giant Awakening\nA Giant shroom has arrived! It’s slow but incredibly tough. Can your towers bring \nit down before it reaches the end?"
+    elif wave == 7:
+        return "You Earned: $70 for beating the wave! \nWave 7: The Blue Horde\nA massive wave of Blue shrooms is charging forward, backed by Purple and Glowing \nshrooms. This is going to be intense!"
+    elif wave == 8:
+        return "You Earned: $80 for beating the wave! \nWave 8: Glowing Nightmare\nThe Glowing shrooms dominate this wave, with Purple shrooms adding to the chaos. \nCan you survive the glowing onslaught?"
+    elif wave == 9:
+        return "You Earned: $90 for beating the wave! \nWave 9: Giant’s Revenge\nThree Giants are leading the charge, supported by Reds and Blues. This is a true test \nof your defenses!"
+    elif wave == 10:
+        return "You Earned: $100 for beating the wave! \nWave 10: The Final Boss\nThe Boss has arrived! It’s massive, powerful, and ready to crush your defenses. \nThis is the ultimate challenge!"
+    else:
+        return "Unknown Wave\nPrepare for the unexpected!"
+    
+
 def draw_tower_stat(screen, tower):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
    font = pygame.font.Font("fonts/BrickSans.ttf", 12)

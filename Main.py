@@ -158,10 +158,10 @@ def game():
     gameMap = Map(screen, mapSample)
     
     # Create buttons
-    witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\ncost: 100\natk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(680, 90, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\ncost: 80\natk: 8")
-    bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\ncost: 120\natk: 25")
-    slimeButton = Button(680, 145, IMAGES["slime"], True, "Slime", tooltip_text="Slime\ncost: 120\natk: slow")
+    witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text=   "Witch: \"Double, double, toil and trouble!\" The Witch Tower hurls magical fireballs at            \nenemies, making them regret stepping onto your turf. \n- \"A reliable all-rounder tower that does decent damage\"\ncost: 100\natk: 10\n") # (x, y, image, single_click, tower_name, tool_tip)
+    archerButton = Button(680, 90, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer: \"Bullseye!\" The Archer Tower is your go-to for precision strikes. With its rapid         \n-fire arrows, it’s perfect for thinning out waves of weaker enemies. \n- \"A fast shooting arrows tower that does less damage\" \ncost: 80 \natk: 8\n")
+    bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text=     "Bear: \"Rawr!\" The Bear Tower smashes enemies with brute force. It’s slow but devastating, \nperfect for taking down a group of foes. \n- \"A powerful tower that smashes the ground, dealing damage to all enemies in its range.\"\ncost: 120\natk: 25\n")
+    slimeButton = Button(680, 145, IMAGES["slime"], True, "Slime", tooltip_text=        "Slime: \"Sticky situation!\" The Slime Tower slows enemies with gooey projectiles, giving    \nyour other towers more time to finish the job. Great for controlling the battlefield \n- \"A tower that slows all enemies in its range.\" \ncost: 120\natk: slow\n")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
@@ -530,6 +530,17 @@ def game():
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
         draw_underbar(screen, SCORE_FILE, score)
+
+        # Wave descripion code
+        font = pygame.font.Font("fonts/BrickSans.ttf", 10)
+        wave_description_text = wave_description(wave_number)
+        lines = wave_description_text.split("\n")
+        y_offset = 405  # Starting y position for the text
+        for line in lines:
+            waveDes = font.render(line, True, (255, 255, 255))
+            screen.blit(waveDes, (10, y_offset))  # Draw each line
+            y_offset += 15  # Move down for the next line
+
         draw_logs(screen, log_messages)
 
 
