@@ -105,7 +105,7 @@ class Tower:
             self.image = self.frames[0]  # reset to first frame
 
     def attacksound(self):
-        if self.attack_sound:
+        if self.attack_sound and Settings.sfx_volume > 0:
             if self.tower_name == "Witch":
                 base_volume = 0.3
             elif self.tower_name == "Archer":

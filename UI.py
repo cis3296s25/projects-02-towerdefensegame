@@ -5,11 +5,9 @@ from pygame import mixer
 import os
 import json
 
-
 from TowerData import towers_base
 import Settings
 from Achievements import achievements
-
 
 class Spore:
    def __init__(self, screen_width, screen_height):
@@ -19,23 +17,19 @@ class Spore:
        self.speed_y = random.uniform(0.1, 0.5)
        self.alpha = random.randint(100, 200)
 
-
    def update(self):
        self.y += self.speed_y
        if self.y > 700:
            self.y = 0
            self.x = random.randint(0, 750)
 
-
    def draw(self, screen):
        color = (255, 255, 255)
        pygame.draw.circle(screen, color, (int(self.x), int(self.y)), self.radius)
 
-
 def homescreen(screen):
    mixer.stop() # stop all bgm from playing
    clock = pygame.time.Clock()
-
 
    # Load logo and buttons
    logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
@@ -46,8 +40,6 @@ def homescreen(screen):
    achievements_btn = pygame.image.load("images/Homescreen/achievementsbutton.png").convert_alpha()
 
 
-
-
    # size of pngs
    logo = pygame.transform.smoothscale(logo, (800, 650))
    play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
@@ -55,7 +47,6 @@ def homescreen(screen):
    leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
    information_btn = pygame.transform.smoothscale(information_btn, (40, 40))
    achievements_btn = pygame.transform.smoothscale(achievements_btn, (40, 40))
-
 
    # Get rects for positioning
    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
@@ -65,11 +56,7 @@ def homescreen(screen):
    information_rect = information_btn.get_rect(bottomright = ((screen.get_width()-10), (screen.get_height() - 10)))
    achievements_rect = achievements_btn.get_rect(bottomleft = ((103), (screen.get_height() - 10)))
 
-
-
-
    spores = [Spore(750, 600) for _ in range(50)]
-
 
    while True:
        # Background
@@ -77,7 +64,6 @@ def homescreen(screen):
        for spore in spores:
            spore.update()
            spore.draw(screen)
-
 
        # Draw logo and play button
        screen.blit(logo, logo_rect)
@@ -87,9 +73,7 @@ def homescreen(screen):
        screen.blit(information_btn, information_rect)
        screen.blit(achievements_btn, achievements_rect)
 
-
        for event in pygame.event.get():
-
 
            mouse_pos = pygame.mouse.get_pos()
           
@@ -109,16 +93,12 @@ def homescreen(screen):
                    elif achievements_rect.collidepoint(mouse_pos):
                        return "achievements"
 
-
        pygame.display.flip()
        clock.tick(60)
 
 
-
-
 def pause_screen(screen, mixer):
    mixer.music.pause()
-
 
    # Create a transparent overlay
    overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA) 
@@ -133,7 +113,6 @@ def pause_screen(screen, mixer):
    screen.blit(resume_text, resume_rect)
    pygame.display.flip()
 
-
    # Pause gameloop
    paused = True
    while paused:
@@ -147,33 +126,27 @@ def pause_screen(screen, mixer):
   
    mixer.music.unpause()
 
-
 def settings_screen(screen):
    clock = pygame.time.Clock()
    running = True
-
 
    achievements_btn = pygame.image.load("images/Homescreen/achievementsbutton.png").convert_alpha()
    achievements_btn = pygame.transform.smoothscale(achievements_btn, (40, 40))
    achievements_rect = achievements_btn.get_rect(bottomleft = ((103), (screen.get_height() - 10)))
 
-
    # Volume slider setup
-   volume = Settings.music_volume
-   mixer.music.set_volume(volume)
+   volume = mixer.music.get_volume()
    muted = volume == 0
-   sfx_muted = Settings.sfx_volume == 0
+   Settings.sfx_volume == 0
    dragging_music = False
    slider_rect = pygame.Rect(300, 200, 150, 10)
    handle_rect = pygame.Rect(slider_rect.x + int(slider_rect.width * volume) - 5, slider_rect.y - 5, 10, 20)
-
 
    # SFX Volume
    global sfx_volume
    dragging_sfx = False
    sfx_slider_rect = pygame.Rect(300, 300, 150, 10)
    sfx_handle_rect = pygame.Rect(sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5, sfx_slider_rect.y - 5, 10, 20)
-
 
    # Speaker icons
    speaker_low = pygame.transform.scale(pygame.image.load("images/low-volume.png"), (24, 24))
@@ -182,7 +155,6 @@ def settings_screen(screen):
    speaker_mute = pygame.transform.scale(pygame.image.load("images/mute.png"), (24, 24))
    music_speaker_rect = pygame.Rect(slider_rect.x + slider_rect.width + 20, slider_rect.y - 5, 24, 24)
    sfx_speaker_rect = pygame.Rect(sfx_slider_rect.x + sfx_slider_rect.width + 20, sfx_slider_rect.y - 5, 24, 24)
-
 
    # Load exit button image
    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
@@ -195,117 +167,122 @@ def settings_screen(screen):
    sfx_icon = pygame.image.load("images/Homescreen/sfxIcon.png").convert_alpha()
    sfx_icon = pygame.transform.scale(sfx_icon, (32, 32))
 
-
-
-
    while running:
-       screen.fill((40, 40, 40))
-       font = pygame.font.Font("fonts/BrickSans.ttf", 40)
-       title = font.render("Settings", True, (255, 255, 255))
-       screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 100))
+        screen.fill((40, 40, 40))
+        font = pygame.font.Font("fonts/BrickSans.ttf", 40)
+        title = font.render("Settings", True, (255, 255, 255))
+        screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 100))
 
+        # MUSIC VOLUME
+        screen.blit(music_icon, (slider_rect.x - 40, slider_rect.y - 8))
+        pygame.draw.rect(screen, (200, 200, 200), slider_rect)
+        current_volume = mixer.music.get_volume()
+        filled_width = int(slider_rect.width * current_volume)
+        if filled_width > 0:
+            pygame.draw.rect(screen, (255, 255, 255), (slider_rect.x, slider_rect.y, filled_width, slider_rect.height))
+        
+        sfx_v = Settings.sfx_volume
+        sfx_filled_width = int(sfx_slider_rect.width * sfx_v)
+        if sfx_filled_width > 0:
+            pygame.draw.rect(screen, (255, 255, 255), (sfx_slider_rect.x, sfx_slider_rect.y, sfx_filled_width, sfx_slider_rect.height))
+        pygame.draw.rect(screen, (255, 255, 255), handle_rect) # the slider button
+        
+        actual_music_volume = mixer.music.get_volume()
+        music_speaker_icon = (
+            speaker_mute if actual_music_volume == 0
+            else speaker_high if actual_music_volume > 0.66
+            else speaker_med if actual_music_volume > 0.33
+            else speaker_low
+        )
+        screen.blit(music_speaker_icon, music_speaker_rect)
 
+        # SFX VOLUME
+        screen.blit(sfx_icon, (sfx_slider_rect.x - 40, sfx_slider_rect.y - 8))
+        pygame.draw.rect(screen, (200, 200, 200), sfx_slider_rect)
+        pygame.draw.rect(screen, (255, 255, 255), (sfx_slider_rect.x, sfx_slider_rect.y, int(sfx_slider_rect.width * Settings.sfx_volume), sfx_slider_rect.height))
+        pygame.draw.rect(screen, (255, 255, 255), sfx_handle_rect)
+        sfx_speaker_icon = (
+            speaker_mute if Settings.sfx_volume == 0
+            else speaker_high if Settings.sfx_volume > 0.66
+            else speaker_med if Settings.sfx_volume > 0.33
+            else speaker_low
+        )
+        screen.blit(sfx_speaker_icon, sfx_speaker_rect)
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
-       # MUSIC VOLUME
-       screen.blit(music_icon, (slider_rect.x - 40, slider_rect.y - 8))
-       pygame.draw.rect(screen, (200, 200, 200), slider_rect)
-       pygame.draw.rect(screen, (255, 255, 255), (slider_rect.x, slider_rect.y, int(slider_rect.width * volume), slider_rect.height))
-       pygame.draw.rect(screen, (255, 255, 255), handle_rect)
-       music_speaker_icon = speaker_mute if muted else speaker_high if volume > 0.66 else speaker_med if volume > 0.33 else speaker_low
-       screen.blit(music_speaker_icon, music_speaker_rect)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if handle_rect.collidepoint(event.pos):
+                    dragging_music = True
+                elif music_speaker_rect.collidepoint(event.pos):
+                    actual_volume = mixer.music.get_volume()
+                    if actual_volume == 0:
+                        mixer.music.set_volume(Settings.music_volume) # Unmute to previous volume
+                        handle_rect.x = slider_rect.x + int(slider_rect.width * Settings.music_volume) - 5
+                    else:
+                        Settings.music_volume = actual_volume # Mute and save current volume
+                        mixer.music.set_volume(0)
+                        handle_rect.x = slider_rect.x
+                
+                elif sfx_handle_rect.collidepoint(event.pos):
+                    dragging_sfx = True
 
+                elif sfx_speaker_rect.collidepoint(event.pos):
+                    if Settings.sfx_volume == 0:
+                        Settings.sfx_volume = 0.5
+                    else:
+                        Settings.sfx_volume = 0
+                    sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5
+                elif achievements_rect.collidepoint(event.pos):
+                    return "achievements"
+                
+                elif exit_rect.collidepoint(event.pos):
+                    return
+                
+            elif event.type == pygame.MOUSEBUTTONUP:
+                dragging_music = False
+                dragging_sfx = False
 
-       # SFX VOLUME
-       screen.blit(sfx_icon, (sfx_slider_rect.x - 40, sfx_slider_rect.y - 8))
-       pygame.draw.rect(screen, (200, 200, 200), sfx_slider_rect)
-       pygame.draw.rect(screen, (255, 255, 255), (sfx_slider_rect.x, sfx_slider_rect.y, int(sfx_slider_rect.width * Settings.sfx_volume), sfx_slider_rect.height))
-       pygame.draw.rect(screen, (255, 255, 255), sfx_handle_rect)
-       sfx_v = Settings.sfx_volume
-       sfx_speaker_icon = speaker_mute if sfx_muted else speaker_high if sfx_v > 0.66 else speaker_med if sfx_v > 0.33 else speaker_low
-       screen.blit(sfx_speaker_icon, sfx_speaker_rect)
+            elif event.type == pygame.MOUSEMOTION:
+                if dragging_music:
+                    mouse_x = event.pos[0]
+                    volume = max(0, min(1, (mouse_x - slider_rect.x) / slider_rect.width))
+                    muted = volume == 0
+                    mixer.music.set_volume(0 if muted else volume)
+                    handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
+                    Settings.music_volume = volume
+                if dragging_sfx:
+                    mouse_x = event.pos[0]
+                    new_sfx_volume  = max(0, min(1, (mouse_x - sfx_slider_rect.x) / sfx_slider_rect.width))
+                    sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * new_sfx_volume) - 5
+                    Settings.sfx_volume = new_sfx_volume
+                    sfx_muted = new_sfx_volume == 0
 
-
-       for event in pygame.event.get():
-           if event.type == pygame.QUIT:
-               pygame.quit()
-               sys.exit()
-
-
-           elif event.type == pygame.MOUSEBUTTONDOWN:
-               if handle_rect.collidepoint(event.pos):
-                   dragging_music = True
-               elif music_speaker_rect.collidepoint(event.pos):
-                   muted = not muted
-                   mixer.music.set_volume(0 if muted else volume)
-               elif sfx_handle_rect.collidepoint(event.pos):
-                   dragging_sfx = True
-               elif sfx_slider_rect.collidepoint(event.pos):
-                   sfx_muted = not sfx_muted
-                   Settings.sfx_volume = 0 if sfx_muted else 0.5
-                   sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * Settings.sfx_volume) - 5
-               elif achievements_rect.collidepoint(event.pos):
-                   return "achievements"
-               elif exit_rect.collidepoint(event.pos):
-                   return
-              
-
-
-
-
-           elif event.type == pygame.MOUSEBUTTONUP:
-               dragging_music = False
-               dragging_sfx = False
-
-
-           elif event.type == pygame.MOUSEMOTION:
-               if dragging_music:
-                   mouse_x = event.pos[0]
-                   volume = max(0, min(1, (mouse_x - slider_rect.x) / slider_rect.width))
-                   muted = volume == 0
-                   mixer.music.set_volume(0 if muted else volume)
-                   handle_rect.x = slider_rect.x + int(slider_rect.width * volume) - 5
-                   Settings.music_volume = volume
-               if dragging_sfx:
-                   mouse_x = event.pos[0]
-                   new_sfx_volume  = max(0, min(1, (mouse_x - sfx_slider_rect.x) / sfx_slider_rect.width))
-                   sfx_handle_rect.x = sfx_slider_rect.x + int(sfx_slider_rect.width * new_sfx_volume) - 5
-                   Settings.sfx_volume = new_sfx_volume
-                   sfx_muted = new_sfx_volume == 0
-
-
-           elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-               return  # Go back to game or menu
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return  # Go back to game or menu
           
-       screen.blit(exit_btn, exit_rect)
-       screen.blit(achievements_btn, achievements_rect)
+        screen.blit(exit_btn, exit_rect)
+        screen.blit(achievements_btn, achievements_rect)
 
-
-
-
-       pygame.display.flip()
-       clock.tick(60)
-
-
-
+        pygame.display.flip()
+        clock.tick(60)
 
 def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time, time_high_score, time_top_five):
    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
    mixer.music.stop()
-
 
    gameclear_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameclear.mp3"))
    current_volume = pygame.mixer.music.get_volume()
    gameclear_sound.set_volume(0.4 * current_volume)
    gameclear_sound.play(fade_ms=500)
 
-
    clock = pygame.time.Clock()
-
 
    game_clear_img = pygame.image.load("images/gameClearScreen.png").convert_alpha()
    game_clear_img = pygame.transform.smoothscale(game_clear_img, (600, 500))  # adjust size if you want
-
 
    clear_rect = game_clear_img.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 75))
    sub_font = pygame.font.Font("fonts/BrickSans.ttf", 28)
@@ -319,7 +296,6 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
        score_text = pygame.font.Font("fonts/BrickSans.ttf", 40).render(f"Score: {score}", True, (255, 255, 255))
    score_rect = score_text.get_rect(center=(screen.get_width() //2, 375))
 
-
    if (time_high_score):
        time_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render(f"Time Taken: {total_wave_time}", True, (138, 43, 226))
    elif (time_top_five):
@@ -327,7 +303,6 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
    else:
        time_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render(f"Time Taken: {total_wave_time}", True, (255, 255, 255))
    time_rect = time_text.get_rect(center=(screen.get_width() //2, 450))
-
 
    spores = [Spore(750, 600) for _ in range(50)]
    while True:
@@ -346,47 +321,34 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                return  # go back to homescreen
 
-
        pygame.display.flip()
        clock.tick(60)
-
 
 def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
    mixer.music.stop()
 
-
    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
    current_volume = pygame.mixer.music.get_volume()
    gameover_sound.set_volume(0.4 * current_volume)
    gameover_sound.play()
-
-
    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
-
-
    if (high_score):
        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
    elif (top_five):
        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
    else:
        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
-
-
    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
-
-
    gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
    score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
-
 
    screen.fill((0, 0, 0))
    screen.blit(gameover_text, gameover_rect)
    screen.blit(score_text, score_rect)
    screen.blit(quit_text, quit_rect)
    pygame.display.flip()
-
 
    # Wait for player to quit
    waiting = True
@@ -401,7 +363,6 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                waiting = False
 
-
 def draw_sidebar(screen, lives, money):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
   
@@ -415,14 +376,10 @@ def draw_sidebar(screen, lives, money):
    screen.blit(text_Money, (610, 30))  # Position the Money text
    screen.blit(text_tower, (610, 60))  # Position the Tower text
    pygame.draw.line(screen, (255, 255, 255), (610, 80), (740, 80), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
-  
-  
-
 
 def draw_underbar(screen, SCORE_FILE, score):
    pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
    font = pygame.font.Font("fonts/BrickSans.ttf", 15)
-
 
    text_Score = font.render(f"Score: ", True, (255, 255, 255))
    if (get_top_score(SCORE_FILE, "score") < score ):
@@ -432,35 +389,27 @@ def draw_underbar(screen, SCORE_FILE, score):
    else:
        value_Score = font.render(f"{score}", True, (255, 255, 255))
 
-
    screen.blit(text_Score, (605, 525))
    screen.blit(value_Score, (605+text_Score.get_width(), 525))
-
 
 def draw_tower_stat(screen, tower):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
    font = pygame.font.Font("fonts/BrickSans.ttf", 12)
 
-
    # Create text for tower stats
    text_range = font.render(f"Range: {tower.range}", True, (255, 255, 255))  # White text for range
    text_damage = font.render(f"Damage: {tower.damage}", True, (255, 255, 255))  # White text for damage
    text_cooldown = font.render(f"Cooldown: {tower.cooldown}", True, (255, 255, 255))  # White text for tower name
-  
-
 
    # Positioning the text on the screen (keeping it aligned on the right side)
    text_range_rect = text_range.get_rect(topleft=(610, 20))
    text_damage_rect = text_damage.get_rect(topleft=(610, 60))
    text_cooldown_rect = text_cooldown.get_rect(topleft=(610, 100))
-  
-
 
    # Draw the text on the screen
    screen.blit(text_range, text_range_rect)  # Draw range text
    screen.blit(text_damage, text_damage_rect)  # Draw damage text
    screen.blit(text_cooldown, text_cooldown_rect)  # Draw cooldown text
-
 
     # Draw Upgrade Button
    upgrade_button_rect = pygame.Rect(620, 150, 120, 40)  # Button size and position
@@ -484,22 +433,17 @@ def draw_tower_stat(screen, tower):
        total_cost += towers_base[tower.tower_name]["upgrades"][i]["cost"]
    refund = total_cost // 2
 
-
    # Sell Button Text
    sell_text = font.render(f"Sell for {refund}", True, (255, 255, 255))
    sell_text_rect = sell_text.get_rect(center=sell_button_rect.center)
    screen.blit(sell_text, sell_text_rect)
 
-
-  
    return upgrade_button_rect, sell_button_rect  # Return both button rects
-
 
 def number_wave(screen, wave_number):
    font = pygame.font.Font("fonts/BrickSans.ttf", 13)
    wave_text = font.render(f"Wave: {wave_number} of 10", True, (255, 255, 255))
    screen.blit(wave_text, (605, 360))  # Position the Wave text
-
 
 def draw_boss_health_bar(screen, boss):
    sporeshield_label = pygame.image.load("images/sporeshield.png").convert_alpha()
@@ -512,22 +456,18 @@ def draw_boss_health_bar(screen, boss):
    bar_x = (screen_width - bar_width) // 2
    bar_y = 40  # top margin
 
-
    #border
    pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
-
 
    # Draw main health (phase 2 or after shield broken)
    if boss.phase == 2:
        health_ratio = boss.hp / boss.max_hp
        pygame.draw.rect(screen, (255, 0, 0), (bar_x, bar_y, bar_width * health_ratio, bar_height))
 
-
    # Draw shield bar (Phase 1)
    if boss.phase == 1:
        shield_ratio = boss.hp / boss.shield_hp
        pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width * shield_ratio, bar_height))
-
 
    # Boss name
    if boss.phase == 1:
@@ -535,23 +475,15 @@ def draw_boss_health_bar(screen, boss):
    elif boss.phase == 2:
        screen.blit(shroomgod_label, (screen.get_width() // 2 - shroomgod_label.get_width() // 2, -238))
 
-
-
-
-
-
 def draw_grid(screen):
    grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
    grid_surface.set_alpha(15)  # Set transparency (0 = fully transparent, 255 = fully opaque)
-
 
    for x in range(0, 600, 40):
        for y in range(0, 600, 40):
            pygame.draw.rect(grid_surface, (255, 255, 255, 100), (x, y, 40, 40), 1)  # Draw on transparent surface
 
-
    screen.blit(grid_surface, (0, 0))
-
 
 def load_scores(SCORE_FILE):
    if not os.path.exists(SCORE_FILE):
@@ -562,11 +494,9 @@ def load_scores(SCORE_FILE):
        except json.JSONDecodeError:
            return[]
 
-
 def save_scores(SCORE_FILE, scores):
    with open(SCORE_FILE, "w") as file:
        json.dump(scores, file)
-
 
 def update_scores(SCORE_FILE, score, sort_method):
    scores = load_scores(SCORE_FILE)
@@ -579,7 +509,6 @@ def update_scores(SCORE_FILE, score, sort_method):
    save_scores(SCORE_FILE, scores)
    return scores
 
-
 def get_top_score(SCORE_FILE, sort_method):
    scores = load_scores(SCORE_FILE)
    if not scores:
@@ -591,7 +520,6 @@ def get_top_score(SCORE_FILE, sort_method):
        return (max(scores))
    elif (sort_method == "time"):
        return (min(scores))
-
 
 def is_top_five(SCORE_FILE, score, sort_method):
    scores = load_scores(SCORE_FILE)
@@ -609,28 +537,21 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
    white = (255, 255, 255)
    clock = pygame.time.Clock()
 
-
    scores = load_scores(SCORE_FILE)
    times = load_scores(TOTAL_WAVE_TIME_FILE)
-
 
    total_pages = 2
    current_page = 0
 
-
    spores = [Spore(750, 600) for _ in range(50)]
-
 
    #space or esc to quit
    running = True
    while running:
-      
        screen.fill((15, 15, 20))
-      
        for spore in spores:
            spore.update()
            spore.draw(screen)
-
 
        if current_page == 0:
            for i, score in enumerate(scores):
@@ -640,11 +561,9 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
            title = font.render("***TOP SCORES***", True, white)
            screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
 
-
            page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
            page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
            page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
-
 
            screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
            screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
@@ -657,16 +576,13 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
            title = font.render("***TOP TIMES***", True, white)
            screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
 
-
            page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
            page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
            page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-
            screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
            screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
            screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
-
 
        for event in pygame.event.get():
            if event.type == pygame.QUIT:
@@ -684,12 +600,10 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
        pygame.display.flip()
        clock.tick(60)
 
-
 def instructions_screen(screen, INSTRUCTIONS_FILE):
    pygame.font.init()
    clock = pygame.time.Clock()
    font = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
-
 
    try:
        with open(INSTRUCTIONS_FILE, "r") as file:
@@ -697,50 +611,35 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
    except FileNotFoundError:
        instructions = ["Instructions file not found"]
 
-
    lines_per_page = 12
    total_pages = (len(instructions)+lines_per_page-1) // lines_per_page
    current_page = 0
 
-
    spores = [Spore(screen.get_width(), screen.get_height()) for _ in range(50)]
-
-
   
-
-
    running = True
    while running:
        screen.fill((15, 15, 20))
-
-
        for spore in spores:
            spore.update()
            spore.draw(screen)
-
-
        start = current_page * lines_per_page
        end = start + lines_per_page
 
-
        title = font.render("***GAME INSTRUCTIONS***", True, (255, 255, 255))
        screen.blit (title, (screen.get_width() // 2 - title.get_width() // 2, 50))
-
 
        for i, line in enumerate(instructions[start:end]):
            text_surface = font.render(line.strip(), True, (255, 255, 255))
            screen.blit(text_surface, (50, 50+i * 30 + 30))
 
-
        page_dir_text = font.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
        page_nav_text = font.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
        page_num_text = font.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-
        screen.blit(page_dir_text, (screen.get_width()//2 - page_dir_text.get_width()//2, screen.get_height() - 35 - page_nav_text.get_height()))
        screen.blit(page_nav_text, (screen.get_width()//2 - page_nav_text.get_width()//2, screen.get_height() - 30))
        screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))  
-
 
        for event in pygame.event.get():
            if event.type == pygame.QUIT:
@@ -754,11 +653,8 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
                    current_page -= 1
                elif event.key == pygame.K_RIGHT and current_page < (total_pages - 1):
                    current_page += 1
-
-
        pygame.display.flip()
        clock.tick(60)
-
 
 def achievements_screen(screen, achievements):
    clock = pygame.time.Clock()
@@ -770,7 +666,6 @@ def achievements_screen(screen, achievements):
    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
    exit_btn = pygame.transform.scale(exit_btn, (40, 40))
    exit_rect = exit_btn.get_rect(topleft=(20, 20))
-
 
    # Calculate progress
    unlocked = sum(1 for a in achievements.values() if a["unlocked"])
@@ -785,12 +680,10 @@ def achievements_screen(screen, achievements):
    scroll_speed = 20
    max_scroll = ((total + cols - 1) // cols) * (card_height + padding) - 400
 
-
    def draw_wrapped_text(surface, text, font, color, x, y, max_width):
        words = text.split()
        lines = []
        current_line = ""
-
 
        for word in words:
            test_line = current_line + word + " "
@@ -801,33 +694,21 @@ def achievements_screen(screen, achievements):
                current_line = word + " "
        lines.append(current_line.strip())
 
-
        for i, line in enumerate(lines):
            rendered = font.render(line, True, color)
            surface.blit(rendered, (x, y + i * font.get_linesize()))
 
-
-
-
    while running:
        screen.fill((20, 20, 20))
        mouse = pygame.mouse.get_pos()
-
-
        screen.blit(exit_btn, exit_rect)
-
 
        # Title and Progress
        title = big_font.render("Achievements", True, (255, 255, 255))
        screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 20))
 
-
        progress = font.render(f"{unlocked}/{total} Unlocked", True, (200, 200, 200))
        screen.blit(progress, (screen.get_width() // 2 - progress.get_width() // 2, 60))
-
-
-
-
        # Draw achievements grid
        start_y = 110 + scroll_y
        achievements_list = list(achievements.items())
@@ -837,19 +718,15 @@ def achievements_screen(screen, achievements):
            x = padding + col * (card_width + padding)
            y = start_y + row * (card_height + padding)
 
-
            # Card background
            bg_color = (60, 60, 60) if not data["unlocked"] else (255, 68, 58)
            pygame.draw.rect(screen, bg_color, (x, y, card_width, card_height), border_radius=5)
-
 
            # Card border color based on unlock status
            border_color = (100, 100, 100) if not data["unlocked"] else (239, 176, 125)
            pygame.draw.rect(screen, border_color, (x, y, card_width, card_height), width=2, border_radius=5)
                       
-          
            is_secret = data.get("category") == "Secret" and not data["unlocked"]
-
 
            if is_secret:
                title_text = "???"
@@ -864,12 +741,8 @@ def achievements_screen(screen, achievements):
            font.set_underline(False)
            screen.blit(title_rendered, (x + 10, y + 10))
 
-
            # Description (uses desc_text now)
            draw_wrapped_text(screen, desc_text, font, (239, 176, 125), x + 10, y + 40, card_width - 20)
-
-
-
 
        # Handle events
        for event in pygame.event.get():
@@ -883,9 +756,5 @@ def achievements_screen(screen, achievements):
                    scroll_y = min(scroll_y + scroll_speed, 0)
                if event.button == 5:  # scroll down
                    scroll_y = max(scroll_y - scroll_speed, -max_scroll)
-
-
        pygame.display.flip()
        clock.tick(60)
-
-
