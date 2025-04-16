@@ -56,7 +56,7 @@ towers_base = {
             3: {"cost": 120, "damage": 45, "cooldown": 2.0, "range": 80},
         }
     },
-"Slow": {
+"Slime": {
         "range": 50,
         "damage": 0,
         "has_projectile": False,

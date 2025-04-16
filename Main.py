@@ -48,7 +48,7 @@ IMG_NAMES = [
     "fastforwardwave",
     "archerSample",
     "bearSample",
-    "slow",
+    "slime",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -63,7 +63,7 @@ cancelImage = IMAGES["cancel_button"] #generate cancel button image
 fastForwardImage = IMAGES["fastforwardwave"] #generate fast forward button image
 archerImage = IMAGES["archerSample"] #generate archer tower image
 bearImage = IMAGES["bearSample"] #generate bear tower image
-slowImage = IMAGES["slow"]
+slimeImage = IMAGES["slime"]
 
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
@@ -148,7 +148,7 @@ def game():
     last_spawn_time = pygame.time.get_ticks()
 
     #Wave Logic
-    wave_number = 0
+    wave_number = 1
     lives = 25  # Starting number of lives
     money = 550  # Starting amount of money
     score = 0 # Starting score amount
@@ -159,13 +159,13 @@ def game():
     
     # Create buttons
     witchButton = Button(620, 95, IMAGES["witchSample"], True, "Witch", tooltip_text="Witch\ncost: 100\natk: 10") # (x, y, image, single_click, tower_name, tool_tip)
-    archerButton = Button(680, 95, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\ncost: 80\natk: 8")
+    archerButton = Button(680, 90, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer\ncost: 80\natk: 8")
     bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text="Bear\ncost: 120\natk: 25")
-    slowButton = Button(680, 140, IMAGES["slow"], True, "Slow", tooltip_text="Slow\ncost: 100\natk: slow")
+    slimeButton = Button(680, 145, IMAGES["slime"], True, "Slime", tooltip_text="Slime\ncost: 120\natk: slow")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [archerButton, bearButton, witchButton, slowButton]
+    buttons = [archerButton, bearButton, witchButton, slimeButton]
 
     def find_button(x, y):
         for button in buttons:
@@ -214,6 +214,8 @@ def game():
         "wave": 0,
         "maxed_towers": 0,
         "one_tower_challenge": False,
+        "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0},
+
     }
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
@@ -330,6 +332,8 @@ def game():
                                 game_state["towers_placed"] += 1
                                 game_state["tower_types"] = {tower.tower_name for tower in towers}
                                 game_state["tower_types"].add(towerButton.name)
+                                tower_type = towerButton.name
+                                game_state["tower_type_counts"][tower_type] += 1
                                 check_achievements(game_state, achievement_notifications)
 
                             else:
