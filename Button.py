@@ -34,7 +34,7 @@ class Button:
 
         # Draw tooltip if hovering
         if self.rect.collidepoint(pos) and self.tooltip_text and self.font:
-            self.draw_tooltip(screen, (0, 400))
+            self.draw_tooltip(screen, (-5, 395))
         
         return action # Return if the button was clicked
     
