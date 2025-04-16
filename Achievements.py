@@ -92,6 +92,11 @@ achievements = {
         "category": "Tower",
         "description": "Deal 300 amount of damage with witch towers in one wave"
     },
+    "Splat Specialist": {
+        "unlocked": False,
+        "category": "Tower",
+        "description": "Win a game with more Slime towers than any other tower type"
+    },
     "Maxed Out": {
         "unlocked": False,
         "category": "Tower",
@@ -129,8 +134,6 @@ def unlock_achievement(name, notifications_list=None):
 
         if notifications_list is not None:
             notifications_list.append((name, pygame.time.get_ticks()))
-    print("[DEBUG] Notifications List:", notifications_list)
-
 
 
 def check_achievements(state, notifications_list):
@@ -156,7 +159,7 @@ def check_achievements(state, notifications_list):
         unlock_achievement("Barely Breathing", notifications_list)
 
     # Tower usage
-    if len(state["tower_types"]) == 3:  # adjust based on # of tower types
+    if len(state["tower_types"]) == 4:  # adjust based on # of tower types
         unlock_achievement("Balanced Loadout", notifications_list)
 
     if state["towers_placed"] >= 20:
@@ -200,4 +203,14 @@ def check_achievements(state, notifications_list):
         unlock_achievement("One Man Army", notifications_list)
 
 ####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
+    # Slime-specific achievement
+    tower_counts = state.get("tower_type_counts", {})
+    slime_count = tower_counts.get("Slime", 0)
+    other_counts = [
+        tower_counts.get("Witch", 0),
+        tower_counts.get("Archer", 0),
+        tower_counts.get("Bear", 0)
+    ]
+    if slime_count > max(other_counts) and state.get("game_won"):
+        unlock_achievement("Splat Specialist", notifications_list)
 
