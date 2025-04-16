@@ -2,6 +2,7 @@ towers_base = {
     "Witch": {
         "range": 120,
         "damage": 10,
+        "has_projectile": True,
         "projectile": {
             "name": "fireball",
             "speed": 1,
@@ -20,6 +21,7 @@ towers_base = {
     "Archer": {
         "range": 150,
         "damage": 8,
+        "has_projectile": True,
         "projectile": {
             "name": "arrow",
             "speed": 6,
@@ -38,6 +40,7 @@ towers_base = {
     "Bear": {
         "range": 50,
         "damage": 25,
+        "has_projectile": False,
         "projectile": {
             "name": "arrow",
             "speed": 6,
@@ -56,6 +59,7 @@ towers_base = {
 "Slow": {
         "range": 50,
         "damage": 0,
+        "has_projectile": False,
         "projectile": {
             "name": "none",
             "speed": 6,

@@ -130,32 +130,28 @@ class Tower:
 
 
     def deal_aoe(self, enemies):
-        if self.aoeDmg:
-            enemy_hit = False
-            for enemy in enemies:
-                if enemy.hp > 0:
-                    # Skip boss while transforming
-                    if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
-                        continue
+        enemy_hit = False
+        for enemy in enemies:
+            if enemy.hp > 0:
+                # Skip boss while transforming
+                if getattr(enemy, "is_boss", False) and getattr(enemy, "transforming", False):
+                    continue
+                enemy.killed_by = self.tower_name
+                if self.get_distance(enemy) <= self.range:
+                    self.target = enemy
+                    enemy.hp -= self.damage
+                    enemy_hit = True
+                    # Only mark as dying if NOT Phase 1 boss
+                    if enemy.hp <= 0:
+                        if getattr(enemy, "is_boss", False) and getattr(enemy, "phase", 1) == 1:
+                            pass  # Let phase transition handle it
+                        else:
+                            enemy.is_dying = True
 
-                    enemy.killed_by = self.tower_name
-
-                    if self.get_distance(enemy) <= self.range:
-                        self.target = enemy
-                        enemy.hp -= self.damage
-                        enemy_hit = True
-
-                        # Only mark as dying if NOT Phase 1 boss
-                        if enemy.hp <= 0:
-                            if getattr(enemy, "is_boss", False) and getattr(enemy, "phase", 1) == 1:
-                                pass  # Let phase transition handle it
-                            else:
-                                enemy.is_dying = True
-
-            if enemy_hit:  # bear attack sound
-                self.attacksound()
-                if self.tower_name == "Witch":
-                    self.game_state["witch_dmg_this_wave"] += self.damage
+        if enemy_hit:  # bear attack sound
+            self.attacksound()
+            if self.tower_name == "Witch":
+                self.game_state["witch_dmg_this_wave"] += self.damage
 
     def take_aim(self, enemies):
         for enemy in enemies:
@@ -167,19 +163,19 @@ class Tower:
                 dist = self.get_distance(enemy)
                 if dist <= self.range:
                     self.target = enemy
-                    projectile = Projectile(self.x, self.y, self.projectile,
-                                            self.range, towers_base[self.tower_name]["projectile"]["frenetic"], self.target,
-                                            speed=towers_base[self.tower_name]["projectile"]["speed"],
-                                            screen=self.screen, damage=self.damage)
-                    self.projectiles.add(projectile)
-                    self.attack_time = pygame.time.get_ticks()
+                    if towers_base[self.tower_name]["has_projectile"]:
+                        projectile = Projectile(self.x, self.y, self.projectile,
+                                                self.range, towers_base[self.tower_name]["projectile"]["frenetic"], self.target,
+                                                speed=towers_base[self.tower_name]["projectile"]["speed"],
+                                                screen=self.screen, damage=self.damage)
+                        self.projectiles.add(projectile)
+                        self.attacksound() # play witch and archer attack sound when shooting
+                        self.target.hp -= projectile.damage
+                        self.attack_time = pygame.time.get_ticks()
 
-                    self.attacksound() # play witch and archer attack sound when shooting
 
-                    self.target.hp -= projectile.damage
                     if self.tower_name == "Witch":
                         self.game_state["witch_dmg_this_wave"] += projectile.damage
-
 
                     # Only mark as dying if NOT Phase 1 boss
                     if self.target.hp <= 0:
@@ -202,7 +198,7 @@ class Tower:
                     self.deal_aoe(enemies)
                 if towers_base[self.tower_name]["aoeEnv"]:
                     self.apply_env_effects(enemies)
-                else:
+                if towers_base[self.tower_name]["has_projectile"]:
                     self.take_aim(enemies)
 
     def update(self):
