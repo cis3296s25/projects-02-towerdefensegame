@@ -123,7 +123,7 @@ def log_message(message):
 
 ############################## END OF LOGGING ###############################
 
-def game():
+def game(mode="normal"):
 
     mixer.music.load(BASE_PATH + "/sounds/backgroundmusic.mp3")
     mixer.music.set_volume(Settings.music_volume)
@@ -215,6 +215,7 @@ def game():
         "maxed_towers": 0,
         "one_tower_challenge": False,
         "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0},
+        "mode": mode,
 
     }
 
@@ -238,19 +239,23 @@ def game():
                 if show_stats and selected_tower:
                     if upgrade_button_rect.collidepoint(event.pos):
                         log_message("Upgrade button clicked!")
+
                         if selected_tower.upgrade == 3:
                             log_message("Tower is already at max upgrade!")
-                        elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3:
+
+                        elif mode == "no_upgrades_mode":
+                            log_message("Upgrades are disabled in No Upgrades Mode!")
+
+                        elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]:
                             money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
                             selected_tower.do_upgrade(game_state)
                             game_state["upgrades_used"] += 1
                             game_state["no_upgrades_wave"] = False
-
                             check_achievements(game_state, achievement_notifications)
-                            
-                        elif money <= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] and selected_tower.upgrade < 3: 
+
+                        else:
                             log_message("Not enough money to upgrade tower!")
-                
+
                     elif sell_button_rect.collidepoint(event.pos):
                         log_message("Sell button clicked!")
                         
@@ -576,7 +581,7 @@ def game():
             button.draw(screen, show_stats)  
 
         if show_stats and selected_tower:
-            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower)
+            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower, mode)
 
         if show_wave:
             number_wave(screen, wave_number)
@@ -613,19 +618,33 @@ def game():
             text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
             screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
 
+        if mode != "normal":
+            mode_font = pygame.font.Font("fonts/BrickSans.ttf", 16)
+            mode_text = mode_font.render(f"Mode: {mode.replace('_', ' ').title()}", True, (239, 176, 125))
+            pygame.draw.rect(screen, (255, 68, 58), (10, 364, mode_text.get_width() + 16, 30), border_radius=8)
+            pygame.draw.rect(screen, (61, 43, 36), (10, 364, mode_text.get_width() + 16, 30), 2, border_radius=8)
+            screen.blit(mode_text, (18, 367))
+
+
 
 
         pygame.display.flip()
+
         clock.tick(fps) # Control the frame rate / speed of the game
 
     mixer.music.stop()
     pygame.quit()
 
 def main():
+
+    valid_modes = ["normal_mode", "no_upgrades_mode", "hardcore_mode", "reverse_mode"]
+
     while True:
         result = homescreen(screen)
         if result == "play":
-            game()
+            selected_mode = mode_selection_screen(screen)
+            if selected_mode in valid_modes:
+                game(selected_mode)
         elif result == "settings":
             setting_result = settings_screen(screen)
             if setting_result == "achievements":
@@ -636,6 +655,8 @@ def main():
             instructions_screen(screen, INSTRUCTIONS_FILE)
         elif result == "achievements":
             achievements_screen(screen, achievements)
+        elif result == "modeSelection":
+            mode_selection_screen(screen)
 
 
 if __name__ == "__main__":

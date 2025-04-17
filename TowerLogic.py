@@ -221,4 +221,9 @@ class Tower:
         dx = enemy_center_x - self.rect.centerx
         dy = enemy_center_y - self.rect.centery
         dist = (dx ** 2 + dy ** 2) ** 0.5
+        if enemy.color == "Giant" or enemy.color == "Boss":
+            dist -= 51
+
+
+
         return abs(dist)
