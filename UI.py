@@ -833,6 +833,8 @@ def mode_selection_screen(screen):
         for i in range(len(modes))
     ]
 
+    spores = [Spore(750, 600) for _ in range(50)]
+
     while running:
         screen.fill((15, 15, 20))
 
@@ -840,6 +842,11 @@ def mode_selection_screen(screen):
 
         title_surface = title_font.render("Select Game Mode", True, white)
         screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 60))
+
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
+
 
         mouse = pygame.mouse.get_pos()
         for i, rect in enumerate(button_rects):
