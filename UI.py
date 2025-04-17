@@ -33,8 +33,6 @@ def homescreen(screen):
 
    # Load logo and buttons
    logo = pygame.image.load("images/Homescreen/towerdefenseLogo.png").convert_alpha()
-   play_btn = pygame.image.load("images/Homescreen/playbutton.png").convert_alpha()
-   settings_btn = pygame.image.load("images/Homescreen/settingsbutton.png").convert_alpha()
    leaderboard_btn = pygame.image.load("images/Homescreen/leaderboard.png").convert_alpha()
    information_btn = pygame.image.load("images/Homescreen/information.png").convert_alpha()
    achievements_btn = pygame.image.load("images/Homescreen/achievementsbutton.png").convert_alpha()
@@ -42,19 +40,28 @@ def homescreen(screen):
 
    # size of pngs
    logo = pygame.transform.smoothscale(logo, (800, 650))
-   play_btn = pygame.transform.smoothscale(play_btn, (110, 50))
-   settings_btn = pygame.transform.smoothscale(settings_btn, (110, 50))
    leaderboard_btn = pygame.transform.smoothscale(leaderboard_btn, (75, 75))
    information_btn = pygame.transform.smoothscale(information_btn, (40, 40))
    achievements_btn = pygame.transform.smoothscale(achievements_btn, (40, 40))
 
    # Get rects for positioning
    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
-   play_rect = play_btn.get_rect(center=(screen.get_width() // 2, 370))
-   settings_rect = settings_btn.get_rect(center=(screen.get_width() // 2, 430))
    leaderboard_rect = leaderboard_btn.get_rect(bottomleft = ((20), (screen.get_height() - (-5))))
    information_rect = information_btn.get_rect(bottomright = ((screen.get_width()-10), (screen.get_height() - 10)))
    achievements_rect = achievements_btn.get_rect(bottomleft = ((103), (screen.get_height() - 10)))
+   pygame.font.init()
+   button_font = pygame.font.Font("fonts/BrickSans.ttf", 18)
+   button_color = (255, 68, 58)
+   hover_color = (255, 101, 93)
+   white = (239,176,125)
+   
+   # Create Play and Settings Rects
+   button_width = 120
+   button_height = 40
+   play_rect = pygame.Rect((screen.get_width() - button_width) // 2, 335, button_width, button_height)
+   settings_rect = pygame.Rect((screen.get_width() - button_width) // 2, 390, button_width, button_height)
+
+
 
    spores = [Spore(750, 600) for _ in range(50)]
 
@@ -67,8 +74,15 @@ def homescreen(screen):
 
        # Draw logo and play button
        screen.blit(logo, logo_rect)
-       screen.blit(play_btn, play_rect)
-       screen.blit(settings_btn, settings_rect)
+       mouse_pos = pygame.mouse.get_pos()
+       for rect, label in [(play_rect, "Play"), (settings_rect, "Settings")]:
+            hovered = rect.collidepoint(mouse_pos)
+            color = hover_color if hovered else button_color
+            pygame.draw.rect(screen, color, rect, border_radius=20)
+            text = button_font.render(label, True, white)
+            screen.blit(text, (rect.centerx - text.get_width() // 2, rect.centery - text.get_height() // 2))
+
+        # Blit icon-based buttons
        screen.blit(leaderboard_btn, leaderboard_rect)
        screen.blit(information_btn, information_rect)
        screen.blit(achievements_btn, achievements_rect)
@@ -92,6 +106,7 @@ def homescreen(screen):
                        return "information"
                    elif achievements_rect.collidepoint(mouse_pos):
                        return "achievements"
+                   
 
        pygame.display.flip()
        clock.tick(60)
@@ -783,3 +798,68 @@ def achievements_screen(screen, achievements):
                    scroll_y = max(scroll_y - scroll_speed, -max_scroll)
        pygame.display.flip()
        clock.tick(60)
+
+def mode_selection_screen(screen):
+    clock = pygame.time.Clock()
+    running = True
+
+    pygame.font.init()
+    title_font =  pygame.font.Font("fonts/BrickSans.ttf", 48)
+    button_font = pygame.font.Font("fonts/BrickSans.ttf", 18)
+    desc_font = pygame.font.Font("fonts/BrickSans.ttf", 11)
+
+    white = (255, 255, 255)
+    gray = (239,176,125)
+    button_color = (255, 68, 58)
+    hover_color = (255,101,93)
+
+    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
+    exit_btn = pygame.transform.scale(exit_btn, (40, 40))
+    exit_rect = exit_btn.get_rect(topleft=(20, 20))
+
+    modes = [
+        {"name": "Normal Mode", "desc": "Standard gameplay with upgrades"},
+        {"name": "No Upgrades Mode", "desc": "Towers cannot be upgraded"},
+        {"name": "Hardcore Mode", "desc": "1 life, tougher enemies, costly towers"},
+        {"name": "Reverse Mode", "desc": "Enemies spawn from the opposite side"},
+    ]
+
+    button_width = 300
+    button_height = 60
+    padding = 20
+    start_y = 150
+    button_rects = [
+        pygame.Rect((screen.get_width() - button_width) // 2, start_y + i * (button_height + padding), button_width, button_height)
+        for i in range(len(modes))
+    ]
+
+    while running:
+        screen.fill((15, 15, 20))
+
+        screen.blit(exit_btn, exit_rect)
+
+        title_surface = title_font.render("Select Game Mode", True, white)
+        screen.blit(title_surface, (screen.get_width() // 2 - title_surface.get_width() // 2, 60))
+
+        mouse = pygame.mouse.get_pos()
+        for i, rect in enumerate(button_rects):
+            hovered = rect.collidepoint(mouse)
+            pygame.draw.rect(screen, hover_color if hovered else button_color, rect, border_radius=8)
+            text = button_font.render(modes[i]["name"], True, white)
+            desc = desc_font.render(modes[i]["desc"], True, gray)
+            screen.blit(text, (rect.centerx - text.get_width() // 2, rect.y + 10))
+            screen.blit(desc, (rect.centerx - desc.get_width() // 2, rect.y + 35))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_rect.collidepoint(event.pos):
+                    return "home"
+                for i, rect in enumerate(button_rects):
+                    if rect.collidepoint(event.pos):
+                        return modes[i]["name"].lower().replace(" ", "_")
+
+        pygame.display.flip()
+        clock.tick(60)
