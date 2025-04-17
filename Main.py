@@ -220,7 +220,7 @@ def game():
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
-
+    speed_multiplier = 1
     while running:
 
         for event in pygame.event.get():
@@ -289,9 +289,19 @@ def game():
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
+                        speed_multiplier = 1.365
+                        spawn_delay = 400  # Reduce spawn delay for fast forward
+                        for enemy in enemies:
+                            enemy.speed *= speed_multiplier # double speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward activated!")
                     else:
                         fps = 60
+                        speed_multiplier = 1
+                        spawn_delay = 800  # Reset spawn delay
+                        for enemy in enemies:
+                            enemy.speed /= 1.365 # normal speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward deactivated!")
 
                 else:
@@ -380,6 +390,9 @@ def game():
                     new_enemy = Enemy(
                         WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
             )
+                
+                new_enemy.speed *= speed_multiplier
+
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
