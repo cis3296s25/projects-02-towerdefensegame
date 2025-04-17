@@ -432,7 +432,7 @@ def wave_description(wave):
         return "Unknown Wave\nPrepare for the unexpected!"
     
 
-def draw_tower_stat(screen, tower):
+def draw_tower_stat(screen, tower, mode):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
    font = pygame.font.Font("fonts/BrickSans.ttf", 12)
 
@@ -453,16 +453,21 @@ def draw_tower_stat(screen, tower):
 
     # Draw Upgrade Button
    upgrade_button_rect = pygame.Rect(620, 150, 120, 40)  # Button size and position
-   pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)  # Green button
-  
-   # Upgrade Button Text
-   if tower.upgrade < 3:
-       upgrade_text = font.render(f"Upgrade: {towers_base[tower.tower_name]["upgrades"][tower.upgrade + 1]["cost"]}", True, (255, 255, 255))
+   if mode == "no_upgrades_mode":
+       pygame.draw.rect(screen, (100, 100, 100), upgrade_button_rect)  # Grayed out
+       upgrade_text = font.render("No Upgrades", True, (200, 200, 200))
+   elif tower.upgrade < 3:
+       pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)  # Green
+       upgrade_text = font.render(
+            f"Upgrade: {towers_base[tower.tower_name]['upgrades'][tower.upgrade + 1]['cost']}",
+            True, (255, 255, 255))
    else:
+       pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)
        upgrade_text = font.render("Max Upgrade", True, (255, 255, 255))
+
    upgrade_text_rect = upgrade_text.get_rect(center=upgrade_button_rect.center)
    screen.blit(upgrade_text, upgrade_text_rect)
-  
+    
    # Draw Sell Button
    sell_button_rect = pygame.Rect(620, 230, 80, 30)  # Button size and position
    pygame.draw.rect(screen, (200, 0, 0), sell_button_rect)  # Red button

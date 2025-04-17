@@ -221,7 +221,6 @@ def game(mode="normal"):
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
-
     while running:
 
         for event in pygame.event.get():
@@ -568,7 +567,7 @@ def game(mode="normal"):
             button.draw(screen, show_stats)  
 
         if show_stats and selected_tower:
-            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower)
+            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower, mode)
 
         if show_wave:
             number_wave(screen, wave_number)
@@ -605,9 +604,18 @@ def game(mode="normal"):
             text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
             screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
 
+        if mode != "normal":
+            mode_font = pygame.font.Font("fonts/BrickSans.ttf", 16)
+            mode_text = mode_font.render(f"Mode: {mode.replace('_', ' ').title()}", True, (239, 176, 125))
+            pygame.draw.rect(screen, (255, 68, 58), (10, 364, mode_text.get_width() + 16, 30), border_radius=8)
+            pygame.draw.rect(screen, (61, 43, 36), (10, 364, mode_text.get_width() + 16, 30), 2, border_radius=8)
+            screen.blit(mode_text, (18, 367))
+
+
 
 
         pygame.display.flip()
+
         clock.tick(fps) # Control the frame rate / speed of the game
 
     mixer.music.stop()
