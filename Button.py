@@ -14,7 +14,7 @@ class Button:
         self.tooltip_fg = (255, 255, 255)  # Foreground color for the tooltip
         
 
-    def draw(self, screen):
+    def draw(self, screen, show_stats=False):
         action = False
         # get mouse position   
         pos = pg.mouse.get_pos()
@@ -33,7 +33,7 @@ class Button:
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
         # Draw tooltip if hovering
-        if self.rect.collidepoint(pos) and self.tooltip_text and self.font:
+        if not show_stats and self.rect.collidepoint(pos) and self.tooltip_text and self.font:
             self.draw_tooltip(screen, (-5, 395))
         
         return action # Return if the button was clicked

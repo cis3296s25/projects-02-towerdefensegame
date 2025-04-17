@@ -560,7 +560,7 @@ def game():
          
 
         for button in buttons:
-            button.draw(screen)  
+            button.draw(screen, show_stats)  
 
         if show_stats and selected_tower:
             upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower)
