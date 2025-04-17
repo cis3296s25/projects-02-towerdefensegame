@@ -47,6 +47,7 @@ class Enemy:
         self.dmg = mob_data[color]["Damage"] 
         self.x = x
         self.y = y
+        self.slow_effects = 0
 
         self.screen = screen
 
