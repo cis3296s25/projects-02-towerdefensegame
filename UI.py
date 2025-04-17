@@ -726,14 +726,14 @@ def achievements_screen(screen, achievements):
    while running:
        screen.fill((20, 20, 20))
        mouse = pygame.mouse.get_pos()
-       screen.blit(exit_btn, exit_rect)
+       screen.blit(exit_btn, (exit_rect.x, exit_rect.y + scroll_y))
 
        # Title and Progress
        title = big_font.render("Achievements", True, (255, 255, 255))
-       screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 20))
+       screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 20 + scroll_y))
 
        progress = font.render(f"{unlocked}/{total} Unlocked", True, (200, 200, 200))
-       screen.blit(progress, (screen.get_width() // 2 - progress.get_width() // 2, 60))
+       screen.blit(progress, (screen.get_width() // 2 - progress.get_width() // 2, 60 + scroll_y))
        # Draw achievements grid
        start_y = 110 + scroll_y
        achievements_list = list(achievements.items())
@@ -741,7 +741,7 @@ def achievements_screen(screen, achievements):
            row = idx // cols
            col = idx % cols
            x = padding + col * (card_width + padding)
-           y = start_y + row * (card_height + padding)
+           y = start_y + row * (card_height + padding) + scroll_y
 
            # Card background
            bg_color = (60, 60, 60) if not data["unlocked"] else (255, 68, 58)
@@ -775,7 +775,7 @@ def achievements_screen(screen, achievements):
                pygame.quit()
                exit()
            elif event.type == pygame.MOUSEBUTTONDOWN:
-               if exit_rect.collidepoint(mouse):
+               if exit_rect.move(0, scroll_y).collidepoint(mouse):
                    return
                if event.button == 4:  # scroll up
                    scroll_y = min(scroll_y + scroll_speed, 0)
