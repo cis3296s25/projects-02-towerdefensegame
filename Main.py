@@ -327,6 +327,8 @@ def game(mode="normal"):
                     grid_y = mouse_y // 40 * 40
                     if mouse_x > 600 or mouse_y > 400:
                         log_message("Clicked on sidebar")
+                        #log_message(f"soundtrack volume: {Settings.music_volume}")
+                        #log_message(f"sound effects volume: {Settings.sfx_volume}")
                     else:
                         selected_tower = select_tower(grid_x, grid_y, towers)
                         if selected_tower:
@@ -641,9 +643,9 @@ def game(mode="normal"):
         if mode != "normal":
             mode_font = pygame.font.Font("fonts/BrickSans.ttf", 16)
             mode_text = mode_font.render(f"Mode: {mode.replace('_', ' ').title()}", True, (239, 176, 125))
-            pygame.draw.rect(screen, (255, 68, 58), (10, 364, mode_text.get_width() + 16, 30), border_radius=8)
-            pygame.draw.rect(screen, (61, 43, 36), (10, 364, mode_text.get_width() + 16, 30), 2, border_radius=8)
-            screen.blit(mode_text, (18, 367))
+            pygame.draw.rect(screen, (255, 68, 58), (5, 520, mode_text.get_width() + 16, 30), border_radius=8)
+            pygame.draw.rect(screen, (61, 43, 36), (5, 520, mode_text.get_width() + 16, 30), 2, border_radius=8)
+            screen.blit(mode_text, (13, 523))
 
 
 
