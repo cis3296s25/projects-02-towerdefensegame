@@ -323,7 +323,7 @@ def game(mode="normal"):
                     if fps == 60:
                         fps = 120
                         game_state["fast_forward_used"] = True
-                        speed_multiplier = 1.585
+                        speed_multiplier = 2
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
                             enemy.speed *= speed_multiplier # increase speed
