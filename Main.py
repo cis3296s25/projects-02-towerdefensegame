@@ -124,10 +124,10 @@ def log_message(message):
 
 ############################## END OF LOGGING ###############################
 
-def reset_slow_effects(enemies):
+def reset_slow_effects(enemies, speed_multiplier):
     for enemy in enemies:
         enemy.slow_effects = 0
-        enemy.speed = mob_data[enemy.color]["Speed"]
+        enemy.speed = mob_data[enemy.color]["Speed"] * speed_multiplier
 
 
 def game(mode="normal"):
@@ -228,6 +228,7 @@ def game(mode="normal"):
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
+    speed_multiplier = 1
     while running:
 
         for event in pygame.event.get():
@@ -300,9 +301,19 @@ def game(mode="normal"):
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
+                        speed_multiplier = 1.585
+                        spawn_delay = 400  # Reduce spawn delay for fast forward
+                        for enemy in enemies:
+                            enemy.speed *= speed_multiplier # increase speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward activated!")
                     else:
                         fps = 60
+                        speed_multiplier = 1
+                        spawn_delay = 800  # Reset spawn delay
+                        for enemy in enemies:
+                            enemy.speed /= 1.585 # normal speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward deactivated!")
 
                 else:
@@ -391,6 +402,9 @@ def game(mode="normal"):
                     new_enemy = Enemy(
                         WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
             )
+                
+                new_enemy.speed *= speed_multiplier
+
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
@@ -400,7 +414,7 @@ def game(mode="normal"):
         gameMap.draw()
         draw_grid(screen)        
 
-        reset_slow_effects(enemies)
+        reset_slow_effects(enemies, speed_multiplier)
         # Draw all placed towers and call attack
         for tower in towers:
             if show_stats and selected_tower and tower == selected_tower:
@@ -412,7 +426,7 @@ def game(mode="normal"):
 
             for enemy in enemies:
                 if enemy.slow_effects > 0:
-                    enemy.speed = mob_data[enemy.color]["Speed"] / 2
+                    enemy.speed = mob_data[enemy.color]["Speed"] / 2 * speed_multiplier
 
             #Tower.update(tower)
 
