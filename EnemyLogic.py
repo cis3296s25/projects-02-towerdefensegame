@@ -58,6 +58,7 @@ class Enemy:
 
         if self.color == "Boss":
             self.load_boss_frames()
+            mob_data["Boss"]["Speed"] = 0.07
         else:
             folder = f"{color}Mushroom"
             frame_prefix = color.lower() + "mushroom"
