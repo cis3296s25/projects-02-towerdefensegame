@@ -378,34 +378,60 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                waiting = False
 
-def draw_sidebar(screen, lives, money):
-   pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
-  
-   font = pygame.font.Font("fonts/BrickSans.ttf", 10)
-  
-   # text
-   text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
-   text_Money = font.render(f"Money: {money}", True, (255, 255, 255))  # (text, antialias, color, background=None)
-   text_tower = font.render("Towers", True, (255, 255, 255)) 
-   screen.blit(text_Lives, (610, 10))  # Position the Lives text
-   screen.blit(text_Money, (610, 30))  # Position the Money text
-   screen.blit(text_tower, (610, 60))  # Position the Tower text
-   pygame.draw.line(screen, (255, 255, 255), (610, 80), (740, 80), 1) # Draw a line below the Tower text (surface, color, start_pos, end_pos, width)
+def draw_sidebar(screen, lives, money, w_ratio = 1, h_ratio = 1):
+    sidebar_x = 600 * w_ratio
+    sidebar_width = 150 * w_ratio
+    sidebar_height = 400 * h_ratio
 
-def draw_underbar(screen, SCORE_FILE, score):
-   pygame.draw.rect(screen, (30, 30, 30), (0, 400, 750, 200))
-   font = pygame.font.Font("fonts/BrickSans.ttf", 15)
+    # Draw the sidebar background
+    pygame.draw.rect(screen, (50, 50, 50), (sidebar_x, 0, sidebar_width, sidebar_height))
 
-   text_Score = font.render(f"Score: ", True, (255, 255, 255))
-   if (get_top_score(SCORE_FILE, "score") < score ):
-       value_Score = font.render(f"**{score}**", True, (138, 43, 226))
-   elif (is_top_five(SCORE_FILE, score, "score")):
-       value_Score = font.render(f"*{score}*", True, (173, 216, 23))
-   else:
-       value_Score = font.render(f"{score}", True, (255, 255, 255))
+    # Scale font size
+    font_size = int(10 * h_ratio)
+    font = pygame.font.Font("fonts/BrickSans.ttf", font_size)
 
-   screen.blit(text_Score, (605, 525))
-   screen.blit(value_Score, (605+text_Score.get_width(), 525))
+    # Render text
+    text_Lives = font.render(f"Lives: {lives}", True, (255, 255, 255))
+    text_Money = font.render(f"Money: {money}", True, (255, 255, 255))
+    text_tower = font.render("Towers", True, (255, 255, 255))
+
+    # Scale text positions
+    screen.blit(text_Lives, (sidebar_x + 10 * w_ratio, 10 * h_ratio))
+    screen.blit(text_Money, (sidebar_x + 10 * w_ratio, 30 * h_ratio))
+    screen.blit(text_tower, (sidebar_x + 10 * w_ratio, 60 * h_ratio))
+
+    # Scale and draw the line below the "Towers" text
+    line_start = (sidebar_x + 10 * w_ratio, 80 * h_ratio)
+    line_end = (sidebar_x + 140 * w_ratio, 80 * h_ratio)
+    pygame.draw.line(screen, (255, 255, 255), line_start, line_end, int(1 * h_ratio))
+
+def draw_underbar(screen, SCORE_FILE, score, w_ratio = 1, h_ratio = 1):
+    # Scale the underbar dimensions
+    underbar_y = 400 * h_ratio
+    underbar_width = 750 * w_ratio
+    underbar_height = 200 * h_ratio
+
+    # Draw the underbar background
+    pygame.draw.rect(screen, (30, 30, 30), (0, underbar_y, underbar_width, underbar_height))
+
+    # Scale font size
+    font_size = int(15 * h_ratio)
+    font = pygame.font.Font("fonts/BrickSans.ttf", font_size)
+
+    # Render text
+    text_Score = font.render(f"Score: ", True, (255, 255, 255))
+    if get_top_score(SCORE_FILE, "score") < score:
+        value_Score = font.render(f"**{score}**", True, (138, 43, 226))
+    elif is_top_five(SCORE_FILE, score, "score"):
+        value_Score = font.render(f"*{score}*", True, (173, 216, 23))
+    else:
+        value_Score = font.render(f"{score}", True, (255, 255, 255))
+
+    # Scale text positions
+    text_x = 605 * w_ratio
+    text_y = 525 * h_ratio
+    screen.blit(text_Score, (text_x, text_y))
+    screen.blit(value_Score, (text_x + text_Score.get_width(), text_y))
 
 def wave_description(wave):
     if wave == 1:
@@ -520,13 +546,17 @@ def draw_boss_health_bar(screen, boss):
    elif boss.phase == 2:
        screen.blit(shroomgod_label, (screen.get_width() // 2 - shroomgod_label.get_width() // 2, -238))
 
-def draw_grid(screen):
-   grid_surface = pygame.Surface((800, 600), pygame.SRCALPHA)  # Create a transparent surface
+def draw_grid(screen, w_ratio = 1, h_ratio = 1):
+   grid_surface = pygame.Surface((800 * w_ratio, 600 * h_ratio), pygame.SRCALPHA)  # Create a transparent surface
    grid_surface.set_alpha(15)  # Set transparency (0 = fully transparent, 255 = fully opaque)
 
-   for x in range(0, 600, 40):
-       for y in range(0, 600, 40):
-           pygame.draw.rect(grid_surface, (255, 255, 255, 100), (x, y, 40, 40), 1)  # Draw on transparent surface
+   x = 0
+   while x < 800 * w_ratio:
+        y = 0
+        while y < 600 * h_ratio:
+            pygame.draw.rect(grid_surface, (255, 255, 255, 100), (x, y, 40 * w_ratio, 40 * h_ratio), 1)
+            y += 40 * h_ratio
+        x += 40 * w_ratio  
 
    screen.blit(grid_surface, (0, 0))
 

@@ -37,7 +37,8 @@ banner_font = pygame.font.Font("fonts/BrickSans.ttf", 14)
 
 SCREEN_WIDTH = 750
 SCREEN_HEIGHT = 550
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT,), pygame.RESIZABLE)
+
 clock = pygame.time.Clock()
 FINAL_WAVE = 10
 
@@ -195,6 +196,8 @@ def game(mode="normal"):
     show_stats = False
     show_wave = True
     towerButton = None
+    w_ratio = 1
+    h_ratio = 1
     fps = 60
 
     game_state = {
@@ -233,6 +236,17 @@ def game(mode="normal"):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            if event.type == pygame.VIDEORESIZE:
+                w, h = pygame.display.get_surface().get_size()
+                w_ratio = w / SCREEN_WIDTH
+                h_ratio = h / SCREEN_HEIGHT
+                print(f"Resized to: {w}x{h} (Ratio: {w_ratio:.2f}, {h_ratio:.2f})")
+
+                for button in buttons:
+                    button.w_ratio = w_ratio
+                    button.h_ratio = h_ratio
+                    button.resize(w_ratio, h_ratio)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
@@ -397,8 +411,8 @@ def game(mode="normal"):
 
         # DRAWING CODE
         screen.fill((0, 0, 0))
-        gameMap.draw()
-        draw_grid(screen)        
+        gameMap.draw(w_ratio, h_ratio)
+        draw_grid(screen, w_ratio, h_ratio) 
 
         reset_slow_effects(enemies)
         # Draw all placed towers and call attack
@@ -544,18 +558,19 @@ def game(mode="normal"):
 
                 wave_started = False
 
-        draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
-        draw_underbar(screen, SCORE_FILE, score)
+        
+        draw_sidebar(screen, lives, money, w_ratio, h_ratio) # makes enemy go behind sidebar instead of overtop it
+        draw_underbar(screen, SCORE_FILE, score, w_ratio, h_ratio) # draws underbar with score and time
 
         # Wave descripion code
-        font = pygame.font.Font("fonts/BrickSans.ttf", 10)
+        font = pygame.font.Font("fonts/BrickSans.ttf", int(10 * h_ratio))
         wave_description_text = wave_description(wave_number)
         lines = wave_description_text.split("\n")
-        y_offset = 405  # Starting y position for the text
+        y_offset = 405 * h_ratio  # Starting y position for the text
         for line in lines:
             waveDes = font.render(line, True, (255, 255, 255))
             screen.blit(waveDes, (10, y_offset))  # Draw each line
-            y_offset += 15  # Move down for the next line
+            y_offset += 15 * h_ratio  # Move down for the next line
 
         draw_logs(screen, log_messages)
 
@@ -615,14 +630,6 @@ def game(mode="normal"):
             # Text
             text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
             screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
-
-        if mode != "normal":
-            mode_font = pygame.font.Font("fonts/BrickSans.ttf", 16)
-            mode_text = mode_font.render(f"Mode: {mode.replace('_', ' ').title()}", True, (239, 176, 125))
-            pygame.draw.rect(screen, (255, 68, 58), (10, 364, mode_text.get_width() + 16, 30), border_radius=8)
-            pygame.draw.rect(screen, (61, 43, 36), (10, 364, mode_text.get_width() + 16, 30), 2, border_radius=8)
-            screen.blit(mode_text, (18, 367))
-
 
 
 
