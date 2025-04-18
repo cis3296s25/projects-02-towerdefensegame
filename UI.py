@@ -237,6 +237,7 @@ def settings_screen(screen, in_game = False):
    music_icon = pygame.transform.scale(music_icon, (32, 32))
    sfx_icon = pygame.image.load("images/Homescreen/sfxIcon.png").convert_alpha()
    sfx_icon = pygame.transform.scale(sfx_icon, (32, 32))
+   temp_volume = 0.5  # Store the current volume for unmuting
 
    while running:
         screen.fill((40, 40, 40))
@@ -291,10 +292,12 @@ def settings_screen(screen, in_game = False):
                 elif music_speaker_rect.collidepoint(event.pos):
                     actual_volume = mixer.music.get_volume()
                     if actual_volume == 0:
-                        mixer.music.set_volume(Settings.music_volume) # Unmute to previous volume
-                        handle_rect.x = slider_rect.x + int(slider_rect.width * Settings.music_volume) - 5
+                        mixer.music.set_volume(temp_volume) # Unmute to previous volume
+                        Settings.music_volume = temp_volume
+                        handle_rect.x = slider_rect.x + int(slider_rect.width * temp_volume) - 5
                     else:
-                        Settings.music_volume = actual_volume # Mute and save current volume
+                        temp_volume = actual_volume
+                        Settings.music_volume = 0 # Mute and save current volume
                         mixer.music.set_volume(0)
                         handle_rect.x = slider_rect.x
                 
