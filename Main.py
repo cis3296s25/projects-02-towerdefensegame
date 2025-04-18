@@ -125,10 +125,10 @@ def log_message(message):
 
 ############################## END OF LOGGING ###############################
 
-def reset_slow_effects(enemies):
+def reset_slow_effects(enemies, speed_multiplier):
     for enemy in enemies:
         enemy.slow_effects = 0
-        enemy.speed = mob_data[enemy.color]["Speed"]
+        enemy.speed = mob_data[enemy.color]["Speed"] * speed_multiplier
 
 
 def game(mode="normal"):
@@ -183,7 +183,6 @@ def game(mode="normal"):
 
     fastForwardScale =  pygame.transform.scale(IMAGES["fastforwardwave"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
-    
 
     #wave button logic
     start_wave_btn_img = pygame.image.load(IMAGE_PATH + "startwave.png").convert_alpha()
@@ -231,6 +230,7 @@ def game(mode="normal"):
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
+    speed_multiplier = 1
     while running:
 
         for event in pygame.event.get():
@@ -250,9 +250,15 @@ def game(mode="normal"):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    result = settings_screen(screen)
-                    if result == "achievements":
-                        achievements_screen(screen, achievements)
+                    while True:
+                        result = settings_screen(screen, in_game = True) # the homebutton appears during game
+                        if result == "achievements":
+                            achievements_screen(screen, achievements)
+                            continue  # return to settings after closing achievements
+                        elif result == "home":
+                            return  # exit to home
+                        elif result is None:
+                            break  # exit settings
 
             if event.type == pygame.MOUSEBUTTONDOWN:
             
@@ -314,9 +320,19 @@ def game(mode="normal"):
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
+                        speed_multiplier = 1.585
+                        spawn_delay = 400  # Reduce spawn delay for fast forward
+                        for enemy in enemies:
+                            enemy.speed *= speed_multiplier # increase speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward activated!")
                     else:
                         fps = 60
+                        speed_multiplier = 1
+                        spawn_delay = 800  # Reset spawn delay
+                        for enemy in enemies:
+                            enemy.speed /= 1.585 # normal speed
+                            #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward deactivated!")
 
                 else:
@@ -325,6 +341,8 @@ def game(mode="normal"):
                     grid_y = mouse_y // 40 * 40
                     if mouse_x > 600 or mouse_y > 400:
                         log_message("Clicked on sidebar")
+                        #log_message(f"soundtrack volume: {Settings.music_volume}")
+                        #log_message(f"sound effects volume: {Settings.sfx_volume}")
                     else:
                         selected_tower = select_tower(grid_x, grid_y, towers)
                         if selected_tower:
@@ -405,6 +423,9 @@ def game(mode="normal"):
                     new_enemy = Enemy(
                         WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
             )
+                
+                new_enemy.speed *= speed_multiplier
+
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
@@ -414,7 +435,7 @@ def game(mode="normal"):
         gameMap.draw(w_ratio, h_ratio)
         draw_grid(screen, w_ratio, h_ratio) 
 
-        reset_slow_effects(enemies)
+        reset_slow_effects(enemies, speed_multiplier)
         # Draw all placed towers and call attack
         for tower in towers:
             if show_stats and selected_tower and tower == selected_tower:
@@ -426,7 +447,7 @@ def game(mode="normal"):
 
             for enemy in enemies:
                 if enemy.slow_effects > 0:
-                    enemy.speed = mob_data[enemy.color]["Speed"] / 2
+                    enemy.speed = mob_data[enemy.color]["Speed"] / 2 * speed_multiplier
 
             #Tower.update(tower)
 
@@ -462,12 +483,18 @@ def game(mode="normal"):
                     elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
                     log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
-                    if gameover_screen(screen, score, SCORE_FILE, high_score, top_five) == "restart":
+                    result = gameover_screen(screen, score, SCORE_FILE, high_score, top_five)
+                    if result == "restart":
                         log_message("Restarting game...")
                         game()
+                        return
+                    elif result == "home":
+                        log_message("Returning home...")
+                        mixer.music.stop()
+                        main()
+                        return
                     else:
                         running = False
-                        break
 
             enemy.draw()
 
@@ -475,10 +502,7 @@ def game(mode="normal"):
                 draw_boss_health_bar(screen, enemy)
                 break  # Only one boss expected at a time
 
-            
-
         # end enemy loop
-        
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 10 wave
                 # accounting final wave's points and time
@@ -631,6 +655,14 @@ def game(mode="normal"):
             text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
             screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
 
+        if mode != "normal":
+            mode_font = pygame.font.Font("fonts/BrickSans.ttf", 16)
+            mode_text = mode_font.render(f"Mode: {mode.replace('_', ' ').title()}", True, (239, 176, 125))
+            pygame.draw.rect(screen, (255, 68, 58), (5, 520, mode_text.get_width() + 16, 30), border_radius=8)
+            pygame.draw.rect(screen, (61, 43, 36), (5, 520, mode_text.get_width() + 16, 30), 2, border_radius=8)
+            screen.blit(mode_text, (13, 523))
+
+
 
 
         pygame.display.flip()
@@ -651,9 +683,11 @@ def main():
             if selected_mode in valid_modes:
                 game(selected_mode)
         elif result == "settings":
-            setting_result = settings_screen(screen)
+            setting_result = settings_screen(screen, in_game = False) # home button dissappears in main menu
             if setting_result == "achievements":
                 achievements_screen(screen, achievements)
+            elif setting_result == "home":
+                continue 
         elif result == "leaderboard":
             leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE)
         elif result == "information":

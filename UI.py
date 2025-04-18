@@ -9,6 +9,16 @@ from TowerData import towers_base
 import Settings
 from Achievements import achievements
 
+pygame.font.init()
+
+# Global fonts
+button_font = pygame.font.Font("fonts/BrickSans.ttf", 18)
+title_font = pygame.font.Font("fonts/BrickSans.ttf", 40)
+small_font = pygame.font.Font("fonts/BrickSans.ttf", 13)
+button_color = (255, 68, 58)
+hover_color = (255, 101, 93)
+white = (239,176,125)
+
 class Spore:
    def __init__(self, screen_width, screen_height):
        self.x = random.randint(0, screen_width)
@@ -111,7 +121,6 @@ def homescreen(screen):
        pygame.display.flip()
        clock.tick(60)
 
-
 def pause_screen(screen, mixer):
    mixer.music.pause()
 
@@ -141,7 +150,49 @@ def pause_screen(screen, mixer):
   
    mixer.music.unpause()
 
-def settings_screen(screen):
+def returntohome(screen):
+    font = pygame.font.Font("fonts/BrickSans.ttf", 20)
+
+    popup_width = 300
+    popup_height = 150
+    popup_rect = pygame.Rect((screen.get_width() - popup_width) // 2, (screen.get_height() - popup_height) // 2, popup_width, popup_height)
+    yes_button = pygame.Rect(popup_rect.centerx - 110, popup_rect.bottom - 50, 80, 30)
+    no_button = pygame.Rect(popup_rect.centerx + 30, popup_rect.bottom - 50, 80, 30)
+
+    clock = pygame.time.Clock()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if yes_button.collidepoint(event.pos):
+                    return True
+                elif no_button.collidepoint(event.pos):
+                    return False
+
+        pygame.draw.rect(screen, (40, 40, 40), popup_rect, border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), popup_rect, 2, border_radius=10)
+
+        # text
+        prompt = button_font.render("Return to Main Menu?", True, (255, 255, 255))
+        screen.blit(prompt, (popup_rect.centerx - prompt.get_width() // 2, popup_rect.y + 30))
+
+        # Yes button
+        pygame.draw.rect(screen, (200, 0, 0), yes_button, border_radius=6)
+        yes_text = font.render("Yes", True, (255, 255, 255))
+        screen.blit(yes_text, (yes_button.centerx - yes_text.get_width() // 2, yes_button.centery - yes_text.get_height() // 2))
+
+        # No button
+        pygame.draw.rect(screen, (0, 150, 0), no_button, border_radius=6)
+        no_text = font.render("No", True, (255, 255, 255))
+        screen.blit(no_text, (no_button.centerx - no_text.get_width() // 2, no_button.centery - no_text.get_height() // 2))
+
+        pygame.display.update(popup_rect)
+        clock.tick(60)
+
+def settings_screen(screen, in_game = False):
    clock = pygame.time.Clock()
    running = True
 
@@ -175,12 +226,18 @@ def settings_screen(screen):
    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
    exit_btn = pygame.transform.scale(exit_btn, (40, 40))
    exit_rect = exit_btn.get_rect(topleft=(20, 20))
+
+   # Load home button image
+   home_btn = pygame.image.load("images/Homescreen/homebutton.png").convert_alpha()
+   home_btn = pygame.transform.scale(home_btn, (40, 40))
+   home_rect = home_btn.get_rect(bottomleft=(achievements_rect.left - 50, screen.get_height() - 10))
   
    # Volume icons for music and sfx
    music_icon = pygame.image.load("images/Homescreen/musicIcon.png").convert_alpha()
    music_icon = pygame.transform.scale(music_icon, (32, 32))
    sfx_icon = pygame.image.load("images/Homescreen/sfxIcon.png").convert_alpha()
    sfx_icon = pygame.transform.scale(sfx_icon, (32, 32))
+   temp_volume = 0.5  # Store the current volume for unmuting
 
    while running:
         screen.fill((40, 40, 40))
@@ -235,10 +292,12 @@ def settings_screen(screen):
                 elif music_speaker_rect.collidepoint(event.pos):
                     actual_volume = mixer.music.get_volume()
                     if actual_volume == 0:
-                        mixer.music.set_volume(Settings.music_volume) # Unmute to previous volume
-                        handle_rect.x = slider_rect.x + int(slider_rect.width * Settings.music_volume) - 5
+                        mixer.music.set_volume(temp_volume) # Unmute to previous volume
+                        Settings.music_volume = temp_volume
+                        handle_rect.x = slider_rect.x + int(slider_rect.width * temp_volume) - 5
                     else:
-                        Settings.music_volume = actual_volume # Mute and save current volume
+                        temp_volume = actual_volume
+                        Settings.music_volume = 0 # Mute and save current volume
                         mixer.music.set_volume(0)
                         handle_rect.x = slider_rect.x
                 
@@ -256,7 +315,10 @@ def settings_screen(screen):
                 
                 elif exit_rect.collidepoint(event.pos):
                     return
-                
+                elif home_rect.collidepoint(event.pos) and in_game:
+                    if returntohome(screen):
+                        return "home"
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_music = False
                 dragging_sfx = False
@@ -281,6 +343,8 @@ def settings_screen(screen):
           
         screen.blit(exit_btn, exit_rect)
         screen.blit(achievements_btn, achievements_rect)
+        if in_game: # don't display if in settings at main menu
+            screen.blit(home_btn, home_rect)
 
         pygame.display.flip()
         clock.tick(60)
@@ -333,50 +397,59 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
            if event.type == pygame.QUIT:
                pygame.quit()
                sys.exit()
-           elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+           elif event.type == pygame.MOUSEBUTTONDOWN:
                return  # go back to homescreen
 
        pygame.display.flip()
        clock.tick(60)
 
 def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
-   BASE_PATH = os.path.abspath(os.path.dirname(__file__))
-   mixer.music.stop()
+    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+    mixer.music.stop()
 
-   gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
-   current_volume = pygame.mixer.music.get_volume()
-   gameover_sound.set_volume(0.4 * current_volume)
-   gameover_sound.play()
-   gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
-   if (high_score):
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
-   elif (top_five):
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
-   else:
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
-   quit_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
-   gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
-   score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
-   quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
+    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
+    current_volume = pygame.mixer.music.get_volume()
+    gameover_sound.set_volume(0.4 * current_volume)
+    gameover_sound.play()
+    spores = [Spore(750, 600) for _ in range(50)]
+    clock = pygame.time.Clock()
+    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 100).render("Game Over", True, (255, 0, 0))
+    gameover_text2 = pygame.font.Font("fonts/BrickSans.ttf", 100).render("Game Over", True, (255, 200, 100))
+    if (high_score):
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+    elif (top_five):
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
+    else:
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
+    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 15).render("Press R to retry or CLICK to return to menu", True, (255, 255, 255))
+    gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+    gameover_rect2 = gameover_text2.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 45))
+    score_rect = score_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 80))
+    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() - 50))
 
-   screen.fill((0, 0, 0))
-   screen.blit(gameover_text, gameover_rect)
-   screen.blit(score_text, score_rect)
-   screen.blit(quit_text, quit_rect)
-   pygame.display.flip()
+    while True:
+        screen.fill((15, 15, 20))
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
 
-   # Wait for player to quit
-   waiting = True
-   while waiting:
-       for event in pygame.event.get():
-           if event.type == pygame.QUIT:
-               pygame.quit()
-               sys.exit()
-           elif event.type == pygame.KEYDOWN:
-               if event.key == pygame.K_r:
-                   return "restart"
-           elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-               waiting = False
+        screen.blit(gameover_text2, gameover_rect2)
+        screen.blit(gameover_text, gameover_rect)
+        screen.blit(score_text, score_rect)
+        screen.blit(quit_text, quit_rect)
+
+        pygame.display.flip()
+        clock.tick(60)
+  
+        for event in pygame.event.get(): # Wait for player input
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return "restart"
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return "home"
 
 def draw_sidebar(screen, lives, money, w_ratio = 1, h_ratio = 1):
     sidebar_x = 600 * w_ratio
