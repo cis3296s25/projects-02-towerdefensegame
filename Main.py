@@ -322,7 +322,6 @@ def game(mode="normal"):
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
-                        game_state["fast_forward_used"] = True
                         speed_multiplier = 2
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
