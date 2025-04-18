@@ -306,7 +306,7 @@ def game(mode="normal"):
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
-                        speed_multiplier = 1.585
+                        speed_multiplier = 2
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
                             enemy.speed *= speed_multiplier # increase speed
@@ -317,7 +317,7 @@ def game(mode="normal"):
                         speed_multiplier = 1
                         spawn_delay = 800  # Reset spawn delay
                         for enemy in enemies:
-                            enemy.speed /= 1.585 # normal speed
+                            enemy.speed /= 2 # normal speed
                             #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward deactivated!")
 
@@ -652,7 +652,7 @@ def game(mode="normal"):
 
         pygame.display.flip()
 
-        clock.tick(fps) # Control the frame rate / speed of the game
+        clock.tick(60) # Control the frame rate / speed of the game
 
     mixer.music.stop()
     pygame.quit()
