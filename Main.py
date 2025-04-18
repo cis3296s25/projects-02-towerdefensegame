@@ -156,7 +156,7 @@ def game(mode="normal"):
 
     #Wave Logic
     wave_number = 1
-    lives = 25  # Starting number of lives
+    lives = 1  # Starting number of lives
     money = 550  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
@@ -453,12 +453,18 @@ def game(mode="normal"):
                     elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
                     log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
-                    if gameover_screen(screen, score, SCORE_FILE, high_score, top_five) == "restart":
+                    result = gameover_screen(screen, score, SCORE_FILE, high_score, top_five)
+                    if result == "restart":
                         log_message("Restarting game...")
                         game()
+                        return
+                    elif result == "home":
+                        log_message("Returning home...")
+                        mixer.music.stop()
+                        main()
+                        return
                     else:
                         running = False
-                        break
 
             enemy.draw()
 
@@ -466,10 +472,7 @@ def game(mode="normal"):
                 draw_boss_health_bar(screen, enemy)
                 break  # Only one boss expected at a time
 
-            
-
         # end enemy loop
-        
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 10 wave
                 # accounting final wave's points and time

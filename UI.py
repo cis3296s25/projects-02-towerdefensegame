@@ -394,50 +394,48 @@ def gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave
            if event.type == pygame.QUIT:
                pygame.quit()
                sys.exit()
-           elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+           elif event.type == pygame.MOUSEBUTTONDOWN:
                return  # go back to homescreen
 
        pygame.display.flip()
        clock.tick(60)
 
 def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
-   BASE_PATH = os.path.abspath(os.path.dirname(__file__))
-   mixer.music.stop()
+    BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+    mixer.music.stop()
 
-   gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
-   current_volume = pygame.mixer.music.get_volume()
-   gameover_sound.set_volume(0.4 * current_volume)
-   gameover_sound.play()
-   gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
-   if (high_score):
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
-   elif (top_five):
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
-   else:
-       score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
-   quit_text = pygame.font.Font("fonts/BrickSans.ttf", 30).render("Press any key to quit or R to retry", True, (255, 255, 255))
-   gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
-   score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
-   quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
+    gameover_sound = mixer.Sound(os.path.join(BASE_PATH, "sounds", "gameover.mp3")) # sound effect
+    current_volume = pygame.mixer.music.get_volume()
+    gameover_sound.set_volume(0.4 * current_volume)
+    gameover_sound.play()
+    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
+    if (high_score):
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
+    elif (top_five):
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
+    else:
+        score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
+    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render("Press R to retry or CLICK to return to menu", True, (255, 255, 255))
+    gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
+    score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
+    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
 
-   screen.fill((0, 0, 0))
-   screen.blit(gameover_text, gameover_rect)
-   screen.blit(score_text, score_rect)
-   screen.blit(quit_text, quit_rect)
-   pygame.display.flip()
+    screen.fill((0, 0, 0))
+    screen.blit(gameover_text, gameover_rect)
+    screen.blit(score_text, score_rect)
+    screen.blit(quit_text, quit_rect)
+    pygame.display.flip()
 
-   # Wait for player to quit
-   waiting = True
-   while waiting:
-       for event in pygame.event.get():
-           if event.type == pygame.QUIT:
-               pygame.quit()
-               sys.exit()
-           elif event.type == pygame.KEYDOWN:
-               if event.key == pygame.K_r:
-                   return "restart"
-           elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-               waiting = False
+    while True:  # Wait for player input
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return "restart"
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return "home"
 
 def draw_sidebar(screen, lives, money):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
