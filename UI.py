@@ -9,6 +9,16 @@ from TowerData import towers_base
 import Settings
 from Achievements import achievements
 
+pygame.font.init()
+
+# Global fonts
+button_font = pygame.font.Font("fonts/BrickSans.ttf", 18)
+title_font = pygame.font.Font("fonts/BrickSans.ttf", 40)
+small_font = pygame.font.Font("fonts/BrickSans.ttf", 13)
+button_color = (255, 68, 58)
+hover_color = (255, 101, 93)
+white = (239,176,125)
+
 class Spore:
    def __init__(self, screen_width, screen_height):
        self.x = random.randint(0, screen_width)
@@ -111,7 +121,6 @@ def homescreen(screen):
        pygame.display.flip()
        clock.tick(60)
 
-
 def pause_screen(screen, mixer):
    mixer.music.pause()
 
@@ -141,7 +150,49 @@ def pause_screen(screen, mixer):
   
    mixer.music.unpause()
 
-def settings_screen(screen):
+def returntohome(screen):
+    font = pygame.font.Font("fonts/BrickSans.ttf", 20)
+
+    popup_width = 300
+    popup_height = 150
+    popup_rect = pygame.Rect((screen.get_width() - popup_width) // 2, (screen.get_height() - popup_height) // 2, popup_width, popup_height)
+    yes_button = pygame.Rect(popup_rect.centerx - 110, popup_rect.bottom - 50, 80, 30)
+    no_button = pygame.Rect(popup_rect.centerx + 30, popup_rect.bottom - 50, 80, 30)
+
+    clock = pygame.time.Clock()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if yes_button.collidepoint(event.pos):
+                    return True
+                elif no_button.collidepoint(event.pos):
+                    return False
+
+        pygame.draw.rect(screen, (40, 40, 40), popup_rect, border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), popup_rect, 2, border_radius=10)
+
+        # text
+        prompt = button_font.render("Return to Main Menu?", True, (255, 255, 255))
+        screen.blit(prompt, (popup_rect.centerx - prompt.get_width() // 2, popup_rect.y + 30))
+
+        # Yes button
+        pygame.draw.rect(screen, (200, 0, 0), yes_button, border_radius=6)
+        yes_text = font.render("Yes", True, (255, 255, 255))
+        screen.blit(yes_text, (yes_button.centerx - yes_text.get_width() // 2, yes_button.centery - yes_text.get_height() // 2))
+
+        # No button
+        pygame.draw.rect(screen, (0, 150, 0), no_button, border_radius=6)
+        no_text = font.render("No", True, (255, 255, 255))
+        screen.blit(no_text, (no_button.centerx - no_text.get_width() // 2, no_button.centery - no_text.get_height() // 2))
+
+        pygame.display.update(popup_rect)
+        clock.tick(60)
+
+def settings_screen(screen, in_game = False):
    clock = pygame.time.Clock()
    running = True
 
@@ -261,8 +312,9 @@ def settings_screen(screen):
                 
                 elif exit_rect.collidepoint(event.pos):
                     return
-                elif home_rect.collidepoint(event.pos):
-                    return "home"
+                elif home_rect.collidepoint(event.pos) and in_game:
+                    if returntohome(screen):
+                        return "home"
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_music = False
@@ -288,7 +340,8 @@ def settings_screen(screen):
           
         screen.blit(exit_btn, exit_rect)
         screen.blit(achievements_btn, achievements_rect)
-        screen.blit(home_btn, home_rect)
+        if in_game: # don't display if in settings at main menu
+            screen.blit(home_btn, home_rect)
 
         pygame.display.flip()
         clock.tick(60)

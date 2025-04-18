@@ -182,7 +182,6 @@ def game(mode="normal"):
 
     fastForwardScale =  pygame.transform.scale(IMAGES["fastforwardwave"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
-    
 
     #wave button logic
     start_wave_btn_img = pygame.image.load(IMAGE_PATH + "startwave.png").convert_alpha()
@@ -237,7 +236,7 @@ def game(mode="normal"):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
                     while True:
-                        result = settings_screen(screen)
+                        result = settings_screen(screen, in_game = True) # the homebutton appears during game
                         if result == "achievements":
                             achievements_screen(screen, achievements)
                             continue  # return to settings after closing achievements
@@ -650,7 +649,7 @@ def main():
             if selected_mode in valid_modes:
                 game(selected_mode)
         elif result == "settings":
-            setting_result = settings_screen(screen)
+            setting_result = settings_screen(screen, in_game = False) # home button dissappears in main menu
             if setting_result == "achievements":
                 achievements_screen(screen, achievements)
             elif setting_result == "home":
