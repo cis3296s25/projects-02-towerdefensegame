@@ -157,7 +157,7 @@ def game(mode="normal"):
     #Wave Logic
     wave_number = 1
     lives = 25  # Starting number of lives
-    money = 550  # Starting amount of money
+    money = 5500  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave
     spawned_count = 0         #how many have spawned from this wave
@@ -198,6 +198,7 @@ def game(mode="normal"):
 
     game_state = {
         "kills": 0,
+        "wave_kills": 0,
         "waves_survived": 0,
         "boss_defeated": False,
         "lives": 25,
@@ -225,7 +226,12 @@ def game(mode="normal"):
         "fast_forward_used": False,
         "paused_game": False,
         "game_over": False,
-
+        "lives_lost_per_wave": [],
+        "lives_lost_at_start": 0,
+        "tower_positions": [],
+        "reverse_sweep_failed": False,
+        "pre_wave_4_kills": 0,
+        "lives_lost_after_wave3": 0,
     }
 
     if mode == "hardcore_mode":
@@ -365,6 +371,7 @@ def game(mode="normal"):
                                 
                                 towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name, game_state))
                                 tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
+                                game_state["tower_positions"].append((grid_x, grid_y))
                                 placing_tower = False
                                 temporary_tower = None
                                 game_state["towers_placed"] += 1
@@ -400,32 +407,33 @@ def game(mode="normal"):
         if wave_started and spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
+
+                # Determine path based on mode
+                if color in ["Giant", "Boss"]:
+                    path = list(reversed(GIANT_PATH)) if mode == "reverse_mode" else GIANT_PATH
+                else:
+                    path = list(reversed(WAYPOINTS)) if mode == "reverse_mode" else WAYPOINTS
+
                 if color == "Giant":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
+                        path[0][0], path[0][1], screen, color, waypoints=path
                     )
                 elif color == "Boss":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], 
-                        GIANT_PATH[0][1], 
-                        screen, 
-                        color, 
-                        waypoints=GIANT_PATH, 
-                        scream_sound = boss_scream_sound, 
+                        path[0][0], path[0][1], screen, color,
+                        waypoints=path,
+                        scream_sound=boss_scream_sound,
                         boss_music=boss_battle_music
                     )
                 else:
-                    new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color)
-
-                    if mode == "hardcore_mode":
-                        new_enemy.hp = int(new_enemy.hp * 1.3)
-                        new_enemy.speed = new_enemy.speed * 1.25
-                
-                new_enemy.speed *= speed_multiplier
+                    new_enemy = Enemy(
+                        path[0][0], path[0][1], screen, color, waypoints=path
+                    )
 
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
+
 
         # DRAWING CODE
         screen.fill((0, 0, 0))
@@ -461,6 +469,10 @@ def game(mode="normal"):
                     money += enemy.money
                     score += enemy.score
                     game_state["kills"] += 1
+                    game_state["wave_kills"] += 1
+
+                    if wave_number <= 3:
+                        game_state["pre_wave_4_kills"] += 1
                     if enemy.killed_by == "Archer":
                         game_state["archer_wave_kills"] += 1
                     check_achievements(game_state, achievement_notifications)
@@ -470,6 +482,10 @@ def game(mode="normal"):
                 enemies.remove(enemy)
                 game_state["lives"] = lives
                 game_state["lives_lost"] += enemy.dmg
+
+                if wave_number > 3:
+                    game_state["lives_lost_after_wave3"] += enemy.dmg
+
                 if lives == 1:
                     game_state["one_life_remaining"] = True
                 money += enemy.money  # increase money if enemy reaches end
@@ -477,7 +493,7 @@ def game(mode="normal"):
                 if lives <= 0:
                     game_state["game_over"] = True
                     check_achievements(game_state, achievement_notifications)
-                    
+
                     if (get_top_score(SCORE_FILE, "score") < score): 
                         high_score = True
                     elif (is_top_five(SCORE_FILE, score, "score")):
@@ -551,6 +567,10 @@ def game(mode="normal"):
                 main()  # restart from homescreen
                 return
             else:
+                lives_lost_this_wave = game_state["lives_lost"] - game_state["lives_lost_at_start"]
+                game_state["lives_lost_per_wave"].append(lives_lost_this_wave)
+                game_state["lives_lost_at_start"] = game_state["lives_lost"]
+                
                 wave_end_time = pygame.time.get_ticks()
                 wave_number += 1
                 game_state["wave"] = wave_number
@@ -582,6 +602,7 @@ def game(mode="normal"):
                 total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
 
                 wave_started = False
+                game_state["wave_kills"] = 0
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
         draw_underbar(screen, SCORE_FILE, score)

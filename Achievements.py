@@ -20,12 +20,6 @@ achievements = {
         "description": "Defeat the Shroomgod",
         "modes": ["normal"]
     },
-    "Sporeshield Shatterer": {
-        "unlocked": False,
-        "category": "Combat",
-        "description": "Break the Sporeshield in under 5 seconds",
-        "modes": ["normal"]
-    },
     "Flawless": {
         "unlocked": False,
         "category": "Combat",
@@ -135,12 +129,6 @@ achievements = {
         "description": "Complete a wave without killing a single enemy",
         "modes": ["normal"]
     },
-    "Speedrunner": {
-        "unlocked": False,
-        "category": "Secret",
-        "description": "Beat the game in under X minutes",
-        "modes": ["normal"]
-    },
     "One Man Army": {
         "unlocked": False,
         "category": "Secret",
@@ -208,7 +196,30 @@ achievements = {
     },
 
     #--- Reverse Mode Achievements ---#
-
+    "Backtrack Boss": {
+        "unlocked": False,
+        "category": "Reverse",
+        "description": "Defeat the Shroomgod in Reverse Mode",
+        "modes": ["reverse_mode"]
+    },
+    "Reverse Sweep": {
+        "unlocked": False,
+        "category": "Reverse",
+        "description": "Lose the first 3 waves in Reverse Mode, then win the game without losing another life",
+        "modes": ["reverse_mode"]
+    },
+    "Reverse Engineering": {
+        "unlocked": False,
+        "category": "Reverse",
+        "description": "Only place towers on the left half of the map in Reverse Mode and win",
+        "modes": ["reverse_mode"]
+    },
+    "True Survivor": {
+        "unlocked": False,
+        "category": "Secret",
+        "description": "Survive Reverse Mode on Hardcore rules… without a single upgrade.",
+        "modes": ["reverse_mode"]
+    }
 }
 
 
@@ -280,10 +291,10 @@ def check_achievements(state, notifications_list):
     if state["witch_dmg_this_wave"] >= 300:
         unlock_achievement("Witching Hour", notifications_list)
 
-    if state["tower_types"] == {"Bear"} and state["wave_completed"]:
+    if state["tower_types"] == {"Bear"} and state["wave_completed"] and state["wave_kills"] > 0:
         unlock_achievement("Bear Force One", notifications_list)
 
-    if state["upgrades_used"] == 0 and state["wave_completed"] >= 1 and state["towers_placed"] > 0:
+    if state["upgrades_used"] == 0 and state["wave_completed"] >= 1 and state["towers_placed"] > 0 and state["wave_kills"] > 0:
         unlock_achievement("No Upgrades, No Problem", notifications_list)
 
     if state["maxed_towers"] >= 1:
@@ -341,3 +352,21 @@ def check_achievements(state, notifications_list):
             unlock_achievement("Flow State", notifications_list)
 
 ####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
+
+# --- Reverse Mode Achievements --- #
+
+    if current_mode == "reverse_mode":
+        if state.get("game_won"):
+            unlock_achievement("Backtrack Boss", notifications_list)
+
+        if (state.get("game_won") and state.get("pre_wave_4_kills", 0) == 0 and state.get("lives_lost_after_wave3", 0) == 0):
+            unlock_achievement("Reverse Sweep", notifications_list)
+
+        if state["game_won"]:
+            all_left = all(x < 320 for x, y in state.get("tower_positions", []))
+            if all_left:
+                unlock_achievement("Reverse Engineering", notifications_list)
+        
+        if (state["game_won"] and state["lives"] == 25 and state["upgrades_used"] == 0):
+            unlock_achievement("True Survivor", notifications_list)
+
