@@ -56,6 +56,31 @@ Provide here instructions on how to use your application.
         /usr/bin/python3 -m pip3 install pygame
         ```
     - Run Main.py on VS code or on Terminal
+    - If none of this work try the Virtual Enviornment
+    - Open Terminal and run:
+    - Window
+    ```
+    python -m venv venv
+    venv\Scripts\activate
+    ```
+    - Mac
+    ```
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+    - Install Required Packages
+    ```
+    pip install pygame
+    ```
+    - Start the Game
+    - Window
+    ```
+    python Main.py
+    ```
+    - Mac
+    ```
+    python3 Main.py
+    ```
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/orgs/cis3296s25/projects/66/views/1?filterQuery=  
