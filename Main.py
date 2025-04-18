@@ -222,8 +222,16 @@ def game(mode="normal"):
         "one_tower_challenge": False,
         "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0},
         "mode": mode,
+        "fast_forward_used": False,
+        "paused_game": False,
+        "game_over": False,
 
     }
+
+    if mode == "hardcore_mode":
+        lives = 1
+        money = 3500
+        game_state["lives"] = lives
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
@@ -236,6 +244,7 @@ def game(mode="normal"):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
+                    game_state["paused_game"] = True
                     while True:
                         result = settings_screen(screen, in_game = True) # the homebutton appears during game
                         if result == "achievements":
@@ -258,8 +267,9 @@ def game(mode="normal"):
                         elif mode == "no_upgrades_mode":
                             log_message("Upgrades are disabled in No Upgrades Mode!")
 
-                        elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]:
-                            money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
+                        elif money >= int(towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] * (1.5 if mode == "hardcore_mode" else 1)):
+                            cost = int(towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] * (1.5 if mode == "hardcore_mode" else 1))
+                            money -= cost
                             selected_tower.do_upgrade(game_state)
                             game_state["upgrades_used"] += 1
                             game_state["no_upgrades_wave"] = False
@@ -306,6 +316,7 @@ def game(mode="normal"):
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
+                        game_state["fast_forward_used"] = True
                         speed_multiplier = 1.585
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
@@ -404,9 +415,11 @@ def game(mode="normal"):
                         boss_music=boss_battle_music
                     )
                 else:
-                    new_enemy = Enemy(
-                        WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
-            )
+                    new_enemy = Enemy(WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color)
+
+                    if mode == "hardcore_mode":
+                        new_enemy.hp = int(new_enemy.hp * 1.3)
+                        new_enemy.speed = new_enemy.speed * 1.25
                 
                 new_enemy.speed *= speed_multiplier
 
@@ -462,12 +475,16 @@ def game(mode="normal"):
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
+                    game_state["game_over"] = True
+                    check_achievements(game_state, achievement_notifications)
+                    
                     if (get_top_score(SCORE_FILE, "score") < score): 
                         high_score = True
                     elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
                     log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
                     result = gameover_screen(screen, score, SCORE_FILE, high_score, top_five)
+
                     if result == "restart":
                         log_message("Restarting game...")
                         game()

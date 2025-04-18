@@ -528,9 +528,11 @@ def draw_tower_stat(screen, tower, mode):
        upgrade_text = font.render("No Upgrades", True, (200, 200, 200))
    elif tower.upgrade < 3:
        pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)  # Green
-       upgrade_text = font.render(
-            f"Upgrade: {towers_base[tower.tower_name]['upgrades'][tower.upgrade + 1]['cost']}",
-            True, (255, 255, 255))
+       base_cost = towers_base[tower.tower_name]['upgrades'][tower.upgrade + 1]['cost']
+       if mode == "hardcore_mode":
+           base_cost = int(base_cost * 1.5)
+
+       upgrade_text = font.render(f"Upgrade: {base_cost}", True, (255, 255, 255))   
    else:
        pygame.draw.rect(screen, (0, 200, 0), upgrade_button_rect)
        upgrade_text = font.render("Max Upgrade", True, (255, 255, 255))
