@@ -156,7 +156,7 @@ def game(mode="normal"):
 
     #Wave Logic
     wave_number = 1
-    lives = 1  # Starting number of lives
+    lives = 25  # Starting number of lives
     money = 550  # Starting amount of money
     score = 0 # Starting score amount
     current_wave_enemies = get_wave_data(wave_number) #what to spawn from current wave

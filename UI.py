@@ -408,26 +408,37 @@ def gameover_screen(screen, score, SCORE_FILE, high_score, top_five):
     current_volume = pygame.mixer.music.get_volume()
     gameover_sound.set_volume(0.4 * current_volume)
     gameover_sound.play()
-    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 50).render("Game Over", True, (255, 0, 0))
+    spores = [Spore(750, 600) for _ in range(50)]
+    clock = pygame.time.Clock()
+    gameover_text = pygame.font.Font("fonts/BrickSans.ttf", 100).render("Game Over", True, (255, 0, 0))
+    gameover_text2 = pygame.font.Font("fonts/BrickSans.ttf", 100).render("Game Over", True, (255, 200, 100))
     if (high_score):
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"HIGH SCORE: **{score}**", True, (138, 43, 226))
     elif (top_five):
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Top Five: *{score}*", True, (173, 216, 23))
     else:
         score_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render(f"Score: {score}", True, (225, 0, 0))
-    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 25).render("Press R to retry or CLICK to return to menu", True, (255, 255, 255))
+    quit_text = pygame.font.Font("fonts/BrickSans.ttf", 15).render("Press R to retry or CLICK to return to menu", True, (255, 255, 255))
     gameover_rect = gameover_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 50))
-    score_rect = score_text.get_rect(center=(screen.get_width() //2, screen.get_height() // 2 + 10))
-    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 50))
+    gameover_rect2 = gameover_text2.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 45))
+    score_rect = score_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 80))
+    quit_rect = quit_text.get_rect(center=(screen.get_width() // 2, screen.get_height() - 50))
 
-    screen.fill((0, 0, 0))
-    screen.blit(gameover_text, gameover_rect)
-    screen.blit(score_text, score_rect)
-    screen.blit(quit_text, quit_rect)
-    pygame.display.flip()
+    while True:
+        screen.fill((15, 15, 20))
+        for spore in spores:
+            spore.update()
+            spore.draw(screen)
 
-    while True:  # Wait for player input
-        for event in pygame.event.get():
+        screen.blit(gameover_text2, gameover_rect2)
+        screen.blit(gameover_text, gameover_rect)
+        screen.blit(score_text, score_rect)
+        screen.blit(quit_text, quit_rect)
+
+        pygame.display.flip()
+        clock.tick(60)
+  
+        for event in pygame.event.get(): # Wait for player input
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
