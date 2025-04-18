@@ -175,6 +175,11 @@ def settings_screen(screen):
    exit_btn = pygame.image.load("images/Homescreen/exitbutton.png").convert_alpha()
    exit_btn = pygame.transform.scale(exit_btn, (40, 40))
    exit_rect = exit_btn.get_rect(topleft=(20, 20))
+
+   # Load home button image
+   home_btn = pygame.image.load("images/Homescreen/homebutton.png").convert_alpha()
+   home_btn = pygame.transform.scale(home_btn, (40, 40))
+   home_rect = home_btn.get_rect(bottomleft=(achievements_rect.left - 50, screen.get_height() - 10))
   
    # Volume icons for music and sfx
    music_icon = pygame.image.load("images/Homescreen/musicIcon.png").convert_alpha()
@@ -256,7 +261,9 @@ def settings_screen(screen):
                 
                 elif exit_rect.collidepoint(event.pos):
                     return
-                
+                elif home_rect.collidepoint(event.pos):
+                    return "home"
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 dragging_music = False
                 dragging_sfx = False
@@ -281,6 +288,7 @@ def settings_screen(screen):
           
         screen.blit(exit_btn, exit_rect)
         screen.blit(achievements_btn, achievements_rect)
+        screen.blit(home_btn, home_rect)
 
         pygame.display.flip()
         clock.tick(60)

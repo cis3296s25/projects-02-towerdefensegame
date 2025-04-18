@@ -239,6 +239,8 @@ def game(mode="normal"):
                     result = settings_screen(screen)
                     if result == "achievements":
                         achievements_screen(screen, achievements)
+                    elif result == "home":
+                        return  # Go back to homescreen
 
             if event.type == pygame.MOUSEBUTTONDOWN:
             
@@ -647,6 +649,8 @@ def main():
             setting_result = settings_screen(screen)
             if setting_result == "achievements":
                 achievements_screen(screen, achievements)
+            elif setting_result == "home":
+                continue 
         elif result == "leaderboard":
             leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE)
         elif result == "information":
