@@ -182,7 +182,6 @@ def game(mode="normal"):
 
     fastForwardScale =  pygame.transform.scale(IMAGES["fastforwardwave"], (40, 40))
     fastForwardButton = Button(700, 300, fastForwardScale, True) # (x, y, image, single_click)
-    
 
     #wave button logic
     start_wave_btn_img = pygame.image.load(IMAGE_PATH + "startwave.png").convert_alpha()
@@ -237,9 +236,15 @@ def game(mode="normal"):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    result = settings_screen(screen)
-                    if result == "achievements":
-                        achievements_screen(screen, achievements)
+                    while True:
+                        result = settings_screen(screen, in_game = True) # the homebutton appears during game
+                        if result == "achievements":
+                            achievements_screen(screen, achievements)
+                            continue  # return to settings after closing achievements
+                        elif result == "home":
+                            return  # exit to home
+                        elif result is None:
+                            break  # exit settings
 
             if event.type == pygame.MOUSEBUTTONDOWN:
             
@@ -462,12 +467,18 @@ def game(mode="normal"):
                     elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
                     log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
-                    if gameover_screen(screen, score, SCORE_FILE, high_score, top_five) == "restart":
+                    result = gameover_screen(screen, score, SCORE_FILE, high_score, top_five)
+                    if result == "restart":
                         log_message("Restarting game...")
                         game()
+                        return
+                    elif result == "home":
+                        log_message("Returning home...")
+                        mixer.music.stop()
+                        main()
+                        return
                     else:
                         running = False
-                        break
 
             enemy.draw()
 
@@ -475,10 +486,7 @@ def game(mode="normal"):
                 draw_boss_health_bar(screen, enemy)
                 break  # Only one boss expected at a time
 
-            
-
         # end enemy loop
-        
         if not enemies and spawned_count == len(current_wave_enemies):
             if wave_number == FINAL_WAVE: # game clear after 10 wave
                 # accounting final wave's points and time
@@ -658,9 +666,11 @@ def main():
             if selected_mode in valid_modes:
                 game(selected_mode)
         elif result == "settings":
-            setting_result = settings_screen(screen)
+            setting_result = settings_screen(screen, in_game = False) # home button dissappears in main menu
             if setting_result == "achievements":
                 achievements_screen(screen, achievements)
+            elif setting_result == "home":
+                continue 
         elif result == "leaderboard":
             leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE)
         elif result == "information":
