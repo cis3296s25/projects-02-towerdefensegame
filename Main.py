@@ -304,7 +304,7 @@ def game(mode="normal"):
                         speed_multiplier = 1.585
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
-                            enemy.speed *= speed_multiplier # double speed
+                            enemy.speed *= speed_multiplier # increase speed
                             #log_message(f"Enemy speed: {enemy.speed}")
                         log_message("Fast forward activated!")
                     else:
