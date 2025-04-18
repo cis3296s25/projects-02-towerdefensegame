@@ -236,11 +236,15 @@ def game(mode="normal"):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
-                    result = settings_screen(screen)
-                    if result == "achievements":
-                        achievements_screen(screen, achievements)
-                    elif result == "home":
-                        return  # Go back to homescreen
+                    while True:
+                        result = settings_screen(screen)
+                        if result == "achievements":
+                            achievements_screen(screen, achievements)
+                            continue  # return to settings after closing achievements
+                        elif result == "home":
+                            return  # exit to home
+                        elif result is None:
+                            break  # exit settings
 
             if event.type == pygame.MOUSEBUTTONDOWN:
             
