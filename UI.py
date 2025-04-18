@@ -479,7 +479,7 @@ def draw_underbar(screen, SCORE_FILE, score):
        value_Score = font.render(f"{score}", True, (255, 255, 255))
 
    screen.blit(text_Score, (595, 525))
-   screen.blit(value_Score, (695+text_Score.get_width(), 525))
+   screen.blit(value_Score, (595+text_Score.get_width(), 525))
 
 def wave_description(wave):
     if wave == 1:
