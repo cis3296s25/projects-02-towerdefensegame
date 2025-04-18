@@ -7,6 +7,7 @@ from pygame import(
     mixer,
 )
 from EnemyLogic import Enemy, WAYPOINTS, GIANT_PATH
+from EnemyData import mob_data
 from TowerLogic import Tower, ENEMY_PATHS
 from MapLogic import Map
 from Button import Button
@@ -122,6 +123,12 @@ def log_message(message):
         log_messages.pop(0)
 
 ############################## END OF LOGGING ###############################
+
+def reset_slow_effects(enemies):
+    for enemy in enemies:
+        enemy.slow_effects = 0
+        enemy.speed = mob_data[enemy.color]["Speed"]
+
 
 def game(mode="normal"):
 
@@ -407,6 +414,7 @@ def game(mode="normal"):
         gameMap.draw()
         draw_grid(screen)        
 
+        reset_slow_effects(enemies)
         # Draw all placed towers and call attack
         for tower in towers:
             if show_stats and selected_tower and tower == selected_tower:
@@ -415,6 +423,10 @@ def game(mode="normal"):
                 tower.draw(False)
             Tower.attack(tower, enemies, fps)
             Tower.update_animation(tower, fps)
+
+            for enemy in enemies:
+                if enemy.slow_effects > 0:
+                    enemy.speed = mob_data[enemy.color]["Speed"] / 2
 
             #Tower.update(tower)
 

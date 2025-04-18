@@ -120,13 +120,22 @@ class Tower:
     # fixes towers not attacking giant: come back to here if any problems
     def apply_env_effects(self, enemies):
         for enemy in enemies:
-            og_speed = mob_data[enemy.color]["Speed"]
-            speed = og_speed/2
+            if not hasattr(enemy, "slow_effects"):
+                enemy.slow_effects = 0
+
             if self.get_distance(enemy) <= self.range:
-                self.target = enemy
-                self.target.speed = speed
-            else:
-                enemy.speed = og_speed
+                enemy.slow_effects += 1
+
+    
+    #def apply_env_effects(self, enemies):
+     #   for enemy in enemies:
+      #      og_speed = mob_data[enemy.color]["Speed"]
+       #     speed = og_speed/2
+        #    if self.get_distance(enemy) <= self.range:
+         #       self.target = enemy
+          #      self.target.speed = speed
+           # else:
+            #    enemy.speed = og_speed
 
 
     def deal_aoe(self, enemies):
