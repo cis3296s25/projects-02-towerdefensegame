@@ -343,6 +343,7 @@ def settings_screen(screen, in_game = False):
           
         screen.blit(exit_btn, exit_rect)
         screen.blit(achievements_btn, achievements_rect)
+        screen.blit(home_btn, home_rect)
         if in_game: # don't display if in settings at main menu
             screen.blit(home_btn, home_rect)
 
@@ -477,8 +478,8 @@ def draw_underbar(screen, SCORE_FILE, score):
    else:
        value_Score = font.render(f"{score}", True, (255, 255, 255))
 
-   screen.blit(text_Score, (605, 525))
-   screen.blit(value_Score, (605+text_Score.get_width(), 525))
+   screen.blit(text_Score, (595, 525))
+   screen.blit(value_Score, (695+text_Score.get_width(), 525))
 
 def wave_description(wave):
     if wave == 1:
@@ -559,7 +560,7 @@ def draw_tower_stat(screen, tower, mode):
    return upgrade_button_rect, sell_button_rect  # Return both button rects
 
 def number_wave(screen, wave_number):
-   font = pygame.font.Font("fonts/BrickSans.ttf", 13)
+   font = pygame.font.Font("fonts/BrickSans.ttf", 11)
    wave_text = font.render(f"Wave: {wave_number} of 10", True, (255, 255, 255))
    screen.blit(wave_text, (605, 360))  # Position the Wave text
 

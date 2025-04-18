@@ -200,6 +200,7 @@ class Enemy:
                     self.hp = 1500
                     self.max_hp = 1500
                     self.speed = 0.4
+                    mob_data["Boss"]["Speed"] = 0.4  # Set the new speed for the Boss
                     self.frames = self.phase2_frames
                     self.death_frames = self.phase2_death_frames
                     self.current_frame = 0
