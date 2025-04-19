@@ -198,6 +198,7 @@ def game(mode="normal"):
 
     game_state = {
         "kills": 0,
+        "wave_kills": 0,
         "waves_survived": 0,
         "boss_defeated": False,
         "lives": 25,
@@ -222,8 +223,21 @@ def game(mode="normal"):
         "one_tower_challenge": False,
         "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0},
         "mode": mode,
-
+        "fast_forward_used": False,
+        "paused_game": False,
+        "game_over": False,
+        "lives_lost_per_wave": [],
+        "lives_lost_at_start": 0,
+        "tower_positions": [],
+        "reverse_sweep_failed": False,
+        "pre_wave_4_kills": 0,
+        "lives_lost_after_wave3": 0,
     }
+
+    if mode == "hardcore_mode":
+        lives = 1
+        money = 3500
+        game_state["lives"] = lives
 
     achievement_notifications = []  # holds (achievement_name, timestamp)
 
@@ -236,6 +250,7 @@ def game(mode="normal"):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # Press 'ESC' to pause
+                    game_state["paused_game"] = True
                     while True:
                         result = settings_screen(screen, in_game = True) # the homebutton appears during game
                         if result == "achievements":
@@ -258,8 +273,9 @@ def game(mode="normal"):
                         elif mode == "no_upgrades_mode":
                             log_message("Upgrades are disabled in No Upgrades Mode!")
 
-                        elif money >= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]:
-                            money -= towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"]
+                        elif money >= int(towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] * (1.5 if mode == "hardcore_mode" else 1)):
+                            cost = int(towers_base[selected_tower.tower_name]["upgrades"][selected_tower.upgrade + 1]["cost"] * (1.5 if mode == "hardcore_mode" else 1))
+                            money -= cost
                             selected_tower.do_upgrade(game_state)
                             game_state["upgrades_used"] += 1
                             game_state["no_upgrades_wave"] = False
@@ -356,6 +372,7 @@ def game(mode="normal"):
                                 
                                 towers.append(Tower(grid_x, grid_y, screen, temporary_tower.tower_name, game_state))
                                 tower_positions.add((grid_x, grid_y))  # Mark the position as occupied
+                                game_state["tower_positions"].append((grid_x, grid_y))
                                 placing_tower = False
                                 temporary_tower = None
                                 game_state["towers_placed"] += 1
@@ -391,30 +408,33 @@ def game(mode="normal"):
         if wave_started and spawned_count < len(current_wave_enemies):
             if current_time - last_spawn_time >= spawn_delay:
                 color = current_wave_enemies[spawned_count]
+
+                # Determine path based on mode
+                if color in ["Giant", "Boss"]:
+                    path = list(reversed(GIANT_PATH)) if mode == "reverse_mode" else GIANT_PATH
+                else:
+                    path = list(reversed(WAYPOINTS)) if mode == "reverse_mode" else WAYPOINTS
+
                 if color == "Giant":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], GIANT_PATH[0][1], screen, color, waypoints=GIANT_PATH
+                        path[0][0], path[0][1], screen, color, waypoints=path
                     )
                 elif color == "Boss":
                     new_enemy = Enemy(
-                        GIANT_PATH[0][0], 
-                        GIANT_PATH[0][1], 
-                        screen, 
-                        color, 
-                        waypoints=GIANT_PATH, 
-                        scream_sound = boss_scream_sound, 
+                        path[0][0], path[0][1], screen, color,
+                        waypoints=path,
+                        scream_sound=boss_scream_sound,
                         boss_music=boss_battle_music
                     )
                 else:
                     new_enemy = Enemy(
-                        WAYPOINTS[0][0], WAYPOINTS[0][1], screen, color
-            )
-                
-                new_enemy.speed *= speed_multiplier
+                        path[0][0], path[0][1], screen, color, waypoints=path
+                    )
 
                 enemies.append(new_enemy)
                 spawned_count += 1
                 last_spawn_time = current_time
+
 
         # DRAWING CODE
         screen.fill((0, 0, 0))
@@ -450,6 +470,10 @@ def game(mode="normal"):
                     money += enemy.money
                     score += enemy.score
                     game_state["kills"] += 1
+                    game_state["wave_kills"] += 1
+
+                    if wave_number <= 3:
+                        game_state["pre_wave_4_kills"] += 1
                     if enemy.killed_by == "Archer":
                         game_state["archer_wave_kills"] += 1
                     check_achievements(game_state, achievement_notifications)
@@ -459,17 +483,25 @@ def game(mode="normal"):
                 enemies.remove(enemy)
                 game_state["lives"] = lives
                 game_state["lives_lost"] += enemy.dmg
+
+                if wave_number > 3:
+                    game_state["lives_lost_after_wave3"] += enemy.dmg
+
                 if lives == 1:
                     game_state["one_life_remaining"] = True
                 money += enemy.money  # increase money if enemy reaches end
                 score -= enemy.score
                 if lives <= 0:
+                    game_state["game_over"] = True
+                    check_achievements(game_state, achievement_notifications)
+
                     if (get_top_score(SCORE_FILE, "score") < score): 
                         high_score = True
                     elif (is_top_five(SCORE_FILE, score, "score")):
                         top_five = True
                     log_message(f"score updated {update_scores(SCORE_FILE, score, "score")}")
                     result = gameover_screen(screen, score, SCORE_FILE, high_score, top_five)
+
                     if result == "restart":
                         log_message("Restarting game...")
                         game()
@@ -536,6 +568,10 @@ def game(mode="normal"):
                 main()  # restart from homescreen
                 return
             else:
+                lives_lost_this_wave = game_state["lives_lost"] - game_state["lives_lost_at_start"]
+                game_state["lives_lost_per_wave"].append(lives_lost_this_wave)
+                game_state["lives_lost_at_start"] = game_state["lives_lost"]
+                
                 wave_end_time = pygame.time.get_ticks()
                 wave_number += 1
                 game_state["wave"] = wave_number
@@ -567,6 +603,7 @@ def game(mode="normal"):
                 total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
 
                 wave_started = False
+                game_state["wave_kills"] = 0
 
         draw_sidebar(screen, lives, money) # makes enemy go behind sidebar instead of overtop it
         draw_underbar(screen, SCORE_FILE, score)
