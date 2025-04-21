@@ -124,6 +124,7 @@ class Tower:
                 enemy.slow_effects = 0
 
             if self.get_distance(enemy) <= self.range:
+                self.animating = True
                 enemy.slow_effects += 1
 
     
