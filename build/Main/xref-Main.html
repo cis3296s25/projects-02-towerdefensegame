@@ -18,9 +18,12 @@
   <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/Main.py" type="text/plain"><tt>Main.py</tt></a>
 <span class="moduletype">Script</span>  <div class="import">
 imports:
-    <a href="#Button">Button</a>
+    <a href="#Achievements">Achievements</a>
+ &#8226;   <a href="#Button">Button</a>
+ &#8226;   <a href="#EnemyData">EnemyData</a>
  &#8226;   <a href="#EnemyLogic">EnemyLogic</a>
  &#8226;   <a href="#MapLogic">MapLogic</a>
+ &#8226;   <a href="#TowerData">TowerData</a>
  &#8226;   <a href="#TowerLogic">TowerLogic</a>
  &#8226;   <a href="#UI">UI</a>
  &#8226;   <a href="#_collections_abc">_collections_abc</a>
@@ -159,6 +162,7 @@ imports:
  &#8226;   <a href="#keyword">keyword</a>
  &#8226;   <a href="#linecache">linecache</a>
  &#8226;   <a href="#locale">locale</a>
+ &#8226;   <a href="#math">math</a>
  &#8226;   <a href="#ntpath">ntpath</a>
  &#8226;   <a href="#operator">operator</a>
  &#8226;   <a href="#os">os</a>
@@ -183,7 +187,6 @@ imports:
  &#8226;   <a href="#sre_constants">sre_constants</a>
  &#8226;   <a href="#sre_parse">sre_parse</a>
  &#8226;   <a href="#stat">stat</a>
- &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#traceback">traceback</a>
  &#8226;   <a href="#types">types</a>
  &#8226;   <a href="#warnings">warnings</a>
@@ -392,6 +395,23 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="Achievements"></a>
+  <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/Achievements.py" type="text/plain"><tt>Achievements</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#pygame">pygame</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#UI">UI</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="Button"></a>
   <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/Button.py" type="text/plain"><tt>Button</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -408,11 +428,25 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="EnemyData"></a>
+  <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/EnemyData.py" type="text/plain"><tt>EnemyData</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imported by:
+    <a href="#EnemyLogic">EnemyLogic</a>
+ &#8226;   <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#TowerLogic">TowerLogic</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="EnemyLogic"></a>
   <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/EnemyLogic.py" type="text/plain"><tt>EnemyLogic</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#math">math</a>
+    <a href="#EnemyData">EnemyData</a>
+ &#8226;   <a href="#math">math</a>
  &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#os.path">os.path</a>
  &#8226;   <a href="#pygame">pygame</a>
@@ -454,11 +488,64 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="ProjectileLogic"></a>
+  <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/ProjectileLogic.py" type="text/plain"><tt>ProjectileLogic</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#TowerData">TowerData</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pygame">pygame</a>
+ &#8226;   <a href="#re">re</a>
+ &#8226;   <a href="#unittest">unittest</a>
+ &#8226;   <a href="#unittest.case">unittest.case</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#TowerLogic">TowerLogic</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="Settings"></a>
+  <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/Settings.py" type="text/plain"><tt>Settings</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imported by:
+    <a href="#TowerLogic">TowerLogic</a>
+ &#8226;   <a href="#UI">UI</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="TowerData"></a>
+  <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/TowerData.py" type="text/plain"><tt>TowerData</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imported by:
+    <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#ProjectileLogic">ProjectileLogic</a>
+ &#8226;   <a href="#TowerLogic">TowerLogic</a>
+ &#8226;   <a href="#UI">UI</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="TowerLogic"></a>
   <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/TowerLogic.py" type="text/plain"><tt>TowerLogic</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#pygame">pygame</a>
+    <a href="#EnemyData">EnemyData</a>
+ &#8226;   <a href="#ProjectileLogic">ProjectileLogic</a>
+ &#8226;   <a href="#Settings">Settings</a>
+ &#8226;   <a href="#TowerData">TowerData</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pygame">pygame</a>
+ &#8226;   <a href="#pygame.mixer">pygame.mixer</a>
 
   </div>
   <div class="import">
@@ -474,7 +561,14 @@ imported by:
   <a target="code" href="///C:/Users/es919/Documents/Git/projects-02-towerdefensegame/UI.py" type="text/plain"><tt>UI</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#pygame">pygame</a>
+    <a href="#Achievements">Achievements</a>
+ &#8226;   <a href="#Settings">Settings</a>
+ &#8226;   <a href="#TowerData">TowerData</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pygame">pygame</a>
+ &#8226;   <a href="#pygame.mixer">pygame.mixer</a>
+ &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#sys">sys</a>
 
   </div>
@@ -2679,6 +2773,7 @@ imported by:
  &#8226;   <a href="#asyncio.streams">asyncio.streams</a>
  &#8226;   <a href="#asyncio.tasks">asyncio.tasks</a>
  &#8226;   <a href="#asyncio.unix_events">asyncio.unix_events</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
 
   </div>
 
@@ -3512,6 +3607,7 @@ imported by:
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#tarfile">tarfile</a>
  &#8226;   <a href="#tokenize">tokenize</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
  &#8226;   <a href="#unittest.mock">unittest.mock</a>
  &#8226;   <a href="#warnings">warnings</a>
 
@@ -7581,6 +7677,7 @@ imported by:
  &#8226;   <a href="#signal">signal</a>
  &#8226;   <a href="#socket">socket</a>
  &#8226;   <a href="#ssl">ssl</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
 
   </div>
 
@@ -7786,6 +7883,7 @@ imported by:
  &#8226;   <a href="#setuptools.config._validate_pyproject">setuptools.config._validate_pyproject</a>
  &#8226;   <a href="#setuptools.config.pyprojecttoml">setuptools.config.pyprojecttoml</a>
  &#8226;   <a href="#setuptools.config.setupcfg">setuptools.config.setupcfg</a>
+ &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
  &#8226;   <a href="#setuptools.extension">setuptools.extension</a>
  &#8226;   <a href="#setuptools.installer">setuptools.installer</a>
  &#8226;   <a href="#setuptools.wheel">setuptools.wheel</a>
@@ -9141,7 +9239,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#importlib.metadata">importlib.metadata</a>
+    <a href="#UI">UI</a>
+ &#8226;   <a href="#importlib.metadata">importlib.metadata</a>
  &#8226;   <a href="#json.decoder">json.decoder</a>
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
@@ -9220,6 +9319,7 @@ imported by:
  &#8226;   <a href="#dataclasses">dataclasses</a>
  &#8226;   <a href="#inspect">inspect</a>
  &#8226;   <a href="#rlcompleter">rlcompleter</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
 
   </div>
 
@@ -9371,6 +9471,7 @@ imported by:
   <tt>math</tt> <span class="moduletype"><i>(builtin module)</i></span>  <div class="import">
 imported by:
     <a href="#EnemyLogic">EnemyLogic</a>
+ &#8226;   <a href="#Main.py">Main.py</a>
  &#8226;   <a href="#_pydatetime">_pydatetime</a>
  &#8226;   <a href="#_pydecimal">_pydecimal</a>
  &#8226;   <a href="#asyncio.tasks">asyncio.tasks</a>
@@ -10452,6 +10553,9 @@ imports:
 imported by:
     <a href="#EnemyLogic">EnemyLogic</a>
  &#8226;   <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#ProjectileLogic">ProjectileLogic</a>
+ &#8226;   <a href="#TowerLogic">TowerLogic</a>
+ &#8226;   <a href="#UI">UI</a>
  &#8226;   <a href="#_aix_support">_aix_support</a>
  &#8226;   <a href="#_colorize">_colorize</a>
  &#8226;   <a href="#_distutils_hack">_distutils_hack</a>
@@ -10865,8 +10969,8 @@ imported by:
     <a href="#packaging.licenses._spdx">packaging.licenses._spdx</a>
  &#8226;   <a href="#packaging.metadata">packaging.metadata</a>
  &#8226;   <a href="#pkg_resources">pkg_resources</a>
+ &#8226;   <a href="#setuptools._normalization">setuptools._normalization</a>
  &#8226;   <a href="#setuptools.config._validate_pyproject.formats">setuptools.config._validate_pyproject.formats</a>
- &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
 
   </div>
 
@@ -11757,10 +11861,12 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#Button">Button</a>
+    <a href="#Achievements">Achievements</a>
+ &#8226;   <a href="#Button">Button</a>
  &#8226;   <a href="#EnemyLogic">EnemyLogic</a>
  &#8226;   <a href="#Main.py">Main.py</a>
  &#8226;   <a href="#MapLogic">MapLogic</a>
+ &#8226;   <a href="#ProjectileLogic">ProjectileLogic</a>
  &#8226;   <a href="#TowerLogic">TowerLogic</a>
  &#8226;   <a href="#UI">UI</a>
  &#8226;   <a href="#pygame._freetype">pygame._freetype</a>
@@ -12149,6 +12255,8 @@ imports:
   <div class="import">
 imported by:
     <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#TowerLogic">TowerLogic</a>
+ &#8226;   <a href="#UI">UI</a>
  &#8226;   <a href="#pygame">pygame</a>
  &#8226;   <a href="#pygame.sndarray">pygame.sndarray</a>
 
@@ -12562,6 +12670,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#UI">UI</a>
  &#8226;   <a href="#email.generator">email.generator</a>
  &#8226;   <a href="#email.utils">email.utils</a>
  &#8226;   <a href="#secrets">secrets</a>
@@ -12593,6 +12702,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#Main.py">Main.py</a>
+ &#8226;   <a href="#ProjectileLogic">ProjectileLogic</a>
  &#8226;   <a href="#_pydecimal">_pydecimal</a>
  &#8226;   <a href="#_pyrepl.completing_reader">_pyrepl.completing_reader</a>
  &#8226;   <a href="#_pyrepl.pager">_pyrepl.pager</a>
@@ -13084,6 +13194,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#setuptools">setuptools</a>
+ &#8226;   <a href="#setuptools.command.bdist_wheel">setuptools.command.bdist_wheel</a>
  &#8226;   <a href="#setuptools.monkey">setuptools.monkey</a>
 
   </div>
@@ -13204,6 +13315,7 @@ imports:
     <a href="#setuptools._distutils">setuptools._distutils</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C">setuptools._distutils.compilers.C</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.msvc">setuptools._distutils.compilers.C.msvc</a>
+ &#8226;   <a href="#warnings">warnings</a>
 
   </div>
   <div class="import">
@@ -13249,6 +13361,7 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#setuptools._distutils">setuptools._distutils</a>
+ &#8226;   <a href="#setuptools._distutils.compat.numpy">setuptools._distutils.compat.numpy</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C">setuptools._distutils.compilers.C</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.base">setuptools._distutils.compilers.C.base</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.errors">setuptools._distutils.compilers.C.errors</a>
@@ -13480,8 +13593,26 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#setuptools._distutils.compat.py39">setuptools._distutils.compat.py39</a>
+    <a href="#setuptools._distutils.compat.numpy">setuptools._distutils.compat.numpy</a>
+ &#8226;   <a href="#setuptools._distutils.compat.py39">setuptools._distutils.compat.py39</a>
  &#8226;   <a href="#setuptools._distutils.sysconfig">setuptools._distutils.sysconfig</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="setuptools._distutils.compat.numpy"></a>
+  <a target="code" href="///C:/Users/es919/AppData/Local/Programs/Python/Python313/Lib/site-packages/setuptools/_distutils/compat/numpy.py" type="text/plain"><tt>setuptools._distutils.compat.numpy</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#setuptools._distutils.compat">setuptools._distutils.compat</a>
+ &#8226;   <a href="#setuptools._distutils.compilers.C.base">setuptools._distutils.compilers.C.base</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#setuptools._distutils.ccompiler">setuptools._distutils.ccompiler</a>
 
   </div>
 
@@ -13532,7 +13663,6 @@ imported by:
 imports:
     <a href="#setuptools._distutils.compilers">setuptools._distutils.compilers</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C">setuptools._distutils.compilers.C</a>
- &#8226;   <a href="#setuptools._distutils.compilers.C.base">setuptools._distutils.compilers.C.base</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.msvc">setuptools._distutils.compilers.C.msvc</a>
 
   </div>
@@ -13581,7 +13711,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#setuptools._distutils.ccompiler">setuptools._distutils.ccompiler</a>
- &#8226;   <a href="#setuptools._distutils.compilers.C">setuptools._distutils.compilers.C</a>
+ &#8226;   <a href="#setuptools._distutils.compat.numpy">setuptools._distutils.compat.numpy</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.msvc">setuptools._distutils.compilers.C.msvc</a>
 
   </div>
@@ -14244,8 +14374,10 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#packaging">packaging</a>
+ &#8226;   <a href="#packaging.licenses">packaging.licenses</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#setuptools">setuptools</a>
+ &#8226;   <a href="#typing">typing</a>
 
   </div>
   <div class="import">
@@ -14254,6 +14386,7 @@ imported by:
  &#8226;   <a href="#setuptools._core_metadata">setuptools._core_metadata</a>
  &#8226;   <a href="#setuptools.command.bdist_wheel">setuptools.command.bdist_wheel</a>
  &#8226;   <a href="#setuptools.command.egg_info">setuptools.command.egg_info</a>
+ &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
 
   </div>
 
@@ -16250,6 +16383,7 @@ imports:
  &#8226;   <a href="#packaging.version">packaging.version</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#setuptools">setuptools</a>
+ &#8226;   <a href="#setuptools._core_metadata">setuptools._core_metadata</a>
  &#8226;   <a href="#setuptools._distutils.log">setuptools._distutils.log</a>
  &#8226;   <a href="#setuptools._normalization">setuptools._normalization</a>
  &#8226;   <a href="#setuptools._shutil">setuptools._shutil</a>
@@ -16866,13 +17000,13 @@ imports:
     <a href="#'collections.abc'">'collections.abc'</a>
  &#8226;   <a href="#__future__">__future__</a>
  &#8226;   <a href="#configparser">configparser</a>
+ &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#glob">glob</a>
  &#8226;   <a href="#io">io</a>
  &#8226;   <a href="#itertools">itertools</a>
  &#8226;   <a href="#more_itertools">more_itertools</a>
  &#8226;   <a href="#numbers">numbers</a>
  &#8226;   <a href="#os">os</a>
- &#8226;   <a href="#packaging.licenses">packaging.licenses</a>
  &#8226;   <a href="#packaging.markers">packaging.markers</a>
  &#8226;   <a href="#packaging.specifiers">packaging.specifiers</a>
  &#8226;   <a href="#packaging.version">packaging.version</a>
@@ -16891,6 +17025,7 @@ imports:
  &#8226;   <a href="#setuptools._distutils.util">setuptools._distutils.util</a>
  &#8226;   <a href="#setuptools._entry_points">setuptools._entry_points</a>
  &#8226;   <a href="#setuptools._importlib">setuptools._importlib</a>
+ &#8226;   <a href="#setuptools._normalization">setuptools._normalization</a>
  &#8226;   <a href="#setuptools._path">setuptools._path</a>
  &#8226;   <a href="#setuptools._reqs">setuptools._reqs</a>
  &#8226;   <a href="#setuptools._static">setuptools._static</a>
@@ -17746,8 +17881,7 @@ imported by:
   <a name="sys"></a>
   <tt>sys</tt> <span class="moduletype"><i>(builtin module)</i></span>  <div class="import">
 imported by:
-    <a href="#Main.py">Main.py</a>
- &#8226;   <a href="#UI">UI</a>
+    <a href="#UI">UI</a>
  &#8226;   <a href="#_aix_support">_aix_support</a>
  &#8226;   <a href="#_collections_abc">_collections_abc</a>
  &#8226;   <a href="#_colorize">_colorize</a>
@@ -18626,6 +18760,7 @@ imported by:
  &#8226;   <a href="#setuptools._distutils.spawn">setuptools._distutils.spawn</a>
  &#8226;   <a href="#setuptools._distutils.sysconfig">setuptools._distutils.sysconfig</a>
  &#8226;   <a href="#setuptools._distutils.util">setuptools._distutils.util</a>
+ &#8226;   <a href="#setuptools._normalization">setuptools._normalization</a>
  &#8226;   <a href="#setuptools._path">setuptools._path</a>
  &#8226;   <a href="#setuptools._reqs">setuptools._reqs</a>
  &#8226;   <a href="#setuptools._shutil">setuptools._shutil</a>
@@ -18702,16 +18837,20 @@ imported by:
 
 <div class="node">
   <a name="typing_extensions"></a>
-  <a target="code" href="///C:/Users/es919/AppData/Local/Programs/Python/Python313/Lib/site-packages/setuptools/_vendor/typing_extensions.py" type="text/plain"><tt>typing_extensions</tt></a>
+  <a target="code" href="///C:/Users/es919/AppData/Local/Programs/Python/Python313/Lib/site-packages/typing_extensions.py" type="text/plain"><tt>typing_extensions</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#'collections.abc'">'collections.abc'</a>
  &#8226;   <a href="#_socket">_socket</a>
  &#8226;   <a href="#abc">abc</a>
+ &#8226;   <a href="#asyncio.coroutines">asyncio.coroutines</a>
+ &#8226;   <a href="#builtins">builtins</a>
  &#8226;   <a href="#collections">collections</a>
  &#8226;   <a href="#contextlib">contextlib</a>
+ &#8226;   <a href="#enum">enum</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#inspect">inspect</a>
+ &#8226;   <a href="#keyword">keyword</a>
  &#8226;   <a href="#operator">operator</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#types">types</a>
@@ -18784,7 +18923,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#unittest">unittest</a>
+    <a href="#ProjectileLogic">ProjectileLogic</a>
+ &#8226;   <a href="#unittest">unittest</a>
  &#8226;   <a href="#unittest._log">unittest._log</a>
  &#8226;   <a href="#unittest.async_case">unittest.async_case</a>
  &#8226;   <a href="#unittest.case">unittest.case</a>
@@ -18865,7 +19005,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#unittest">unittest</a>
+    <a href="#ProjectileLogic">ProjectileLogic</a>
+ &#8226;   <a href="#unittest">unittest</a>
  &#8226;   <a href="#unittest._log">unittest._log</a>
  &#8226;   <a href="#unittest.async_case">unittest.async_case</a>
  &#8226;   <a href="#unittest.loader">unittest.loader</a>
@@ -19297,6 +19438,7 @@ imported by:
  &#8226;   <a href="#re._parser">re._parser</a>
  &#8226;   <a href="#rlcompleter">rlcompleter</a>
  &#8226;   <a href="#runpy">runpy</a>
+ &#8226;   <a href="#setuptools._distutils._msvccompiler">setuptools._distutils._msvccompiler</a>
  &#8226;   <a href="#setuptools._distutils.command.bdist">setuptools._distutils.command.bdist</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.base">setuptools._distutils.compilers.C.base</a>
  &#8226;   <a href="#setuptools._distutils.compilers.C.msvc">setuptools._distutils.compilers.C.msvc</a>

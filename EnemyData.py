@@ -3,14 +3,14 @@ mob_data = {
         "Damage": 1,
         "Health": 50,
         "Speed": 0.8,
-        "Money": 15, 
+        "Money": 10,
         "Score": 100
     },
     "Blue": {
         "Damage": 3,
         "Health": 30,
         "Speed": 1.0,
-        "Money": 20, 
+        "Money": 12,
         "Score": 200
     },
     "Purple": {

@@ -1,7 +1,7 @@
 towers_base = {
     "Witch": {
         "range": 120,
-        "damage": 10,
+        "damage": 27,
         "has_projectile": True,
         "projectile": {
             "name": "fireball",
@@ -10,17 +10,17 @@ towers_base = {
         },
         "aoeDmg": False,
         "aoeEnv": False,
-        "cooldown": 2,
+        "cooldown": 3,
         "cost": 100,
         "upgrades": {
-            1: {"cost": 50, "damage": 12, "cooldown": 2, "range": 130},
-            2: {"cost": 75, "damage": 15, "cooldown": 1.8, "range": 140},
-            3: {"cost": 120, "damage": 18, "cooldown": 1.5, "range": 150},
+            1: {"cost": 30, "damage": 27, "cooldown": 3, "range": 135},
+            2: {"cost": 60, "damage": 27, "cooldown": 3, "range": 150},
+            3: {"cost": 120, "damage": 28, "cooldown": 2, "range": 150},
         }
     },
     "Archer": {
         "range": 150,
-        "damage": 8,
+        "damage": 5,
         "has_projectile": True,
         "projectile": {
             "name": "arrow",
@@ -29,17 +29,17 @@ towers_base = {
         },
         "aoeDmg": False,
         "aoeEnv": False,
-        "cooldown": 1.5,
-        "cost": 80,
+        "cooldown": 1,
+        "cost": 60,
         "upgrades": {
-            1: {"cost": 40, "damage": 10, "cooldown": 1.4, "range": 160},
-            2: {"cost": 60, "damage": 12, "cooldown": 1.3, "range": 170},
-            3: {"cost": 100, "damage": 15, "cooldown": 1.2, "range": 180},
+            1: {"cost": 20, "damage": 8, "cooldown": 1, "range": 160},
+            2: {"cost": 40, "damage": 8, "cooldown": 1, "range": 180},
+            3: {"cost": 80, "damage": 10, "cooldown": 1, "range": 180},
         }
     },
     "Bear": {
-        "range": 50,
-        "damage": 25,
+        "range": 80,
+        "damage": 15,
         "has_projectile": False,
         "projectile": {
             "name": "arrow",
@@ -48,8 +48,8 @@ towers_base = {
         },
         "aoeDmg": True,
         "aoeEnv": False,
-        "cooldown": 2.8,
-        "cost": 120,
+        "cooldown": 2,
+        "cost": 60,
         "upgrades": {
             1: {"cost": 60, "damage": 28, "cooldown": 2.5, "range": 60},
             2: {"cost": 80, "damage": 35, "cooldown": 2.3, "range": 65},
