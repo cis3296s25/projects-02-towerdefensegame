@@ -66,6 +66,10 @@ archerImage = IMAGES["archerSample"] #generate archer tower image
 bearImage = IMAGES["bearSample"] #generate bear tower image
 slimeImage = IMAGES["slime"]
 
+
+modes_played_global = set()
+modes_won_global = set()
+
 #Allows us to wrap the game into a .exe file
 def resource_path(relative_path):
     try:
@@ -232,14 +236,25 @@ def game(mode="normal"):
         "reverse_sweep_failed": False,
         "pre_wave_4_kills": 0,
         "lives_lost_after_wave3": 0,
+        "modes_played": set(),
+        "modes_won": set(),
+
     }
+
+    achievement_notifications = []  # holds (achievement_name, timestamp)
+
+    if mode != "normal":
+        game_state["modes_played"].add(mode)
+        modes_played_global.add(mode)
+
+    check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
     if mode == "hardcore_mode":
         lives = 1
-        money = 3500
+        money = 350
         game_state["lives"] = lives
 
-    achievement_notifications = []  # holds (achievement_name, timestamp)
+    
 
     speed_multiplier = 1
     while running:
@@ -279,7 +294,7 @@ def game(mode="normal"):
                             selected_tower.do_upgrade(game_state)
                             game_state["upgrades_used"] += 1
                             game_state["no_upgrades_wave"] = False
-                            check_achievements(game_state, achievement_notifications)
+                            check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
                         else:
                             log_message("Not enough money to upgrade tower!")
@@ -300,7 +315,7 @@ def game(mode="normal"):
                         game_state["towers_sold_this_wave"] += 1
                         if wave_started:
                             game_state["sold_mid_wave"] = True
-                        check_achievements(game_state, achievement_notifications)
+                        check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
                         tower_positions.remove((selected_tower.x, selected_tower.y))  # Free up the position
                         selected_tower = None  # Deselect the tower
@@ -318,10 +333,11 @@ def game(mode="normal"):
                         wave_start_time = pygame.time.get_ticks()
                         game_state["wave_completed"] = False
                         game_state["start_money"] = money
-                        check_achievements(game_state, achievement_notifications)
+                        check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
                 elif fastForwardButton.draw(screen):
                     if fps == 60:
                         fps = 120
+                        game_state["fast_forward_used"] = True
                         speed_multiplier = 2
                         spawn_delay = 400  # Reduce spawn delay for fast forward
                         for enemy in enemies:
@@ -380,7 +396,7 @@ def game(mode="normal"):
                                 game_state["tower_types"].add(towerButton.name)
                                 tower_type = towerButton.name
                                 game_state["tower_type_counts"][tower_type] += 1
-                                check_achievements(game_state, achievement_notifications)
+                                check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
                             else:
                                 log_message("Not enough money to place tower!")
@@ -476,7 +492,7 @@ def game(mode="normal"):
                         game_state["pre_wave_4_kills"] += 1
                     if enemy.killed_by == "Archer":
                         game_state["archer_wave_kills"] += 1
-                    check_achievements(game_state, achievement_notifications)
+                    check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
             else:
                 lives -= enemy.dmg
@@ -493,7 +509,7 @@ def game(mode="normal"):
                 score -= enemy.score
                 if lives <= 0:
                     game_state["game_over"] = True
-                    check_achievements(game_state, achievement_notifications)
+                    check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
 
                     if (get_top_score(SCORE_FILE, "score") < score): 
                         high_score = True
@@ -554,6 +570,11 @@ def game(mode="normal"):
 
                 game_state["gold"] = money
                 game_state["game_won"] = True
+
+                if mode != "normal":
+                    game_state["modes_won"].add(mode)
+                    modes_won_global.add(mode)
+
                 game_state["lives"] = lives
                 if getattr(enemy, "is_boss", False) and enemy.hp <= 0 and not game_state["boss_defeated"]:
                     game_state["boss_defeated"] = True
@@ -561,7 +582,7 @@ def game(mode="normal"):
                 print("[DEBUG] Final Lives:", game_state["lives"])
                 print("[DEBUG] Game Won:", game_state["game_won"])
 
-                check_achievements(game_state, achievement_notifications)
+                check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
                 gameclear_screen(screen, score, SCORE_FILE, high_score, top_five, total_wave_time, time_high_score, time_top_five)
                 
                 mixer.music.stop()
@@ -582,16 +603,12 @@ def game(mode="normal"):
                     game_state["one_tower_challenge"] = False
 
                 game_state["waves_survived"] += 1
-                check_achievements(game_state, achievement_notifications)
+                check_achievements(game_state, achievement_notifications, modes_played_global, modes_won_global)
                 game_state["towers_sold_this_wave"] = 0
                 game_state["archer_wave_kills"] = 0
                 game_state["witch_dmg_this_wave"] = 0
                 game_state["tower_types"] = set()
                 game_state["no_upgrades_wave"] = True
-                
-
-                #check_achievements(game_state)
-
 
                 current_wave_enemies = get_wave_data(wave_number)
                 spawned_count = 0
@@ -667,14 +684,23 @@ def game(mode="normal"):
             banner_x = 10
             banner_y = 10 + i * (banner_height + 10)
 
-            # Background banner
-            pygame.draw.rect(screen, (255, 68, 58), (banner_x, banner_y, banner_width, banner_height), border_radius=8)
+            if name == "Master Defender":
+                # Unique background and border for the platinum trophy
+                bg_color = (180, 145, 255)    # Soft purple glow
+                border_color = (255, 255, 255)  # White border
+                text_color = (255, 255, 255)
+                icon = "👑"
+            else:
+                # Default style
+                bg_color = (255, 68, 58)
+                border_color = (61, 43, 36)
+                text_color = (239, 176, 125)
+                icon = "🏆"
 
-            # Border
-            pygame.draw.rect(screen, (61, 43, 36), (banner_x, banner_y, banner_width, banner_height), 2, border_radius=8)
+            pygame.draw.rect(screen, bg_color, (banner_x, banner_y, banner_width, banner_height), border_radius=8)
+            pygame.draw.rect(screen, border_color, (banner_x, banner_y, banner_width, banner_height), 2, border_radius=8)
 
-            # Text
-            text_surface = banner_font.render(f"🏆 Achievement Unlocked: {name}", True, (239, 176, 125))
+            text_surface = banner_font.render(f"{icon} Achievement Unlocked: {name}", True, text_color)
             screen.blit(text_surface, (banner_x + padding, banner_y + padding // 2))
 
         if mode != "normal":

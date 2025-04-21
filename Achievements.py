@@ -1,6 +1,14 @@
 import pygame
 
 achievements = {
+    # --- 100% Completion Achievement --- #
+    "Master Defender": {
+        "unlocked": False,
+        "category": "Trophy",
+        "description": "Unlock all other achievements",
+        "modes": ["all"]
+    },
+
     # --- Combat Achievements --- #
     "First Blood": {
         "unlocked": False,
@@ -219,7 +227,20 @@ achievements = {
         "category": "Secret",
         "description": "Survive Reverse Mode on Hardcore rules… without a single upgrade.",
         "modes": ["reverse_mode"]
-    }
+    },
+    # --- Mode Achievements --- #
+    "Challenge Accepted": {
+        "unlocked": False,
+        "category": "Mode",
+        "description": "Play each challenge mode at least once",
+        "modes": ["all"]
+    },
+    "Mode Master": {
+        "unlocked": False,
+        "category": "Mode",
+        "description": "Win a full game in each challenge mode",
+        "modes": ["all"]
+    },
 }
 
 
@@ -232,7 +253,7 @@ def unlock_achievement(name, notifications_list=None):
             notifications_list.append((name, pygame.time.get_ticks()))
 
 
-def check_achievements(state, notifications_list):
+def check_achievements(state, notifications_list, modes_played_global = None, modes_won_global = None):
     current_mode = state.get("mode", "normal")
 
     for name, data in achievements.items():
@@ -351,8 +372,6 @@ def check_achievements(state, notifications_list):
         if state.get("game_won") and not state.get("fast_forward_used", False) and not state.get("paused_game", False):
             unlock_achievement("Flow State", notifications_list)
 
-####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
-
 # --- Reverse Mode Achievements --- #
 
     if current_mode == "reverse_mode":
@@ -370,3 +389,14 @@ def check_achievements(state, notifications_list):
         if (state["game_won"] and state["lives"] == 25 and state["upgrades_used"] == 0):
             unlock_achievement("True Survivor", notifications_list)
 
+    if {"no_upgrades_mode", "hardcore_mode", "reverse_mode"}.issubset(modes_played_global or set()):
+        unlock_achievement("Challenge Accepted", notifications_list)
+
+    if {"no_upgrades_mode", "hardcore_mode", "reverse_mode"}.issubset(modes_won_global or set()):
+        unlock_achievement("Mode Master", notifications_list)
+
+####################### ACHIEVEMENTS ABOVE WORK ### BELOW STILL NEED TESTING ####################################
+
+    # === Check for 100% Completion Trophy ===
+    if all(data["unlocked"] or name == "Master Defender" for name, data in achievements.items()):
+        unlock_achievement("Master Defender", notifications_list)
