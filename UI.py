@@ -506,9 +506,13 @@ def wave_description(wave):
         return "Unknown Wave\nPrepare for the unexpected!"
     
 
-def draw_tower_stat(screen, tower, mode):
+def draw_tower_stat(screen, tower, mode, money):
    pygame.draw.rect(screen, (50, 50, 50), (600, 0, 150, 400))
    font = pygame.font.Font("fonts/BrickSans.ttf", 12)
+
+   # Create text for total money
+   text_money = font.render(f"Money: {money}", True, (255, 255, 255)) # White text for money
+   text_final_total = font.render(f"Total - Cost: {money - towers_base[tower.tower_name]['upgrades'][tower.upgrade+1]['cost']}", True, (255, 255, 255))
 
    # Create text for tower stats
    text_range = font.render(f"Range: {tower.range}", True, (255, 255, 255))  # White text for range
@@ -516,14 +520,18 @@ def draw_tower_stat(screen, tower, mode):
    text_cooldown = font.render(f"Cooldown: {tower.cooldown}", True, (255, 255, 255))  # White text for tower name
 
    # Positioning the text on the screen (keeping it aligned on the right side)
-   text_range_rect = text_range.get_rect(topleft=(610, 20))
+   text_range_rect = text_range.get_rect(topleft=(610, 30))
    text_damage_rect = text_damage.get_rect(topleft=(610, 60))
    text_cooldown_rect = text_cooldown.get_rect(topleft=(610, 100))
+   text_money_rect = text_money.get_rect(topleft=(610, 300))
+   text_final_rect = text_money.get_rect(topleft=(610, 320))
 
    # Draw the text on the screen
+   screen.blit(text_money, text_money_rect) # Draw money text
    screen.blit(text_range, text_range_rect)  # Draw range text
    screen.blit(text_damage, text_damage_rect)  # Draw damage text
    screen.blit(text_cooldown, text_cooldown_rect)  # Draw cooldown text
+   screen.blit(text_final_total, text_final_rect) # Draw money after upgrade txt
 
     # Draw Upgrade Button
    upgrade_button_rect = pygame.Rect(620, 150, 120, 40)  # Button size and position
