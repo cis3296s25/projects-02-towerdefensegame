@@ -665,7 +665,7 @@ def game(mode="normal"):
             button.draw(screen, show_stats)  
 
         if show_stats and selected_tower:
-            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower, mode)
+            upgrade_button_rect, sell_button_rect = draw_tower_stat(screen, selected_tower, mode, money)
 
         if show_wave:
             number_wave(screen, wave_number)
