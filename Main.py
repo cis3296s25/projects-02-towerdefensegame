@@ -113,7 +113,7 @@ def select_tower(pixel_x, pixel_y, towers):
 ############################# LOGGING FUNCTIONALITY ###############################
 log_messages = []
 def draw_logs(screen, log_messages):
-    font = pygame.font.SysFont("Arial", 14)  # Font for log messages
+    font = pygame.font.SysFont("Arial", 13)  # Font for log messages
     y_offset = 410  # Start drawing logs near the bottom of the screen
     for message in log_messages[-5:]:  # Show only the last 5 messages
         text_surface = font.render(message, True, (255, 255, 255))  # White text
@@ -122,7 +122,15 @@ def draw_logs(screen, log_messages):
         
 def log_message(message):
     print(message)  # Still print to the terminal
-    log_messages.append(message)  # Add the message to the log list
+    #message_list = message.split("\n")  # Split the message into lines
+    if len(message) > 30:  # Limit the length of each line to 50 characters
+        extra_message = "   " + message[27:]  # Get the extra part of the message 
+        message = message[:27] + "..."  # Truncate long messages
+        log_messages.append(message)  # Add the message to the log list
+        log_messages.append(extra_message)  # Add the extra message to the log list
+    else:
+        log_messages.append(message)
+
     if len(log_messages) > 50:  # Limit the number of stored messages
         log_messages.pop(0)
 
@@ -541,8 +549,8 @@ def game(mode="normal"):
             if wave_number == FINAL_WAVE: # game clear after 10 wave
                 # accounting final wave's points and time
                 wave_end_time = pygame.time.get_ticks()
-                log_message(f"It took {((wave_end_time-wave_start_time)/1000)} seconds to beat the wave")
-                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
+                log_message(f"It took {((wave_end_time-wave_start_time)/1000):.3f} seconds to beat the wave")
+                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000))):3f}")
                 score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
                 total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
                 total_wave_time = round(total_wave_time, 2)
@@ -614,8 +622,8 @@ def game(mode="normal"):
                 spawned_count = 0
                 last_spawn_time = pygame.time.get_ticks()  # Reset spawn timer
                 money += 10 * wave_number
-                log_message(f"It took {((wave_end_time-wave_start_time)/1000)} seconds to beat the wave")
-                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))}")
+                log_message(f"It took {((wave_end_time-wave_start_time)/1000):.3f} seconds to beat the wave")
+                log_message(f"Time increases your score by {((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000))):.3f}")
                 score += int(((wave_number**3) * (200/((wave_end_time-wave_start_time)/1000)))) #The faster you beat the wave the more points you get
                 total_wave_time += ((wave_end_time-wave_start_time)/1000) #Add time it took to beat the wave to the total time
 
