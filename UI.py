@@ -697,6 +697,7 @@ def is_top_five(SCORE_FILE, score, sort_method):
 
 def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
     pygame.font.init()
+    bigFont = pygame.font.SysFont("fonts/BrickSans.ttf", 55)
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 30)
     smallFont = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
     white = (255, 255, 255)
@@ -704,6 +705,14 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
 
     scores = load_scores(SCORE_FILE)
     times = load_scores(TOTAL_WAVE_TIME_FILE)
+
+    firstPlaceImg = pygame.image.load("./images/firstPlace.png").convert_alpha()
+    smallerIcon = pygame.transform.smoothscale(firstPlaceImg, (70, 70))
+    glowingMushroomImg = pygame.image.load("./images/GlowingMushroom.png")
+    bearImg = pygame.image.load("./images/bearSample.png")
+    slimeImg = pygame.image.load("./images/slime.png")
+    witchImg = pygame.image.load("./images/witchSample.png")
+    archerImg = pygame.image.load("./images/archerSample.png")
 
     total_pages = 2
     current_page = 0
@@ -719,38 +728,70 @@ def leaderboard_screen(screen, SCORE_FILE, TOTAL_WAVE_TIME_FILE):
             spore.draw(screen)
 
         if current_page == 0:
-            for i, score in enumerate(scores):
-                line = f"{i + 1}. {score}"
-                text = font.render(line, True, white)
-                screen.blit(text, (100, 120 + i * 40))
-            title = font.render("***TOP SCORES***", True, white)
-            screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+            # TOP SCORES
+            title = bigFont.render("***TOP SCORES***", True, white)
+            screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 80))
 
+            screen.blit(witchImg, (screen.get_width() // 2 + 11, 43))
+            screen.blit(archerImg, (screen.get_width() // 2 + 62, 38))
+
+            screen.blit(glowingMushroomImg, (title.get_width()-glowingMushroomImg.get_width() - 110, 50))
+            screen.blit(glowingMushroomImg, (screen.get_width() // 2 - title.get_width() // 2 + 320, 50))
+
+            for i, score in enumerate(scores):
+                if (i == 0):
+                    line = f"{score}"
+                    text = bigFont.render(line, True, (138, 43, 226))
+                    screen.blit(text, (screen.get_width()//2 - 50, 190 + i * 40))
+                    screen.blit(smallerIcon, (screen.get_width()//2 - 120, 163))
+                else: 
+                    line = f"{i + 1}. {score}"
+                    text = font.render(line, True, white)
+                    screen.blit(text, (screen.get_width()//2 - 50, 220 + i * 40))
+
+            
             page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
             page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
             page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-            screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2,
-                                        screen.get_height() - 35 - page_nav_text.get_height()))
-            screen.blit(page_nav_text,
-                        (screen.get_width() // 2 - page_nav_text.get_width() // 2, screen.get_height() - 30))
+            screen.blit(bearImg, (screen.get_width() // 2 - page_dir_text.get_width() // 2 - 55, screen.get_height() - 40 - page_nav_text.get_height()))
+            screen.blit(slimeImg, (screen.get_width() - page_num_text.get_width() - 25, screen.get_height() - 65))
+
+            screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2, screen.get_height() - 35 - page_nav_text.get_height()))
+            screen.blit(page_nav_text, (screen.get_width() // 2 - page_nav_text.get_width() // 2, screen.get_height() - 30))
             screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
         elif current_page == 1:
+            # TOP CLEAR TIMES
+            title = bigFont.render("***TOP TIMES***", True, white)
+            screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 80))
+
+            screen.blit(witchImg, (screen.get_width() // 2 + 12, 43))
+            screen.blit(archerImg, (screen.get_width() // 2 + 65, 38))
+
+            screen.blit(glowingMushroomImg, (title.get_width()-glowingMushroomImg.get_width() - 60, 50))
+            screen.blit(glowingMushroomImg, (screen.get_width() // 2 - title.get_width() // 2 + 280, 50))
+
             for i, time in enumerate(times):
-                line = f"{i + 1}. {time} seconds"
-                text = font.render(line, True, white)
-                screen.blit(text, (100, 120 + i * 40))
-            title = font.render("***TOP TIMES***", True, white)
-            screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 50))
+                if (i == 0): 
+                    line = f"{time}s"
+                    text = bigFont.render(line, True, (138, 43, 226))
+                    screen.blit(text, (screen.get_width()//2 - 50, 190 + i * 40))
+                    screen.blit(smallerIcon, (screen.get_width()//2 - 120, 163))
+                else:
+                    line = f"{i + 1}. {time}s"
+                    text = font.render(line, True, white)
+                    screen.blit(text, (screen.get_width()//2 - 50, 220 + i * 40))
+                
 
             page_dir_text = smallFont.render(f"Press ESC or SPACE keys to return to home", True, (255, 255, 255))
             page_nav_text = smallFont.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
             page_num_text = smallFont.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-            screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2,
-                                        screen.get_height() - 35 - page_nav_text.get_height()))
-            screen.blit(page_nav_text,
-                        (screen.get_width() // 2 - page_nav_text.get_width() // 2, screen.get_height() - 30))
+            screen.blit(bearImg, (screen.get_width() // 2 - page_dir_text.get_width() // 2 - 55, screen.get_height() - 40 - page_nav_text.get_height()))
+            screen.blit(slimeImg, (screen.get_width() - page_num_text.get_width() - 25, screen.get_height() - 65))
+
+            screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2, screen.get_height() - 35 - page_nav_text.get_height()))
+            screen.blit(page_nav_text, (screen.get_width() // 2 - page_nav_text.get_width() // 2, screen.get_height() - 30))
             screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
 
         for event in pygame.event.get():
@@ -774,6 +815,9 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
     pygame.font.init()
     clock = pygame.time.Clock()
     font = pygame.font.SysFont("fonts/BrickSans.ttf", 20)
+
+    bearImg = pygame.image.load("./images/bearSample.png")
+    slimeImg = pygame.image.load("./images/slime.png")
 
     try:
         with open(INSTRUCTIONS_FILE, "r") as file:
@@ -807,8 +851,10 @@ def instructions_screen(screen, INSTRUCTIONS_FILE):
         page_nav_text = font.render(f"Use left and right arrow keys to navigate pages", True, (255, 255, 255))
         page_num_text = font.render(f"Page {current_page + 1} of {total_pages}", True, (255, 255, 255))
 
-        screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2,
-                                    screen.get_height() - 35 - page_nav_text.get_height()))
+        screen.blit(bearImg, (screen.get_width() // 2 - page_dir_text.get_width() // 2 - 55, screen.get_height() - 40 - page_nav_text.get_height()))
+        screen.blit(slimeImg, (screen.get_width() - page_num_text.get_width() - 25, screen.get_height() - 65))
+
+        screen.blit(page_dir_text, (screen.get_width() // 2 - page_dir_text.get_width() // 2, screen.get_height() - 35 - page_nav_text.get_height()))
         screen.blit(page_nav_text, (screen.get_width() // 2 - page_nav_text.get_width() // 2, screen.get_height() - 30))
         screen.blit(page_num_text, (screen.get_width() - page_num_text.get_width() - 40, screen.get_height() - 30))
 
