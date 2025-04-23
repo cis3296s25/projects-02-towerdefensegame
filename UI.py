@@ -324,6 +324,7 @@ def settings_screen(screen, in_game=False):
                     return
                 elif home_rect.collidepoint(event.pos) and in_game:
                     if returntohome(screen):
+                        mixer.music.stop()
                         return "home"
 
             elif event.type == pygame.MOUSEBUTTONUP:
