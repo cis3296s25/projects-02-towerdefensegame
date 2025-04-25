@@ -24,7 +24,7 @@ towers_base = {
         "has_projectile": True,
         "projectile": {
             "name": "arrow",
-            "speed": 6,
+            "speed": 10,
             "frenetic": False
         },
         "aoeDmg": False,
@@ -76,7 +76,7 @@ towers_base = {
         }
     },
     "SuperArcher": {
-        "range": 150,
+        "range": 175,
         "damage": 12,
         "has_projectile": True,
         "projectile": {
@@ -91,7 +91,7 @@ towers_base = {
         "upgrades": {
             1: {"cost": 300, "damage": 16, "cooldown": 0.01, "range": 200},
             2: {"cost": 450, "damage": 20, "cooldown": 0.005, "range": 250},
-            3: {"cost": 600, "damage": 30, "cooldown": 0.0001, "range": 300},
+            3: {"cost": 600, "damage": 27, "cooldown": 0.0001, "range": 300},
         }
     },
 
