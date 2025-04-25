@@ -287,7 +287,7 @@ def check_achievements(state, notifications_list, modes_played_global = None, mo
         unlock_achievement("Barely Breathing", notifications_list)
 
     # Tower usage
-    if len(state["tower_types"]) == 4:  # adjust based on # of tower types
+    if len(state["tower_types"]) == 5:  # adjust based on # of tower types
         unlock_achievement("Balanced Loadout", notifications_list)
 
     if state["towers_placed"] >= 20:

@@ -50,6 +50,7 @@ IMG_NAMES = [
     "archerSample",
     "bearSample",
     "slime",
+    "superArcherSample",
 ]
 IMAGES = {
     name: image.load(IMAGE_PATH + "{}.png".format(name)).convert_alpha()
@@ -65,6 +66,7 @@ fastForwardImage = IMAGES["fastforwardwave"] #generate fast forward button image
 archerImage = IMAGES["archerSample"] #generate archer tower image
 bearImage = IMAGES["bearSample"] #generate bear tower image
 slimeImage = IMAGES["slime"]
+superArcherImage = IMAGES["superArcherSample"] #generate super archer tower image
 
 
 modes_played_global = set()
@@ -181,10 +183,11 @@ def game(mode="normal"):
     archerButton = Button(680, 90, IMAGES["archerSample"], True, "Archer", tooltip_text="Archer: \"Bullseye!\" The Archer Tower is your go-to for precision strikes. With its rapid         \n-fire arrows, it’s perfect for thinning out waves of weaker enemies. \n- \"A fast shooting arrows tower that does less damage\" \ncost: 80 \natk: 8\n")
     bearButton = Button(620, 140, IMAGES["bearSample"], True, "Bear", tooltip_text=     "Bear: \"Rawr!\" The Bear Tower smashes enemies with brute force. It’s slow but devastating, \nperfect for taking down a group of foes. \n- \"A powerful tower that smashes the ground, dealing damage to all enemies in its range.\"\ncost: 120\natk: 25\n")
     slimeButton = Button(680, 145, IMAGES["slime"], True, "Slime", tooltip_text=        "Slime: \"Sticky situation!\" The Slime Tower slows enemies with gooey projectiles, giving    \nyour other towers more time to finish the job. Great for controlling the battlefield \n- \"A tower that slows all enemies in its range.\" \ncost: 120\natk: slow\n")
+    superArcherButton = Button(620, 190, IMAGES["superArcherSample"], True, "SuperArcher", tooltip_text=   "SuperArcher: \"I am the one who shoots!\" The SuperArcher Tower is a powerful ranged tower \nthat can shoot arrows rapid fire. It’s perfect for taking down tougher enemies. \n- \"A powerful tower that shoots arrows at incredible speeds\"\ncost: 650\natk: 12\n")
     cancelButtonScale = pygame.transform.scale(cancelImage, (60, 39.9))
     cancelButton = Button(620, 300, cancelButtonScale, True) # (x, y, image, single_click)
     
-    buttons = [archerButton, bearButton, witchButton, slimeButton]
+    buttons = [archerButton, bearButton, witchButton, slimeButton, superArcherButton]
 
     def find_button(x, y):
         for button in buttons:
@@ -233,7 +236,7 @@ def game(mode="normal"):
         "wave": 0,
         "maxed_towers": 0,
         "one_tower_challenge": False,
-        "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0},
+        "tower_type_counts": {"Witch": 0, "Archer": 0, "Bear": 0, "Slime": 0, "SuperArcher": 0},
         "mode": mode,
         "fast_forward_used": False,
         "paused_game": False,
